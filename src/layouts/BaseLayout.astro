@@ -1,0 +1,57 @@
+---
+import '../styles/global.css';
+import { CSP } from '../config/csp.mjs';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const siteName = 'Nate Nelson';
+const {
+  title,
+  description = 'Nate Nelson is a cybersecurity journalist covering ransomware, nation-state hacking, vulnerabilities, and the policy fights around them.',
+} = Astro.props;
+
+const pageTitle = title ? `${title} · ${siteName}` : `${siteName} · Cybersecurity journalist`;
+
+const nav = [
+  { href: '/', label: 'Home' },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content={CSP} />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="color-scheme" content="light dark" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <a class="site-name" href="/">{siteName}</a>
+      <nav aria-label="Main">
+        <ul>
+          {nav.map((item) => (
+            <li>
+              <a href={item.href} aria-current={Astro.url.pathname === item.href ? 'page' : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </header>
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <p>&copy; {new Date().getFullYear()} Nate Nelson</p>
+    </footer>
+  </body>
+</html>
