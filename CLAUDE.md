@@ -10,6 +10,8 @@ its phases in order and stop for review at the end of each one.
   Never push to `main`.
 - `npm run build` runs `astro build` and then `scripts/verify-build.mjs`. Both must pass
   before pushing. CI runs the same command on every PR; pushes to `main` also deploy.
+- `npm run check` type-checks with `astro check` (dev-only: `@astrojs/check` + TypeScript 6,
+  approved by Nate; never shipped to the site). CI runs it before the build.
 - Node version is pinned in `.nvmrc`. Install with `npm ci --ignore-scripts` (same as CI).
 
 ## Stack

@@ -11,9 +11,14 @@
     "build": "astro build && node scripts/verify-build.mjs",
     "verify": "node scripts/verify-build.mjs",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "check": "astro check"
   },
   "dependencies": {
     "astro": "7.3.8"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "typescript": "6.0.3"
   }
 }
