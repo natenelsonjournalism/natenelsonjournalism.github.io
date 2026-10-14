@@ -1,0 +1,60 @@
+---
+// TEMPORARY (Phase 2): proves the placeholder content loads and renders.
+// Phase 3 replaces this with the real Work, Investigations and Speaking pages.
+import { render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ClipItem from '../components/ClipItem.astro';
+import { TOPICS } from '../config/topics';
+import { formatDate, getAppearances, getClips, getInvestigations, getRelatedClips, isoDate } from '../lib/content';
+
+const clips = await getClips();
+const investigations = await Promise.all(
+  (await getInvestigations()).map(async (inv) => ({
+    inv,
+    related: await getRelatedClips(inv),
+    Content: (await render(inv)).Content,
+  })),
+);
+const appearances = await getAppearances();
+---
+
+<BaseLayout title="Content preview" description="Temporary preview of placeholder content." noindex>
+  <h1>Content preview</h1>
+  <p>Temporary page showing placeholder content. Everything here is fake and will be replaced.</p>
+
+  <h2>Topics</h2>
+  <ul>{Object.values(TOPICS).map((label) => <li>{label}</li>)}</ul>
+
+  <h2>Clips ({clips.length})</h2>
+  {clips.map((clip) => <ClipItem clip={clip} />)}
+
+  <h2>Investigations ({investigations.length})</h2>
+  {
+    investigations.map(({ inv, related, Content }) => (
+      <article>
+        <h3>{inv.data.title}</h3>
+        <p>
+          {inv.data.outlets.join(', ')} · <time datetime={isoDate(inv.data.date)}>{formatDate(inv.data.date)}</time>
+        </p>
+        <p>{inv.data.summary}</p>
+        <h4>Impact</h4>
+        <ul>{inv.data.impact.map((i) => <li>{i}</li>)}</ul>
+        <h4>Related clips</h4>
+        <ul>{related.map((c) => <li>{c.data.title}</li>)}</ul>
+        <Content />
+      </article>
+    ))
+  }
+
+  <h2>Appearances ({appearances.length})</h2>
+  <ul>
+    {
+      appearances.map((a) => (
+        <li>
+          {a.data.url ? <a href={a.data.url}>{a.data.title}</a> : a.data.title} ({a.data.type}),{' '}
+          {a.data.event_or_show}, <time datetime={isoDate(a.data.date)}>{formatDate(a.data.date)}</time>
+        </li>
+      ))
+    }
+  </ul>
+</BaseLayout>

@@ -1,0 +1,25 @@
+---
+import { TOPICS } from '../config/topics';
+import { clipLink, formatDate, isoDate, type Clip } from '../lib/content';
+
+interface Props {
+  clip: Clip;
+}
+
+const { clip } = Astro.props;
+const { title, outlet, date, topics, summary } = clip.data;
+const { href, archived } = clipLink(clip);
+---
+
+<article class="clip">
+  <h3 class="clip-title">
+    {href ? <a href={href}>{title}</a> : title}
+    {archived && <span class="clip-note"> (archived)</span>}
+    {!href && <span class="clip-note"> (link unavailable)</span>}
+  </h3>
+  <p class="clip-meta">
+    {outlet} · <time datetime={isoDate(date)}>{formatDate(date)}</time>
+  </p>
+  <p class="clip-summary">{summary}</p>
+  <p class="clip-topics">Topics: {topics.map((t) => TOPICS[t]).join(', ')}</p>
+</article>

@@ -58,6 +58,70 @@ asking Nate.
 - `actions/upload-pages-artifact` skips dotfiles by default. When Phase 5 adds
   `public/.well-known/security.txt`, set `include-hidden-files: true` on that step.
 
+## Content
+
+All site content lives in three places. Astro checks every entry when the site builds;
+if something is wrong (a missing field, a misspelled topic, a bad date, a duplicate id),
+the build stops and names the file, the entry and the problem. Nothing broken goes live.
+
+- `src/data/clips.yaml`: published articles.
+- `src/content/investigations/*.md`: one case study per file.
+- `src/data/appearances.yaml`: talks, podcasts, TV, radio, panels.
+- `src/config/topics.ts`: the fixed list of topics. Add a topic there before using it.
+- Schemas: `src/content.config.ts`. Helpers for pages (sorting, archive links):
+  `src/lib/content.ts`.
+
+### How to add a new clip
+
+Add an entry to `src/data/clips.yaml` (anywhere in the list; the site sorts by date):
+
+```yaml
+- id: wired-2026-hospital-ransomware   # unique; lowercase letters, numbers, hyphens
+  title: "Ransomware gang claims attack on regional hospital network"
+  outlet: Wired
+  date: 2026-09-18                     # YYYY-MM-DD
+  url: https://example.com/the-article # full https:// link
+  topics: [ransomware, cybercrime]     # from src/config/topics.ts
+  summary: "One or two sentences on what the story found."
+  featured: true                       # optional: show on the homepage (default false)
+  # archive_url: https://web.archive.org/web/...   # optional: archived copy
+  # link_status: dead                  # optional: set when the original link breaks
+```
+
+- Wrap any text containing a colon followed by a space (`: `) in double quotes. Quoting
+  titles and summaries always is the safe habit.
+- When a link dies, set `link_status: dead`. If `archive_url` is set the site links to
+  the archive and labels it "(archived)"; otherwise the title shows without a link.
+- Once published, don't change an `id`: investigations refer to clips by it.
+
+### How to add an investigation
+
+Create `src/content/investigations/<short-name>.md`. The file name (without `.md`)
+becomes the page address, e.g. `/investigations/hospital-ransomware/`.
+
+```markdown
+---
+title: "Tracing a ransomware attack on a hospital network"
+date: 2026-09-30
+outlets: [Wired]
+related_clips: [wired-2026-hospital-ransomware]   # clip ids from clips.yaml
+impact:
+  - "Hospital disclosed the full scope of the breach"
+  - "State regulator opened an inquiry"
+summary: "One or two sentences for the index page."
+---
+
+The case study, in Markdown: how the story started, how it was reported, what changed.
+```
+
+Every id in `related_clips` must exist in `clips.yaml`, or the build fails.
+
+### How to add an appearance
+
+Add an entry to `src/data/appearances.yaml`: `id` (unique, as for clips), `title`,
+`event_or_show`, `date`, `type` (`talk`, `podcast`, `tv`, `radio` or `panel`) and an
+optional `url`.
+
 ## Design
 
 Clean, editorial, typography-led. Credible rather than "hacker aesthetic": no
