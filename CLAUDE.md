@@ -13,6 +13,11 @@ its phases in order and stop for review at the end of each one.
 - `npm run check` type-checks with `astro check` (dev-only: `@astrojs/check` + TypeScript 6,
   approved by Nate; never shipped to the site). CI runs it before the build.
 - Node version is pinned in `.nvmrc`. Install with `npm ci --ignore-scripts` (same as CI).
+- **PR previews:** Cloudflare Pages (project `natenelson-preview`) builds every PR branch
+  and posts a `*.natenelson-preview.pages.dev` link on the PR. Previews only; the real site
+  is GitHub Pages. Cloudflare's automatic production deploys are switched off, and its build
+  sets `NPM_CONFIG_IGNORE_SCRIPTS=true` to match CI. Preview links are public: never push
+  anything that isn't ready to be public anyway.
 
 ## Stack
 
