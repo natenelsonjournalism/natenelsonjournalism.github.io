@@ -16,11 +16,18 @@
 //     - must list every page (except 404) and nothing else
 //   SVG files
 //     - must not contain scripts, event handlers, or external references
-//
-// Outbound <a href> links (e.g. to published articles) are allowed.
+//   Outbound links
+//     - <a href> to other sites (e.g. published articles) is allowed, but must carry
+//       rel="noopener noreferrer"
+//     - no tel: links or phone numbers in page text (Signal is a username, not a number)
+//   security.txt (RFC 9116)
+//     - must exist with Contact, Expires and Canonical; Expires at most a year out
+//     - warns when Expires is within 60 days, fails once it has passed
+//   Images and PDFs (in dist/, public/ and src/)
+//     - must carry no hidden metadata: EXIF/GPS, XMP, IPTC, PNG text chunks, PDF author
 
 import { readdir, readFile } from 'node:fs/promises';
-import { join, relative, extname } from 'node:path';
+import { join, relative, extname, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CSP } from '../src/config/csp.mjs';
 
@@ -29,7 +36,9 @@ const dist = join(root, 'dist');
 const SITE_HOST = 'natenelsonjournalism.github.io';
 
 const errors = [];
+const warnings = [];
 const fail = (file, msg) => errors.push(`${relative(root, file)}: ${msg}`);
+const warn = (file, msg) => warnings.push({ file: relative(root, file), msg });
 
 async function* walk(dir) {
   for (const entry of await readdir(dir, { withFileTypes: true })) {
@@ -147,6 +156,17 @@ function checkMarkup(file, markup, { isHtml }) {
           if (reason) fail(file, `<${tag} ${name}> candidate "${url}" → ${reason}`);
         }
       }
+      if (isHtml && tag === 'a' && name === 'href') {
+        const href = decodeEntities(value).trim();
+        if (/^tel:/i.test(href)) fail(file, `<a href="${value}">: tel: links are not allowed (no phone numbers on the site)`);
+        if (/^https?:\/\/signal\.me\/#p\//i.test(href)) fail(file, `<a href="${value}">: this Signal link contains a phone number; use a username link`);
+        if (/^[a-z][a-z0-9+.-]*:\/\//i.test(href) || href.startsWith('//')) {
+          const rel = (get('rel') ?? '').toLowerCase().split(/\s+/);
+          if (externalReason(href) && !(rel.includes('noopener') && rel.includes('noreferrer'))) {
+            fail(file, `<a href="${value}"> links to another site without rel="noopener noreferrer"`);
+          }
+        }
+      }
       if (!isHtml && (name === 'href' || name === 'xlink:href')) {
         const reason = externalReason(value);
         if (reason) fail(file, `SVG <${tag} ${name}="${value}"> → ${reason}`);
@@ -168,6 +188,125 @@ function checkMarkup(file, markup, { isHtml }) {
   }
 
   if (isHtml && !cspInHead) fail(file, 'missing CSP <meta http-equiv="Content-Security-Policy"> in <head>');
+  if (isHtml) checkPhoneNumbers(file, body);
+}
+
+// Phone-number shapes: +44 20 7946 0958, (555) 555-0100, 555-555-0100, 555.555.0100.
+// Dates (2026-09-18) and grouped PGP fingerprints don't match these.
+const PHONE_RE = /\+\d{1,3}[\s.-]?\(?\d{1,4}\)?(?:[\s.-]?\d{2,4}){2,4}\b|\(\d{3}\)\s?\d{3}[\s.-]\d{4}\b|\b\d{3}[.-]\d{3}[.-]\d{4}\b/;
+
+function checkPhoneNumbers(file, html) {
+  const text = decodeEntities(
+    html.replace(/<script[\s\S]*?<\/script>/gi, ' ').replace(/<[^>]*>/g, ' '),
+  ).replace(/\s+/g, ' ');
+  const m = text.match(PHONE_RE);
+  if (m) fail(file, `page text contains what looks like a phone number ("${m[0]}"); never publish phone numbers`);
+}
+
+// RFC 9116 security.txt. Expires is set by hand and renewed yearly (see CLAUDE.md).
+async function checkSecurityTxt(files) {
+  const file = join(dist, '.well-known', 'security.txt');
+  if (!files.includes(file)) return fail(file, 'missing (source: public/.well-known/security.txt)');
+  const fields = new Map();
+  for (const line of (await readFile(file, 'utf8')).split(/\r?\n/)) {
+    const m = line.match(/^([A-Za-z-]+):\s*(.+?)\s*$/);
+    if (m && !line.startsWith('#')) {
+      const key = m[1].toLowerCase();
+      fields.set(key, [...(fields.get(key) ?? []), m[2]]);
+    }
+  }
+  for (const required of ['contact', 'expires', 'canonical']) {
+    if (!fields.has(required)) fail(file, `missing required "${required}:" field`);
+  }
+  for (const contact of fields.get('contact') ?? []) {
+    if (!/^(mailto:|https:\/\/|tel:)/i.test(contact)) fail(file, `Contact "${contact}" must be a mailto: or https:// URI`);
+  }
+  const canonical = `https://${SITE_HOST}/.well-known/security.txt`;
+  if (fields.has('canonical') && !fields.get('canonical').includes(canonical)) fail(file, `Canonical must be ${canonical}`);
+  for (const url of fields.get('encryption') ?? []) {
+    // The PGP key is self-hosted: it must be a file in this build.
+    const path = url.startsWith(`https://${SITE_HOST}/`) ? url.slice(`https://${SITE_HOST}`.length) : null;
+    if (!path || !files.includes(join(dist, ...path.split('/')))) fail(file, `Encryption "${url}" must point to a key file on this site`);
+  }
+
+  const expires = fields.get('expires')?.[0];
+  if (!expires) return;
+  const when = new Date(expires);
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$/.test(expires) || Number.isNaN(when.getTime())) {
+    return fail(file, `Expires "${expires}" is not a date like 2027-10-01T00:00:00Z`);
+  }
+  const days = (when.getTime() - Date.now()) / 86_400_000;
+  const howToRenew = 'set a new date no more than a year ahead in public/.well-known/security.txt';
+  if (days <= 0) fail(file, `Expires (${expires}) has passed: ${howToRenew}`);
+  else if (days > 366) fail(file, `Expires (${expires}) is more than a year away; RFC 9116 asks for less`);
+  else if (days < 60) warn(file, `Expires (${expires}) is in ${Math.ceil(days)} day(s): ${howToRenew}`);
+}
+
+// Hidden metadata in images and PDFs (camera, GPS, software, author, edit history).
+// Scans the build plus the source folders, because originals stay in git history.
+const IMAGE_EXTS = new Set(['.jpg', '.jpeg', '.png', '.webp', '.gif', '.avif', '.tif', '.tiff', '.heic', '.pdf']);
+
+function findMetadata(buf, ext) {
+  const found = [];
+  if (ext === '.jpg' || ext === '.jpeg') {
+    // Walk the JPEG segments before the image data.
+    let i = 2;
+    while (i + 4 <= buf.length && buf[i] === 0xff) {
+      const marker = buf[i + 1];
+      if (marker === 0xda || marker === 0xd9) break; // start of scan / end of image
+      const len = buf.readUInt16BE(i + 2);
+      const head = buf.subarray(i + 4, i + 4 + 32).toString('latin1');
+      if (marker === 0xe1 && head.startsWith('Exif')) found.push('EXIF');
+      if (marker === 0xe1 && head.startsWith('http://ns.adobe.com/xap')) found.push('XMP');
+      if (marker === 0xed) found.push('IPTC/Photoshop');
+      if (marker === 0xfe) found.push('JPEG comment');
+      i += 2 + len;
+    }
+  } else if (ext === '.png') {
+    let i = 8;
+    while (i + 8 <= buf.length) {
+      const len = buf.readUInt32BE(i);
+      const type = buf.subarray(i + 4, i + 8).toString('latin1');
+      if (['eXIf', 'tEXt', 'zTXt', 'iTXt', 'tIME'].includes(type)) found.push(`PNG ${type} chunk`);
+      if (type === 'IEND') break;
+      i += 12 + len;
+    }
+  } else if (ext === '.webp') {
+    const s = buf.toString('latin1');
+    if (s.includes('EXIF')) found.push('EXIF');
+    if (s.includes('XMP ')) found.push('XMP');
+  } else if (ext === '.pdf') {
+    const s = buf.toString('latin1');
+    if (/\/Author\s*(\((?!\s*\))|<(?!\s*>))/.test(s)) found.push('PDF author');
+    if (s.includes('<x:xmpmeta')) found.push('XMP (PDF edit history)');
+    // Each incremental save appends a new %%EOF and keeps the old content.
+    // A "fast web view" (linearized) PDF legitimately has two.
+    const allowedEofs = /\/Linearized/.test(s.slice(0, 1024)) ? 2 : 1;
+    if ((s.match(/%%EOF/g) ?? []).length > allowedEofs) found.push('PDF revision history (incremental saves)');
+  } else {
+    // GIF/AVIF/TIFF/HEIC: no light-weight parser here, so look for the usual markers.
+    const s = buf.toString('latin1');
+    if (s.includes('Exif\0\0') || ext === '.tif' || ext === '.tiff' || ext === '.heic') found.push('EXIF (or a format that usually carries it)');
+    if (s.includes('<x:xmpmeta')) found.push('XMP');
+  }
+  return [...new Set(found)];
+}
+
+async function checkMetadata(distFiles) {
+  const sourceFiles = [];
+  for (const dir of ['public', 'src']) {
+    try {
+      for await (const f of walk(join(root, dir))) sourceFiles.push(f);
+    } catch {
+      // folder doesn't exist
+    }
+  }
+  for (const file of [...distFiles, ...sourceFiles]) {
+    const ext = extname(file).toLowerCase();
+    if (!IMAGE_EXTS.has(ext) || file.includes(`${sep}node_modules${sep}`)) continue;
+    const found = findMetadata(await readFile(file), ext);
+    if (found.length) fail(file, `contains hidden metadata (${found.join(', ')}); strip it before committing (see CLAUDE.md)`);
+  }
 }
 
 // Every page except 404 must be listed in the sitemap, and nothing else.
@@ -214,7 +353,13 @@ async function main() {
 
   if (pages === 0) fail(dist, 'no HTML pages found');
   await checkSitemap(files);
+  await checkSecurityTxt(files);
+  await checkMetadata(files);
 
+  for (const { file, msg } of warnings) {
+    // On GitHub Actions this shows as a yellow annotation on the run and the PR.
+    console.warn(process.env.GITHUB_ACTIONS ? `::warning file=${file}::${msg}` : `  ⚠ ${file}: ${msg}`);
+  }
   if (errors.length) {
     console.error(`verify-build: ${errors.length} problem(s) found:\n`);
     for (const e of errors) console.error(`  ✗ ${e}`);

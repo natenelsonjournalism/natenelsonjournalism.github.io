@@ -39,6 +39,25 @@ function strictFile(fileName: string): Loader {
   };
 }
 
+/**
+ * Astro's glob() loader, but strict: if a Markdown file fails to render, Astro only
+ * logs an error and publishes the page without its text. This turns that into a
+ * build failure.
+ */
+function strictGlob(options: Parameters<typeof glob>[0]): Loader {
+  const inner = glob(options);
+  return {
+    name: 'strict-glob',
+    async load(context) {
+      const problems: string[] = [];
+      const logger = Object.create(context.logger) as typeof context.logger;
+      logger.error = (message) => problems.push(message);
+      await inner.load({ ...context, logger });
+      if (problems.length) throw new Error([`Problem in ${options.base}:`, ...problems].join('\n'));
+    },
+  };
+}
+
 const slug = z
   .string()
   .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
@@ -83,7 +102,7 @@ const clips = defineCollection({
 });
 
 const investigations = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/investigations' }),
+  loader: strictGlob({ pattern: '**/*.md', base: './src/content/investigations' }),
   schema: z
     .object({
       title: z.string().min(1),

@@ -38,7 +38,7 @@ const fingerprint = pgpFingerprint
       {
         secureDrop ? (
           <p>
-            <a href={secureDrop.url}>{secureDrop.label}</a>. Use the Tor Browser, and don’t visit it from a work
+            <a href={secureDrop.url} rel="noopener noreferrer">{secureDrop.label}</a>. Use the Tor Browser, and don’t visit it from a work
             device or network.
           </p>
         ) : (
