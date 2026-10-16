@@ -5,11 +5,14 @@ import { CSP } from '../config/csp.mjs';
 interface Props {
   title?: string;
   description?: string;
+  /** Keep this page out of search engines (e.g. temporary pages). */
+  noindex?: boolean;
 }
 
 const siteName = 'Nate Nelson';
 const {
   title,
+  noindex = false,
   description = 'Nate Nelson is a cybersecurity journalist covering ransomware, nation-state hacking, vulnerabilities, and the policy fights around them.',
 } = Astro.props;
 
@@ -30,6 +33,7 @@ const nav = [
     <meta name="color-scheme" content="light dark" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
