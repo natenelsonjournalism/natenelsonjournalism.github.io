@@ -100,9 +100,12 @@ from `<meta>` tags and some aren't possible at all:
   scripts and no forms, framing the site gives an attacker little to work with.
 - HTTPS and HSTS come from GitHub (`github.io` is on the browser HSTS preload list).
 
-Observatory results (https://developer.mozilla.org/en-US/observatory): not yet recorded.
-Nate runs the scan on the live site after the Phase 5 merge; record the grade, score and
-any findings here.
+Observatory results (https://developer.mozilla.org/en-US/observatory), scanned by Nate on
+2026-10-16 after the Phase 5 merge: **B, 75/100**. The score is consistent with the two
+header-only deductions above: no `X-Frame-Options`/`frame-ancestors` (−20) and no
+`X-Content-Type-Options` (−5). Neither can be fixed on GitHub Pages. Reaching A would mean
+moving to a host that allows custom headers (e.g. Cloudflare Pages with a `_headers` file).
+Re-scan after any hosting change.
 
 ## Metadata and discoverability
 
