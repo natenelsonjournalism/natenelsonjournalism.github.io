@@ -15,7 +15,7 @@ const { Content } = await render(inv);
 const related = await getRelatedClips(inv);
 ---
 
-<BaseLayout title={inv.data.title} description={inv.data.summary}>
+<BaseLayout title={inv.data.title} description={inv.data.summary} ogType="article">
   <article>
     <div class="page-intro">
       <p class="eyebrow"><a href="/investigations/">Investigations</a></p>

@@ -4,7 +4,7 @@ import Placeholder from '../components/Placeholder.astro';
 import { BIOS, FILES, SITE } from '../config/site';
 ---
 
-<BaseLayout title="About" description={`About ${SITE.name}, ${SITE.role.toLowerCase()}.`}>
+<BaseLayout title="About" description={`About ${SITE.name}, ${SITE.role.toLowerCase()}.`} ogType="profile" person>
   <div class="about-intro">
     <div class="prose">
       <h1>About</h1>

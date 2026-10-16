@@ -18,6 +18,13 @@ export const SITE = {
     'Nate Nelson is a cybersecurity journalist covering ransomware, nation-state hacking, vulnerabilities, and the policy fights around them.',
 } as const;
 
+/**
+ * Professional profiles: shown to search engines as "the same person" (JSON-LD sameAs).
+ * Use full https:// links, e.g. { label: 'LinkedIn', url: 'https://www.linkedin.com/in/...' }.
+ * Include author pages at outlets here too.
+ */
+export const PROFILES: { label: string; url: string }[] = [];
+
 /** Bios in three lengths (About page). `null` = not written yet. */
 export const BIOS: { oneLine: string | null; short: string | null; long: string[] | null } = {
   // ~1 line, for bylines and introductions.

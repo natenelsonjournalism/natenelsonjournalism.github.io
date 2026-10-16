@@ -11,7 +11,7 @@ const recent = clips.filter((c) => !featuredIds.has(c.id)).slice(0, 5);
 const outlets = getOutlets(clips);
 ---
 
-<BaseLayout>
+<BaseLayout person>
   <section class="page-intro" aria-labelledby="intro-heading">
     <p class="eyebrow">{SITE.role}</p>
     <h1 id="intro-heading">{SITE.name}</h1>

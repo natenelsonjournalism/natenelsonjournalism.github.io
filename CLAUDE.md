@@ -36,7 +36,8 @@ deliberate design choice so the CSP can be `script-src 'none'`.
 - Every page uses `src/layouts/BaseLayout.astro`, which emits the CSP `<meta>` tag.
   The policy string lives only in `src/config/csp.mjs`; the layout and the verifier
   both import it.
-- No `<script>`, no `<style>` elements, no `style=""` attributes, no `on*=` handlers,
+- No `<script>` (sole exception: `<script type="application/ld+json">` holding valid JSON,
+  emitted only by `src/components/PersonJsonLd.astro`; browsers never execute it), no `<style>` elements, no `style=""` attributes, no `on*=` handlers,
   no `<iframe>`/`<object>`/`<embed>`, no `.js` files in `dist/`.
   - Astro hoists component `<style>` blocks into external CSS because
     `build.inlineStylesheets: 'never'` is set. Don't use `is:inline` styles/scripts, and
@@ -62,6 +63,23 @@ asking Nate.
 - Dependabot (`.github/dependabot.yml`) updates npm and github-actions weekly.
 - `actions/upload-pages-artifact` skips dotfiles by default. When Phase 5 adds
   `public/.well-known/security.txt`, set `include-hidden-files: true` on that step.
+
+## Metadata and discoverability
+
+- `BaseLayout.astro` emits per-page title, description, canonical URL (always the
+  github.io address, so preview copies never compete in search), Open Graph and X card tags,
+  icons, manifest, RSS and sitemap links. Props: `title`, `description`, `noindex`,
+  `ogType`, `person` (adds schema.org `Person` JSON-LD; used on Home and About).
+- One static share image for every page: `public/og-default.png` (1200×630). Icons:
+  `public/favicon.svg` (monogram drawn from Source Serif 4), `favicon-32.png`,
+  `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`; manifest `public/site.webmanifest`.
+  These were rendered once with a headless browser and contain no metadata; redo them
+  after the design pass.
+- `@astrojs/sitemap` (official integration, approved by the plan) writes
+  `sitemap-index.xml` + `sitemap-0.xml`; `public/robots.txt` points to it. The verifier fails
+  if any page (except 404) is missing from the sitemap.
+- RSS feed of clips: `src/pages/rss.xml.ts` (hand-written, no dependency), at `/rss.xml`.
+- Professional profiles for JSON-LD `sameAs`: `PROFILES` in `src/config/site.ts`.
 
 ## Content
 

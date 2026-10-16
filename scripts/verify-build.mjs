@@ -4,12 +4,16 @@
 //
 //   HTML pages
 //     - must carry the exact CSP <meta> tag inside <head>
-//     - must not contain <script> or <style> elements
+//     - must not contain <script> or <style> elements (sole exception: a
+//       <script type="application/ld+json"> block holding valid JSON, which
+//       browsers never execute)
 //     - must not use style="" or on*="" (event handler) attributes
 //     - must not load resources (src, srcset, poster, data, <link href>,
 //       CSS url()) from any host other than our own
 //   CSS files
 //     - must not reference url() / @import on another host
+//   Sitemap
+//     - must list every page (except 404) and nothing else
 //   SVG files
 //     - must not contain scripts, event handlers, or external references
 //
@@ -106,7 +110,23 @@ function checkMarkup(file, markup, { isHtml }) {
     if (tag === 'head') inHead = true;
     if (tag === 'body') inHead = false;
 
-    if (tag === 'script') fail(file, '<script> element is not allowed');
+    if (tag === 'script') {
+      // The one exception: a JSON-LD data block (structured data for search engines).
+      // Browsers never execute it, but we still require it to be pure, valid JSON.
+      if (isHtml && (get('type') ?? '').trim().toLowerCase() === 'application/ld+json' && attrs.length === 1) {
+        const start = m.index + m[0].length;
+        const end = body.toLowerCase().indexOf('</script', start);
+        const json = end === -1 ? '' : body.slice(start, end);
+        if (json.includes('<')) fail(file, 'JSON-LD block must not contain "<" (escape it as \\u003c)');
+        try {
+          JSON.parse(json);
+        } catch {
+          fail(file, 'JSON-LD block is not valid JSON');
+        }
+      } else {
+        fail(file, '<script> element is not allowed (only <script type="application/ld+json"> data blocks)');
+      }
+    }
     if (tag === 'style') fail(file, '<style> element is not allowed (use an external stylesheet)');
     if (tag === 'iframe' || tag === 'frame' || tag === 'object' || tag === 'embed') {
       fail(file, `<${tag}> element is not allowed (no embeds)`);
@@ -150,6 +170,23 @@ function checkMarkup(file, markup, { isHtml }) {
   if (isHtml && !cspInHead) fail(file, 'missing CSP <meta http-equiv="Content-Security-Policy"> in <head>');
 }
 
+// Every page except 404 must be listed in the sitemap, and nothing else.
+async function checkSitemap(files) {
+  const sitemaps = files.filter((f) => /sitemap-\d+\.xml$/.test(f));
+  if (sitemaps.length === 0) return fail(dist, 'no sitemap-*.xml found');
+  const listed = new Set();
+  for (const f of sitemaps) {
+    for (const m of (await readFile(f, 'utf8')).matchAll(/<loc>([^<]+)<\/loc>/g)) listed.add(m[1]);
+  }
+  const expected = new Set(
+    files
+      .filter((f) => f.endsWith('.html') && !f.endsWith('404.html'))
+      .map((f) => `https://${SITE_HOST}/${relative(dist, f).split('\\').join('/').replace(/index\.html$/, '')}`),
+  );
+  for (const url of expected) if (!listed.has(url)) fail(dist, `sitemap is missing ${url}`);
+  for (const url of listed) if (!expected.has(url)) fail(dist, `sitemap lists ${url}, which is not a page`);
+}
+
 async function main() {
   let files;
   try {
@@ -176,6 +213,7 @@ async function main() {
   }
 
   if (pages === 0) fail(dist, 'no HTML pages found');
+  await checkSitemap(files);
 
   if (errors.length) {
     console.error(`verify-build: ${errors.length} problem(s) found:\n`);
