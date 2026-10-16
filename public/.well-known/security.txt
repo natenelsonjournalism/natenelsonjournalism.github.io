@@ -1,0 +1,9 @@
+# Security contact for natenelsonjournalism.github.io (RFC 9116).
+# Found a security problem with this website? Please get in touch.
+# Renew "Expires" every year. The monthly site check opens a GitHub issue 60 days ahead.
+# Add "Encryption: https://natenelsonjournalism.github.io/<key>.asc" once the PGP key is published.
+
+Contact: https://natenelsonjournalism.github.io/contact/
+Expires: 2027-10-01T00:00:00Z
+Preferred-Languages: en
+Canonical: https://natenelsonjournalism.github.io/.well-known/security.txt

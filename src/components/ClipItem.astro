@@ -18,7 +18,7 @@ const Heading = `h${headingLevel}` as 'h2' | 'h3';
 
 <article class:list={['clip', { 'clip-compact': compact }]}>
   <Heading class="clip-title">
-    {href ? <a href={href}>{title}</a> : title}
+    {href ? <a href={href} rel="noopener noreferrer">{title}</a> : title}
     {archived && <span class="clip-note">(archived copy)</span>}
     {!href && <span class="clip-note">(link no longer available)</span>}
   </Heading>

@@ -12,6 +12,9 @@ its phases in order and stop for review at the end of each one.
   before pushing. CI runs the same command on every PR; pushes to `main` also deploy.
 - `npm run check` type-checks with `astro check` (dev-only: `@astrojs/check` + TypeScript 6,
   approved by Nate; never shipped to the site). CI runs it before the build.
+- `npm run a11y` (after a build) checks every page for WCAG 2.2 A/AA problems in light and
+  dark mode with axe-core, driven by `playwright-core` (dev-only; downloads no browser).
+  CI uses the runner's Chrome; locally set `CHROME_PATH` to a Chrome/Chromium binary.
 - Node version is pinned in `.nvmrc`. Install with `npm ci --ignore-scripts` (same as CI).
 - **PR previews:** Cloudflare Pages (project `natenelson-preview`) builds every PR branch
   and posts a `*.natenelson-preview.pages.dev` link on the PR. Previews only; the real site
@@ -46,9 +49,22 @@ deliberate design choice so the CSP can be `script-src 'none'`.
 - `src`, `srcset`, `poster`, `<link href>`, CSS `url()` and `@import` must be same-origin.
   Fonts, images and the PGP key are self-hosted under `public/` or `src/assets/`.
   Outbound `<a href>` links to articles are fine.
+- Every link to another site must carry `rel="noopener noreferrer"`. Components add it by
+  hand; Markdown links in investigations get it from `src/lib/external-links-plugin.mjs`, so
+  write links there in Markdown syntax (`[text](https://...)`), not raw `<a>` HTML.
 - No analytics, embeds, CDN links, or social widgets.
 - Interactivity is replaced by static generation: e.g. Work-page filters are separate
   pages (`/work/topic/ransomware/`), and dark mode follows `prefers-color-scheme` (no toggle).
+
+- No phone numbers anywhere: the verifier fails on `tel:` links, phone-number Signal links
+  and phone-number-shaped text.
+- Images and PDFs in `public/`, `src/` and `dist/` must carry no hidden metadata (EXIF/GPS,
+  XMP, IPTC, PNG text chunks, PDF author or revision history); the verifier fails otherwise.
+- `public/.well-known/security.txt` (RFC 9116) needs `Contact`, `Expires` and `Canonical`.
+  **Renew `Expires` every year** (no more than a year ahead). From 60 days before it, the
+  build shows a warning and the monthly site check opens an issue. Expiry never blocks a
+  deploy (Nate's call: an expired file is harmless, a blocked deploy is not). Add an `Encryption:` line once the PGP key is published
+  (it must point to a key file on this site).
 
 If the verifier flags something, fix the source; don't loosen the verifier without
 asking Nate.
@@ -61,8 +77,32 @@ asking Nate.
 - **Every action is pinned to a full commit SHA** with the version in a trailing comment.
   Resolve SHAs with `git ls-remote --tags https://github.com/<owner>/<action>.git`.
 - Dependabot (`.github/dependabot.yml`) updates npm and github-actions weekly.
-- `actions/upload-pages-artifact` skips dotfiles by default. When Phase 5 adds
-  `public/.well-known/security.txt`, set `include-hidden-files: true` on that step.
+- `actions/upload-pages-artifact` skips dotfiles by default, so the deploy sets
+  `include-hidden-files: true` to ship `.well-known/security.txt`.
+- `.github/workflows/accessibility.yml`: axe check on every PR and push to `main`
+  (read-only; separate from the deploy, so it never holds one up).
+- `.github/workflows/links.yml`: on the 1st of each month (or "Run workflow" on the Actions tab), checks
+  every outbound link on the built site and security.txt's expiry. Problems go into one
+  GitHub issue, updated each month and closed automatically once everything passes. Sites
+  that block automated checks (403/429) are listed separately, not counted as broken.
+  Placeholder `example.com` links are skipped. Permissions: `contents: read`, `issues: write`.
+  Never blocks a deploy.
+
+### Security headers and Mozilla Observatory
+
+GitHub Pages doesn't let a site set its own HTTP headers, so some protections can only come
+from `<meta>` tags and some aren't possible at all:
+
+- Set by the site in `<meta>`: Content-Security-Policy (`script-src 'none'`), referrer policy.
+- Not possible on GitHub Pages: `frame-ancestors` / `X-Frame-Options` (clickjacking; only
+  work as headers), `X-Content-Type-Options`, `Permissions-Policy`, cross-origin isolation
+  headers. Observatory findings about these are hosting limitations, not site bugs. With no
+  scripts and no forms, framing the site gives an attacker little to work with.
+- HTTPS and HSTS come from GitHub (`github.io` is on the browser HSTS preload list).
+
+Observatory results (https://developer.mozilla.org/en-US/observatory): not yet recorded.
+Nate runs the scan on the live site after the Phase 5 merge; record the grade, score and
+any findings here.
 
 ## Metadata and discoverability
 
@@ -84,8 +124,9 @@ asking Nate.
 ## Content
 
 All site content lives in three places. Astro checks every entry when the site builds;
-if something is wrong (a missing field, a misspelled topic, a bad date, a duplicate id),
-the build stops and names the file, the entry and the problem. Nothing broken goes live.
+if something is wrong (a missing field, a misspelled topic, a bad date, a duplicate id,
+an investigation whose Markdown fails to render), the build stops and names the file, the
+entry and the problem. Nothing broken goes live.
 
 - `src/data/clips.yaml`: published articles.
 - `src/content/investigations/*.md`: one case study per file.
