@@ -1,0 +1,21 @@
+---
+import ClipItem from './ClipItem.astro';
+import { groupByYear, type Clip } from '../lib/content';
+
+interface Props {
+  clips: Clip[];
+}
+
+const groups = groupByYear(Astro.props.clips);
+---
+
+{
+  groups.map(({ year, clips }) => (
+    <section class="year-group" aria-labelledby={`year-${year}`}>
+      <h2 id={`year-${year}`}>{year}</h2>
+      {clips.map((clip) => (
+        <ClipItem clip={clip} />
+      ))}
+    </section>
+  ))
+}

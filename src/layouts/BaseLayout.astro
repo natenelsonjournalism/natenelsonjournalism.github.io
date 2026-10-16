@@ -1,26 +1,30 @@
 ---
 import '../styles/global.css';
 import { CSP } from '../config/csp.mjs';
+import { SITE } from '../config/site';
 
 interface Props {
   title?: string;
   description?: string;
-  /** Keep this page out of search engines (e.g. temporary pages). */
+  /** Keep this page out of search engines (e.g. the 404 page). */
   noindex?: boolean;
 }
 
-const siteName = 'Nate Nelson';
-const {
-  title,
-  noindex = false,
-  description = 'Nate Nelson is a cybersecurity journalist covering ransomware, nation-state hacking, vulnerabilities, and the policy fights around them.',
-} = Astro.props;
+const { title, description = SITE.description, noindex = false } = Astro.props;
 
-const pageTitle = title ? `${title} · ${siteName}` : `${siteName} · Cybersecurity journalist`;
+const pageTitle = title ? `${title} · ${SITE.name}` : `${SITE.name} · ${SITE.role}`;
 
 const nav = [
-  { href: '/', label: 'Home' },
+  { href: '/work/', label: 'Work' },
+  { href: '/investigations/', label: 'Investigations' },
+  { href: '/speaking/', label: 'Speaking' },
+  { href: '/about/', label: 'About' },
+  { href: '/contact/', label: 'Contact' },
 ];
+
+const path = Astro.url.pathname;
+// "page" on the section's own page; "true" on pages inside it (e.g. a filter page).
+const current = (href: string) => (path === href ? 'page' : path.startsWith(href) ? 'true' : undefined);
 ---
 
 <!doctype html>
@@ -38,16 +42,18 @@ const nav = [
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header">
-      <a class="site-name" href="/">{siteName}</a>
-      <nav aria-label="Main">
+      <a class="site-name" href="/" aria-current={path === '/' ? 'page' : undefined}>{SITE.name}</a>
+      <nav class="site-nav" aria-label="Main">
         <ul>
-          {nav.map((item) => (
-            <li>
-              <a href={item.href} aria-current={Astro.url.pathname === item.href ? 'page' : undefined}>
-                {item.label}
-              </a>
-            </li>
-          ))}
+          {
+            nav.map((item) => (
+              <li>
+                <a href={item.href} aria-current={current(item.href)}>
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
         </ul>
       </nav>
     </header>
@@ -55,7 +61,8 @@ const nav = [
       <slot />
     </main>
     <footer class="site-footer">
-      <p>&copy; {new Date().getFullYear()} Nate Nelson</p>
+      <p>&copy; {new Date().getFullYear()} {SITE.name} · <a href="/contact/">Contact</a></p>
+      <p>This site uses no cookies, trackers or scripts.</p>
     </footer>
   </body>
 </html>

@@ -1,0 +1,112 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Placeholder from '../components/Placeholder.astro';
+import { CONTACT, FILES, SITE } from '../config/site';
+
+const { email, signal, pgpFingerprint, secureDrop } = CONTACT;
+// Show the fingerprint in groups of four characters, as most tools display it.
+const fingerprint = pgpFingerprint
+  ?.replace(/\s+/g, '')
+  .toUpperCase()
+  .match(/.{1,4}/g)
+  ?.join(' ');
+---
+
+<BaseLayout title="Contact" description={`How to reach ${SITE.name}, including secure channels for sources.`}>
+  <div class="page-intro">
+    <h1>Contact</h1>
+    <p class="lede">For assignments, interviews and speaking invitations, email me. If you’re a source, read the section below first.</p>
+  </div>
+
+  <section class="stack" aria-labelledby="editors-heading">
+    <h2 class="section-heading" id="editors-heading">Editors, producers and event organizers</h2>
+    <div class="channel">
+      <h3>Email</h3>
+      {email ? <p><a href={`mailto:${email}`}>{email}</a></p> : <Placeholder>Dedicated contact email address.</Placeholder>}
+    </div>
+  </section>
+
+  <section class="stack" aria-labelledby="sources-heading">
+    <h2 class="section-heading" id="sources-heading">Sources: contacting me securely</h2>
+    <p>
+      If you have information you think the public should know, I want to hear from you. These channels are listed from
+      most to least private.
+    </p>
+
+    <div class="channel">
+      <h3>SecureDrop</h3>
+      {
+        secureDrop ? (
+          <p>
+            <a href={secureDrop.url}>{secureDrop.label}</a>. Use the Tor Browser, and don’t visit it from a work
+            device or network.
+          </p>
+        ) : (
+          <Placeholder>SecureDrop link, if an outlet you work with runs one.</Placeholder>
+        )
+      }
+    </div>
+
+    <div class="channel">
+      <h3>Signal</h3>
+      {
+        signal ? (
+          <p>
+            Username: <span class="mono">{signal}</span>. Turn on disappearing messages before you say anything
+            sensitive.
+          </p>
+        ) : (
+          <Placeholder>Signal username (a username, never a phone number).</Placeholder>
+        )
+      }
+    </div>
+
+    <div class="channel">
+      <h3>Encrypted email (PGP)</h3>
+      {
+        FILES.pgpKey ? (
+          <p>
+            <a href={FILES.pgpKey} download>Download my public key</a>, and check that its fingerprint matches:
+          </p>
+        ) : (
+          <Placeholder>Link to download the PGP public key file.</Placeholder>
+        )
+      }
+      {
+        fingerprint ? (
+          <code class="fingerprint" aria-label="PGP key fingerprint">{fingerprint}</code>
+        ) : (
+          <Placeholder>
+            Full 40-character key fingerprint, shown like this:
+            <code class="fingerprint">0000 0000 0000 0000 0000 0000 0000 0000 0000 0000</code>
+          </Placeholder>
+        )
+      }
+    </div>
+
+    <h3>If this is your first time contacting a journalist</h3>
+    <Placeholder>Review and adjust this guidance so it matches how you actually work.</Placeholder>
+    <ul class="advice">
+      <li>
+        <strong>Use your own device on your own network.</strong> Not a work laptop or phone, and not office or
+        employer Wi-Fi. Employers can often see what happens on their devices and networks.
+      </li>
+      <li>
+        <strong>Don’t contact me from work accounts.</strong> That includes work email, chat and phone lines, even for a
+        first “hello.”
+      </li>
+      <li>
+        <strong>Start with a short message.</strong> Say roughly what it’s about and how you’d like to talk. Don’t send
+        documents until we’ve agreed on a safe way to do it.
+      </li>
+      <li>
+        <strong>What I can promise:</strong> I won’t name you or describe you in a way that identifies you without your
+        agreement, and I’ll be clear with you about how I plan to use what you tell me.
+      </li>
+      <li>
+        <strong>What I can’t promise:</strong> no channel is perfectly secure, and I can’t control what your devices,
+        employer or service providers record. If your safety is at risk, tell me early so we can plan around it.
+      </li>
+    </ul>
+  </section>
+</BaseLayout>

@@ -4,22 +4,37 @@ import { clipLink, formatDate, isoDate, type Clip } from '../lib/content';
 
 interface Props {
   clip: Clip;
+  /** Title, outlet and date only (homepage "Recent work"). */
+  compact?: boolean;
+  /** Heading level for the title, to keep the page outline correct. */
+  headingLevel?: 2 | 3;
 }
 
-const { clip } = Astro.props;
+const { clip, compact = false, headingLevel = 3 } = Astro.props;
 const { title, outlet, date, topics, summary } = clip.data;
 const { href, archived } = clipLink(clip);
+const Heading = `h${headingLevel}` as 'h2' | 'h3';
 ---
 
-<article class="clip">
-  <h3 class="clip-title">
+<article class:list={['clip', { 'clip-compact': compact }]}>
+  <Heading class="clip-title">
     {href ? <a href={href}>{title}</a> : title}
-    {archived && <span class="clip-note"> (archived)</span>}
-    {!href && <span class="clip-note"> (link unavailable)</span>}
-  </h3>
-  <p class="clip-meta">
-    {outlet} · <time datetime={isoDate(date)}>{formatDate(date)}</time>
-  </p>
-  <p class="clip-summary">{summary}</p>
-  <p class="clip-topics">Topics: {topics.map((t) => TOPICS[t]).join(', ')}</p>
+    {archived && <span class="clip-note">(archived copy)</span>}
+    {!href && <span class="clip-note">(link no longer available)</span>}
+  </Heading>
+  <p class="meta">{outlet} · <time datetime={isoDate(date)}>{formatDate(date)}</time></p>
+  {
+    !compact && (
+      <>
+        <p class="clip-summary">{summary}</p>
+        <ul class="topic-tags" aria-label="Topics">
+          {topics.map((t) => (
+            <li>
+              <a href={`/work/topic/${t}/`}>{TOPICS[t]}</a>
+            </li>
+          ))}
+        </ul>
+      </>
+    )
+  }
 </article>

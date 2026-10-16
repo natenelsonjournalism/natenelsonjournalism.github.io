@@ -1,9 +1,55 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ClipItem from '../components/ClipItem.astro';
+import { SITE } from '../config/site';
+import { getClips, getOutlets } from '../lib/content';
+
+const clips = await getClips();
+const featured = clips.filter((c) => c.data.featured).slice(0, 5);
+const featuredIds = new Set(featured.map((c) => c.id));
+const recent = clips.filter((c) => !featuredIds.has(c.id)).slice(0, 5);
+const outlets = getOutlets(clips);
 ---
 
 <BaseLayout>
-  <h1>Nate Nelson</h1>
-  <p>Cybersecurity journalist.</p>
-  <p>This site is under construction. A portfolio of reporting, investigations, and secure contact details is on the way.</p>
+  <section class="page-intro" aria-labelledby="intro-heading">
+    <p class="eyebrow">{SITE.role}</p>
+    <h1 id="intro-heading">{SITE.name}</h1>
+    <p class="lede">{SITE.pitch.join(' ')}</p>
+    <p class="more-link"><a href="/work/">Read my work</a> · <a href="/contact/">Get in touch</a></p>
+  </section>
+
+  {
+    featured.length > 0 && (
+      <section aria-labelledby="featured-heading">
+        <h2 class="section-heading" id="featured-heading">Selected stories</h2>
+        {featured.map((clip) => (
+          <ClipItem clip={clip} />
+        ))}
+      </section>
+    )
+  }
+
+  {
+    recent.length > 0 && (
+      <section aria-labelledby="recent-heading">
+        <h2 class="section-heading" id="recent-heading">Recent work</h2>
+        {recent.map((clip) => (
+          <ClipItem clip={clip} compact />
+        ))}
+        <p class="more-link">
+          <a href="/work/">All work, by topic, outlet and year</a>
+        </p>
+      </section>
+    )
+  }
+
+  {
+    outlets.length > 0 && (
+      <section class="stack" aria-labelledby="outlets-heading">
+        <h2 class="section-heading" id="outlets-heading">Published in</h2>
+        <p>{outlets.map((o) => o.name).join(' · ')}</p>
+      </section>
+    )
+  }
 </BaseLayout>

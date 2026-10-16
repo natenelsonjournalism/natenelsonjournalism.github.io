@@ -1,0 +1,53 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ClipItem from '../../components/ClipItem.astro';
+import { formatDate, getInvestigations, getRelatedClips, isoDate } from '../../lib/content';
+
+export const getStaticPaths = (async () => {
+  const investigations = await getInvestigations();
+  return investigations.map((inv) => ({ params: { slug: inv.id }, props: { inv } }));
+}) satisfies GetStaticPaths;
+
+const { inv } = Astro.props;
+const { Content } = await render(inv);
+const related = await getRelatedClips(inv);
+---
+
+<BaseLayout title={inv.data.title} description={inv.data.summary}>
+  <article>
+    <div class="page-intro">
+      <p class="eyebrow"><a href="/investigations/">Investigations</a></p>
+      <h1>{inv.data.title}</h1>
+      <p class="meta">
+        {inv.data.outlets.join(', ')} · <time datetime={isoDate(inv.data.date)}>{formatDate(inv.data.date)}</time>
+      </p>
+      <p class="lede">{inv.data.summary}</p>
+    </div>
+
+    <section class="impact" aria-labelledby="impact-heading">
+      <h2 id="impact-heading">Impact</h2>
+      <ul>
+        {inv.data.impact.map((item) => <li>{item}</li>)}
+      </ul>
+    </section>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    {
+      related.length > 0 && (
+        <section aria-labelledby="related-heading">
+          <h2 class="section-heading" id="related-heading">
+            Published stories
+          </h2>
+          {related.map((clip) => (
+            <ClipItem clip={clip} />
+          ))}
+        </section>
+      )
+    }
+  </article>
+</BaseLayout>
