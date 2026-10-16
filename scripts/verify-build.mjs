@@ -22,7 +22,8 @@
 //     - no tel: links or phone numbers in page text (Signal is a username, not a number)
 //   security.txt (RFC 9116)
 //     - must exist with Contact, Expires and Canonical; Expires at most a year out
-//     - warns when Expires is within 60 days, fails once it has passed
+//     - warns when Expires is within 60 days or has passed (never blocks a deploy:
+//       an expired file is harmless, and the monthly site check opens an issue)
 //   Images and PDFs (in dist/, public/ and src/)
 //     - must carry no hidden metadata: EXIF/GPS, XMP, IPTC, PNG text chunks, PDF author
 
@@ -237,7 +238,7 @@ async function checkSecurityTxt(files) {
   }
   const days = (when.getTime() - Date.now()) / 86_400_000;
   const howToRenew = 'set a new date no more than a year ahead in public/.well-known/security.txt';
-  if (days <= 0) fail(file, `Expires (${expires}) has passed: ${howToRenew}`);
+  if (days <= 0) warn(file, `Expires (${expires}) has passed: ${howToRenew}`);
   else if (days > 366) fail(file, `Expires (${expires}) is more than a year away; RFC 9116 asks for less`);
   else if (days < 60) warn(file, `Expires (${expires}) is in ${Math.ceil(days)} day(s): ${howToRenew}`);
 }

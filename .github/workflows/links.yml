@@ -1,4 +1,4 @@
-name: Weekly site check
+name: Monthly site check
 
 # Checks every outbound link (clips, appearances, write-ups) and security.txt's expiry
 # date. If anything needs fixing, it opens one GitHub issue (or updates the open one),
@@ -7,13 +7,13 @@ name: Weekly site check
 
 on:
   schedule:
-    - cron: '17 9 * * 1' # Mondays, 09:17 UTC
+    - cron: '17 9 1 * *' # 1st of each month, 09:17 UTC
   workflow_dispatch: # "Run workflow" button on the Actions tab
 
 permissions: {}
 
 concurrency:
-  group: weekly-site-check
+  group: monthly-site-check
   cancel-in-progress: false
 
 jobs:
@@ -39,10 +39,8 @@ jobs:
       - name: Install dependencies
         run: npm ci --ignore-scripts
 
-      # Plain "astro build": the link check should still run if security.txt has
-      # expired (which makes the full "npm run build" fail).
       - name: Build
-        run: npx astro build
+        run: npm run build
 
       - name: Check
         id: check
@@ -54,7 +52,7 @@ jobs:
           GH_REPO: ${{ github.repository }}
           PROBLEMS: ${{ steps.check.outputs.problems }}
           REPORT: ${{ runner.temp }}/report.md
-          TITLE: 'Weekly site check: broken links or expiring security.txt'
+          TITLE: 'Monthly site check: broken links or expiring security.txt'
         run: |
           existing=$(gh issue list --state open --author app/github-actions --limit 100 \
             --json number,title --jq "map(select(.title == env.TITLE)) | .[0].number // empty")

@@ -61,8 +61,9 @@ deliberate design choice so the CSP can be `script-src 'none'`.
 - Images and PDFs in `public/`, `src/` and `dist/` must carry no hidden metadata (EXIF/GPS,
   XMP, IPTC, PNG text chunks, PDF author or revision history); the verifier fails otherwise.
 - `public/.well-known/security.txt` (RFC 9116) needs `Contact`, `Expires` and `Canonical`.
-  **Renew `Expires` every year** (no more than a year ahead): the build warns 60 days before
-  it and fails once it passes. Add an `Encryption:` line once the PGP key is published
+  **Renew `Expires` every year** (no more than a year ahead). From 60 days before it, the
+  build shows a warning and the monthly site check opens an issue. Expiry never blocks a
+  deploy (Nate's call: an expired file is harmless, a blocked deploy is not). Add an `Encryption:` line once the PGP key is published
   (it must point to a key file on this site).
 
 If the verifier flags something, fix the source; don't loosen the verifier without
@@ -80,9 +81,9 @@ asking Nate.
   `include-hidden-files: true` to ship `.well-known/security.txt`.
 - `.github/workflows/accessibility.yml`: axe check on every PR and push to `main`
   (read-only; separate from the deploy, so it never holds one up).
-- `.github/workflows/links.yml`: every Monday (or "Run workflow" on the Actions tab), checks
+- `.github/workflows/links.yml`: on the 1st of each month (or "Run workflow" on the Actions tab), checks
   every outbound link on the built site and security.txt's expiry. Problems go into one
-  GitHub issue, updated each week and closed automatically once everything passes. Sites
+  GitHub issue, updated each month and closed automatically once everything passes. Sites
   that block automated checks (403/429) are listed separately, not counted as broken.
   Placeholder `example.com` links are skipped. Permissions: `contents: read`, `issues: write`.
   Never blocks a deploy.

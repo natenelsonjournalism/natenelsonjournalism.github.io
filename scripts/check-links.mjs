@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Weekly site check (run by .github/workflows/links.yml; never blocks a deploy).
+// Monthly site check (run by .github/workflows/links.yml; never blocks a deploy).
 // 1. Visits every outbound link on the built site (clips, appearances, write-ups) and
 //    reports the ones that are gone (404/410, server errors, dead domains).
 // 2. Reports when security.txt is within 60 days of expiring.
@@ -116,7 +116,7 @@ try {
   const expires = txt.match(/^Expires:\s*(\S+)/m)?.[1];
   const days = expires ? Math.ceil((new Date(expires).getTime() - Date.now()) / 86_400_000) : NaN;
   if (!expires || Number.isNaN(days)) securityNote = 'security.txt has no valid `Expires:` date.';
-  else if (days <= 0) securityNote = `security.txt expired on ${expires.slice(0, 10)}. Deploys will fail until it is renewed.`;
+  else if (days <= 0) securityNote = `security.txt expired on ${expires.slice(0, 10)}. The site still works, but security researchers may treat the contact details as out of date.`;
   else if (days < 60) securityNote = `security.txt expires in ${days} day(s), on ${expires.slice(0, 10)}.`;
 } catch {
   securityNote = 'security.txt is missing from the build.';
@@ -169,7 +169,7 @@ if (unverified.length) {
   );
 }
 if (!problems && !unverified.length) lines.push('Everything is working.', '');
-lines.push('_This report is made by the weekly site check (`.github/workflows/links.yml`)._');
+lines.push('_This report is made by the monthly site check (`.github/workflows/links.yml`)._');
 const report = lines.join('\n');
 
 if (reportPath) await writeFile(reportPath, report);
