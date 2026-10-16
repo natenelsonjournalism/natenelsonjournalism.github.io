@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Placeholder from '../components/Placeholder.astro';
+import { BIOS, FILES, SITE } from '../config/site';
+---
+
+<BaseLayout title="About" description={`About ${SITE.name}, ${SITE.role.toLowerCase()}.`}>
+  <div class="about-intro">
+    <div class="prose">
+      <h1>About</h1>
+      {
+        BIOS.long ? (
+          BIOS.long.map((paragraph, i) => <p class:list={{ lede: i === 0 }}>{paragraph}</p>)
+        ) : (
+          <Placeholder>
+            Long bio (about 250 words) goes here: your beat, where you’ve been published, notable investigations, and
+            how you work.
+          </Placeholder>
+        )
+      }
+      <p>
+        {
+          FILES.cv ? (
+            <a href={FILES.cv} download>Download my CV (PDF)</a>
+          ) : (
+            <Placeholder as="span">CV download link (PDF, metadata stripped)</Placeholder>
+          )
+        }
+      </p>
+    </div>
+    <Placeholder>
+      <span class="headshot-placeholder">Headshot (EXIF and location data stripped)</span>
+    </Placeholder>
+  </div>
+
+  <section class="stack" aria-labelledby="bio-heading">
+    <h2 class="section-heading" id="bio-heading">Bio for event organizers and editors</h2>
+    <p>Feel free to copy and use either version.</p>
+
+    <h3>One line</h3>
+    <div class="bio-box">
+      {BIOS.oneLine ? <p>{BIOS.oneLine}</p> : <Placeholder>One-line bio, for bylines and introductions.</Placeholder>}
+    </div>
+
+    <h3>Short (about 75 words)</h3>
+    <div class="bio-box">
+      {
+        BIOS.short ? (
+          <p>{BIOS.short}</p>
+        ) : (
+          <Placeholder>About 75 words, for event programs and contributor notes.</Placeholder>
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>

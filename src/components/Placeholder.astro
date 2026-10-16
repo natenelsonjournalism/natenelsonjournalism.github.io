@@ -1,0 +1,9 @@
+---
+// A clearly marked box for content Nate hasn't supplied yet.
+interface Props {
+  as?: 'div' | 'span';
+}
+const { as: Tag = 'div' } = Astro.props;
+---
+
+<Tag class="placeholder"><span class="placeholder-tag">Placeholder</span><slot /></Tag>

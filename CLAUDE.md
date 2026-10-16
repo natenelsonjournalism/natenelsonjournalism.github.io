@@ -73,6 +73,9 @@ the build stops and names the file, the entry and the problem. Nothing broken go
 - `src/content/investigations/*.md`: one case study per file.
 - `src/data/appearances.yaml`: talks, podcasts, TV, radio, panels.
 - `src/config/topics.ts`: the fixed list of topics. Add a topic there before using it.
+- `src/config/site.ts`: name, homepage pitch, bios, CV/PGP file paths and contact channels.
+  A value left as `null` shows on the site as a clearly marked yellow "Placeholder" box,
+  so nothing fake is ever presented as real.
 - Schemas: `src/content.config.ts`. Helpers for pages (sorting, archive links):
   `src/lib/content.ts`.
 
@@ -133,6 +136,15 @@ Clean, editorial, typography-led. Credible rather than "hacker aesthetic": no
 green-on-black terminals or matrix effects. Homepage stays short. Light/dark via
 `prefers-color-scheme`, both WCAG AA. Responsive to 320px. Visible focus styles.
 No motion.
+
+- Styles: `src/styles/global.css` (colour tokens at the top; both themes checked for
+  WCAG AA contrast, so re-check if you change a colour). Fonts: Source Serif 4 (reading)
+  and Inter (labels, navigation), self-hosted OFL files in `public/fonts/` with their
+  licenses; `@font-face` rules in `src/styles/fonts.css`.
+- Pages: `src/pages/`. Shared pieces: `src/components/` (`ClipItem`, `ClipsByYear`,
+  `WorkFilters`, `FilteredWork`, `Placeholder`).
+- Work filter pages are generated only for topics, outlets and years that have clips.
+  Outlet pages use a slug of the outlet name, so spell each outlet identically every time.
 
 ## Never commit
 
