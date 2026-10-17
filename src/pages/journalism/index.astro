@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Placeholder from '../../components/Placeholder.astro';
+import StoryItem from '../../components/StoryItem.astro';
+import { ARCHIVES, SITE } from '../../config/site';
+import { formatDate, getFeatures, getInvestigations, investigationPath, isoDate } from '../../lib/content';
+
+const investigations = await getInvestigations();
+const features = await getFeatures();
+---
+
+<BaseLayout title="Journalism" description={`Investigations and feature stories by ${SITE.name}.`}>
+  <div class="page-intro">
+    <h1>Journalism</h1>
+    <p class="lede">A few stories I’m proudest of. The full archive is linked at the bottom.</p>
+  </div>
+
+  {
+    investigations.length > 0 && (
+      <section aria-labelledby="investigations-heading">
+        <h2 class="section-heading" id="investigations-heading">
+          Investigations
+        </h2>
+        {investigations.map((inv) => (
+          <article class="investigation-card">
+            <h3>
+              <a href={investigationPath(inv)}>{inv.data.title}</a>
+            </h3>
+            <p class="meta">
+              {inv.data.outlet} · <time datetime={isoDate(inv.data.date)}>{formatDate(inv.data.date)}</time>
+            </p>
+            <p>{inv.data.summary}</p>
+            <p class="label">Impact</p>
+            <ul class="impact-inline">
+              {inv.data.impact.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </article>
+        ))}
+      </section>
+    )
+  }
+
+  {
+    features.length > 0 && (
+      <section aria-labelledby="features-heading">
+        <h2 class="section-heading" id="features-heading">
+          Features
+        </h2>
+        {features.map((story) => (
+          <StoryItem story={story} />
+        ))}
+      </section>
+    )
+  }
+
+  <section class="stack" aria-labelledby="archive-heading">
+    <h2 class="section-heading" id="archive-heading">Full archive</h2>
+    {
+      ARCHIVES.length > 0 ? (
+        <ul class="plain-list archive-links">
+          {ARCHIVES.map((a) => (
+            <li>
+              <a href={a.url} rel="noopener noreferrer">
+                All my reporting at {a.outlet} →
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <Placeholder>Link to your author page at each outlet (set ARCHIVES in src/config/site.ts).</Placeholder>
+      )
+    }
+  </section>
+</BaseLayout>

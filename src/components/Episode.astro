@@ -1,0 +1,36 @@
+---
+// One podcast episode with the browser's own audio player. preload="none" means
+// nothing is fetched from the show's host until the visitor presses play.
+import Placeholder from './Placeholder.astro';
+import { formatDate, isoDate, type Podcast } from '../lib/content';
+
+interface Props {
+  episode: Podcast['data']['episodes'][number];
+  show: string;
+}
+
+const { episode, show } = Astro.props;
+const { title, date, summary, audio, url, transcript } = episode;
+---
+
+<article class="episode">
+  <h3 class="clip-title">{url ? <a href={url} rel="noopener noreferrer">{title}</a> : title}</h3>
+  <p class="meta"><time datetime={isoDate(date)}>{formatDate(date)}</time></p>
+  {summary && <p class="clip-summary">{summary}</p>}
+  {
+    audio ? (
+      <audio controls preload="none" src={audio} aria-label={`Play “${title}” from ${show}`}>
+        <a href={audio} rel="noopener noreferrer">Download the episode</a>
+      </audio>
+    ) : (
+      <Placeholder>Audio player for this episode (needs the episode’s audio address).</Placeholder>
+    )
+  }
+  {
+    transcript && (
+      <p class="meta">
+        <a href={transcript} rel="noopener noreferrer">Read the transcript</a>
+      </p>
+    )
+  }
+</article>

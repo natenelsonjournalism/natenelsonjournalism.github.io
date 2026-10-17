@@ -1,17 +1,21 @@
 // Content collections and their schemas. Astro checks every entry against these at
 // build time, so a missing field or a misspelled topic stops the build with a message
 // naming the file, the entry and the field.
-import { defineCollection, reference } from 'astro:content';
+import { defineCollection } from 'astro:content';
 import { file, glob, type Loader } from 'astro/loaders';
 import { z } from 'astro/zod';
-import { TOPIC_SLUGS } from './config/topics';
+import { AUDIO_HOSTS, isAllowedAudioUrl } from './config/csp.mjs';
 
 /**
  * Astro's file() loader, but strict: it only *logs* a YAML syntax error, a missing id
  * or a duplicate id and carries on (a typo would silently drop every clip from the
  * site). This wrapper turns those log messages into a build failure.
+ *
+ * With `ordered`, each entry also gets an `order` number (0, 1, 2...) from its position in
+ * the file, because Astro otherwise returns entries sorted by id. Used where Nate controls
+ * the order by hand (podcasts, projects).
  */
-function strictFile(fileName: string): Loader {
+function strictFile(fileName: string, { ordered = false } = {}): Loader {
   const inner = file(fileName);
   return {
     name: 'strict-file',
@@ -27,7 +31,10 @@ function strictFile(fileName: string): Loader {
         details.push(message);
         context.logger.debug(message);
       };
-      await inner.load({ ...context, logger });
+      let position = 0;
+      const parseData: typeof context.parseData = (props) =>
+        context.parseData({ ...props, data: { ...props.data, order: position++ } });
+      await inner.load({ ...context, logger, ...(ordered && { parseData }) });
       if (problems.length) {
         const lines = [`Problem in ${fileName}:`, ...problems];
         if (problems.some((p) => p.startsWith('Error reading data'))) {
@@ -77,14 +84,42 @@ const date = z
   .transform((value) => (value instanceof Date ? value : new Date(`${value}T00:00:00Z`)))
   .refine((value) => !Number.isNaN(value.getTime()), { error: dateMessage });
 
-const topic = z.enum(TOPIC_SLUGS, {
-  error: (issue) =>
-    `Unknown topic "${String(issue.input)}". Allowed topics: ${TOPIC_SLUGS.join(', ')}. ` +
-    'To add a new one, edit src/config/topics.ts.',
+// Fields shared by every published story (investigations and features).
+const linkStatus = z
+  .enum(['live', 'dead'], { error: 'link_status must be "live" or "dead".' })
+  .default('live');
+
+// A file in public/, written as a site path, e.g. "/images/podcasts/my-show.jpg".
+const sitePath = z.string().regex(/^\/[^/]/, {
+  error: 'Must be a path to a file in public/, starting with "/" (e.g. "/images/podcasts/show.jpg").',
 });
 
-const clips = defineCollection({
-  loader: strictFile('src/data/clips.yaml'),
+const audioUrl = httpsUrl.refine((url) => isAllowedAudioUrl(url), {
+  error: (issue) =>
+    `The audio host of "${String(issue.input)}" isn't allowed yet. Add it to AUDIO_HOSTS in ` +
+    `src/config/csp.mjs (currently: ${AUDIO_HOSTS.length ? AUDIO_HOSTS.join(', ') : 'none'}).`,
+});
+
+// Investigative pieces: one Markdown file each, holding a short write-up.
+const investigations = defineCollection({
+  loader: strictGlob({ pattern: '**/*.md', base: './src/content/investigations' }),
+  schema: z
+    .object({
+      title: z.string().min(1),
+      outlet: z.string().min(1),
+      date,
+      url: httpsUrl,
+      archive_url: httpsUrl.optional(),
+      link_status: linkStatus,
+      summary: z.string().min(1),
+      impact: z.array(z.string().min(1)).min(1, { error: 'List at least one impact.' }),
+      featured: z.boolean().default(false),
+    })
+    .strict(),
+});
+
+const features = defineCollection({
+  loader: strictFile('src/data/features.yaml'),
   schema: z
     .object({
       id: slug,
@@ -93,26 +128,64 @@ const clips = defineCollection({
       date,
       url: httpsUrl,
       archive_url: httpsUrl.optional(),
-      topics: z.array(topic).min(1, { error: 'List at least one topic.' }),
+      link_status: linkStatus,
       summary: z.string().min(1),
       featured: z.boolean().default(false),
-      link_status: z.enum(['live', 'dead'], { error: 'link_status must be "live" or "dead".' }).default('live'),
     })
     .strict(),
 });
 
-const investigations = defineCollection({
-  loader: strictGlob({ pattern: '**/*.md', base: './src/content/investigations' }),
+const episode = z
+  .object({
+    title: z.string().min(1),
+    date,
+    summary: z.string().min(1).optional(),
+    // Direct link to the episode's audio file (from the show's RSS feed).
+    audio: audioUrl.optional(),
+    // The episode's own web page, if it has one.
+    url: httpsUrl.optional(),
+    transcript: httpsUrl.optional(),
+  })
+  .strict();
+
+const podcasts = defineCollection({
+  loader: strictFile('src/data/podcasts.yaml', { ordered: true }),
   schema: z
     .object({
-      title: z.string().min(1),
-      date,
-      outlets: z.array(z.string().min(1)).min(1, { error: 'List at least one outlet.' }),
-      related_clips: z.array(reference('clips')).default([]),
-      impact: z.array(z.string().min(1)).min(1, { error: 'List at least one impact.' }),
-      summary: z.string().min(1),
+      order: z.number().int(), // set automatically from the position in the file
+      id: slug,
+      name: z.string().min(1),
+      role: z.string().min(1),
+      years: z.string().min(1).optional(),
+      description: z.string().min(1),
+      cover: sitePath.optional(),
+      links: z
+        .object({ spotify: httpsUrl.optional(), apple: httpsUrl.optional(), website: httpsUrl.optional() })
+        .strict()
+        .default({}),
+      episodes: z.array(episode).default([]),
     })
     .strict(),
+});
+
+const projects = defineCollection({
+  loader: strictFile('src/data/projects.yaml', { ordered: true }),
+  schema: z
+    .object({
+      order: z.number().int(), // set automatically from the position in the file
+      id: slug,
+      name: z.string().min(1),
+      summary: z.string().min(1),
+      url: httpsUrl.optional(),
+      year: z.union([z.string().min(1), z.number().int()]).transform(String).optional(),
+      image: sitePath.optional(),
+      image_alt: z.string().optional(),
+      featured: z.boolean().default(false),
+    })
+    .strict()
+    .refine((p) => !p.image || p.image_alt !== undefined, {
+      error: 'A project with an image needs image_alt (a short description; "" if purely decorative).',
+    }),
 });
 
 const appearances = defineCollection({
@@ -131,4 +204,4 @@ const appearances = defineCollection({
     .strict(),
 });
 
-export const collections = { clips, investigations, appearances };
+export const collections = { investigations, features, podcasts, projects, appearances };

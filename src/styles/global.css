@@ -310,7 +310,7 @@ main {
   font-size: 0.75rem;
 }
 
-/* ---------- Clips ---------- */
+/* ---------- Story and list items ---------- */
 
 .clip {
   padding-block: 1.1rem;
@@ -358,21 +358,6 @@ main {
   margin: 0 0 0.4rem;
 }
 
-.topic-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem 0.75rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  font-family: var(--font-sans);
-  font-size: 0.8rem;
-}
-
-.topic-tags a {
-  color: var(--muted);
-}
-
 .clip-compact {
   padding-block: 0.6rem;
 }
@@ -386,59 +371,7 @@ main {
   margin: 0;
 }
 
-.year-group h2 {
-  font-family: var(--font-sans);
-  font-size: 1rem;
-  font-weight: 650;
-  color: var(--muted);
-  margin: 2.5rem 0 0.75rem;
-}
-
-/* ---------- Work filters ---------- */
-
-.filters {
-  font-family: var(--font-sans);
-  font-size: 0.9rem;
-  margin: 0 0 2.5rem;
-  padding: 1rem 1.25rem;
-  background: var(--surface);
-  border-radius: 4px;
-  max-width: var(--measure);
-}
-
-.filters div {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem 0.9rem;
-  margin: 0;
-  padding-block: 0.3rem;
-}
-
-.filters dt {
-  font-weight: 650;
-  min-width: 4.5rem;
-}
-
-.filters dd {
-  margin: 0;
-}
-
-.filters ul {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem 0.9rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.filters a[aria-current] {
-  color: var(--fg);
-  font-weight: 650;
-  text-decoration: none;
-}
-
-/* ---------- Investigations ---------- */
+/* ---------- Journalism ---------- */
 
 .investigation-card {
   padding-block: 1.25rem;
@@ -449,6 +382,15 @@ main {
 .investigation-card h2,
 .investigation-card h3 {
   margin: 0 0 0.4rem;
+}
+
+.investigation-card h3 a {
+  color: var(--fg);
+  text-decoration-color: var(--rule);
+}
+
+.investigation-card h3 a:hover {
+  text-decoration-color: var(--accent);
 }
 
 .impact {
@@ -484,7 +426,121 @@ main {
   font-size: 1rem;
 }
 
+.archive-links li + li {
+  margin-top: 0.4rem;
+}
+
+.archive-links a {
+  font-family: var(--font-sans);
+  font-weight: 600;
+}
+
+/* ---------- Podcasts ---------- */
+
+.show {
+  max-width: var(--measure);
+  padding-block: 0.5rem 1.5rem;
+}
+
+.show + .show {
+  border-top: 1px solid var(--rule);
+  padding-top: 2rem;
+}
+
+.show-header {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.show-header h2 {
+  margin: 0 0 0.3rem;
+}
+
+.show-header .meta {
+  margin: 0 0 0.6rem;
+}
+
+.show-cover {
+  flex: 0 0 auto;
+  width: 6rem;
+  height: 6rem;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.listen-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.episode {
+  padding: 1rem 0 1.1rem;
+  border-top: 1px solid var(--rule);
+}
+
+.episode:first-of-type {
+  margin-top: 1rem;
+}
+
+.episode .meta {
+  margin: 0 0 0.4rem;
+}
+
+.episode audio {
+  display: block;
+  width: 100%;
+  margin-top: 0.6rem;
+}
+
+/* ---------- Projects ---------- */
+
+.project {
+  display: grid;
+  gap: 0.75rem 1.25rem;
+  max-width: var(--measure);
+  padding-block: 1.1rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.project:last-child {
+  border-bottom: 0;
+}
+
+@media (min-width: 36rem) {
+  .project:has(.project-image) {
+    grid-template-columns: 9rem 1fr;
+  }
+}
+
+.project-image {
+  width: 100%;
+  border-radius: 4px;
+}
+
+.project .meta {
+  margin: 0 0 0.4rem;
+}
+
 /* ---------- About ---------- */
+
+.subsection-heading {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 650;
+  color: var(--muted);
+  margin: 2rem 0 0.5rem;
+}
+
+
 
 .about-intro {
   display: grid;

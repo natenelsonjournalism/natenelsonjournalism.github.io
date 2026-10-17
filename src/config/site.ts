@@ -4,18 +4,19 @@
 
 export const SITE = {
   name: 'Nate Nelson',
-  role: 'Cybersecurity journalist',
+  role: 'Cybersecurity journalist and podcast writer',
   url: 'https://natenelsonjournalism.github.io',
 
   /** Homepage pitch: two sentences. */
+  // DRAFT for Nate to edit.
   pitch: [
-    'I report on cybersecurity: ransomware crews, state-backed hackers, the vulnerabilities they exploit, and the policy fights that follow.',
-    'My work explains how attacks happen and who they hurt, for readers who don’t live in a security operations center.',
+    'I report on cybersecurity and write podcasts about it: ransomware crews, state-backed hackers, and the flaws they exploit.',
+    'I also build small projects on the side.',
   ],
 
   /** Default meta description for pages that don't set their own. */
   description:
-    'Nate Nelson is a cybersecurity journalist covering ransomware, nation-state hacking, vulnerabilities, and the policy fights around them.',
+    'Nate Nelson is a cybersecurity journalist and podcast writer covering ransomware, nation-state hacking, and the vulnerabilities they exploit.',
 } as const;
 
 /**
@@ -24,6 +25,13 @@ export const SITE = {
  * Include author pages at outlets here too.
  */
 export const PROFILES: { label: string; url: string }[] = [];
+
+/**
+ * "Full archive" links at the bottom of the Journalism page: your author page at each
+ * outlet, e.g. { outlet: 'Example News', url: 'https://example.com/author/nate-nelson' }.
+ * Empty = a placeholder shows instead.
+ */
+export const ARCHIVES: { outlet: string; url: string }[] = [];
 
 /** Bios in three lengths (About page). `null` = not written yet. */
 export const BIOS: { oneLine: string | null; short: string | null; long: string[] | null } = {
