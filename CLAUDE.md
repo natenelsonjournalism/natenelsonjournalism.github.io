@@ -27,7 +27,8 @@ its phases in order and stop for review at the end of each one.
 - Astro (pinned exact version), `output: 'static'`, TypeScript strict
   (`astro/tsconfigs/strict`).
 - Hosted on GitHub Pages, deployed by `.github/workflows/deploy.yml` with GitHub's
-  official Pages actions. No stored secrets.
+  official Pages actions. The deploy uses no stored secrets (the only secret in the repo
+  is the GitLab backup key; see below).
 - **Ask before adding any npm package** beyond Astro and its official integrations.
   Prefer a few lines of our own code over a new dependency.
 
@@ -94,6 +95,16 @@ asking Nate.
   that block automated checks (403/429) are listed separately, not counted as broken.
   Placeholder `example.com` links are skipped. Permissions: `contents: read`, `issues: write`.
   Never blocks a deploy.
+
+- `.github/workflows/backup.yml`: copies every branch and tag to a private GitLab project
+  after each change to `main`, every Sunday, and on "Run workflow". No third-party actions.
+  It pushes with an SSH **deploy key** that can write to that one GitLab project only:
+  secret `GITLAB_BACKUP_SSH_KEY` (private key) and variable `GITLAB_BACKUP_REPO`
+  (`git@gitlab.com:<user>/<project>.git`). GitLab's host key is pinned in the workflow.
+  Nothing is deleted on GitLab, and GitLab's protected `main` refuses force pushes, so a
+  rewritten history here makes the backup fail instead of overwriting it. If the key ever
+  leaks, delete the deploy key on GitLab and make a new one. GitHub issues and PR
+  discussions are not included (they aren't part of git).
 
 ### Security headers and Mozilla Observatory
 

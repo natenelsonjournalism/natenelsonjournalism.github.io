@@ -1,0 +1,62 @@
+name: Back up to GitLab
+
+# Copies every branch and tag of this repository to a private GitLab project, so the
+# site's history survives even if the GitHub account is lost. Runs after every change to
+# `main`, once a week (to pick up other branches), and from the "Run workflow" button.
+#
+# Setup (done once by Nate, see CLAUDE.md):
+#   - secret   GITLAB_BACKUP_SSH_KEY  private half of an SSH key whose public half is a
+#                                     GitLab deploy key with write access to that one project
+#   - variable GITLAB_BACKUP_REPO     the project's SSH address, git@gitlab.com:<user>/<project>.git
+#
+# Nothing is ever deleted on GitLab: branches removed here stay there. GitLab keeps `main`
+# protected against force pushes, so if this repository's `main` were ever rewritten, the
+# backup refuses the change and this workflow fails (GitHub emails a failure notice).
+# No third-party actions; the public repository is fetched without credentials.
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '41 4 * * 0' # Sundays, 04:41 UTC
+  workflow_dispatch: # "Run workflow" button on the Actions tab
+
+permissions: {}
+
+concurrency:
+  group: gitlab-backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    name: Push to GitLab
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Copy branches and tags to GitLab
+        env:
+          SSH_KEY: ${{ secrets.GITLAB_BACKUP_SSH_KEY }}
+          GITLAB_REPO: ${{ vars.GITLAB_BACKUP_REPO }}
+        run: |
+          set -euo pipefail
+          if [ -z "$SSH_KEY" ] || [ -z "$GITLAB_REPO" ]; then
+            echo "::error::Backup isn't set up: add the GITLAB_BACKUP_SSH_KEY secret and the GITLAB_BACKUP_REPO variable (see CLAUDE.md)."
+            exit 1
+          fi
+
+          install -m 700 -d ~/.ssh
+          # Keys pasted from Windows can carry carriage returns, which ssh rejects.
+          printf '%s\n' "$SSH_KEY" | tr -d '\r' > ~/.ssh/gitlab_backup
+          chmod 600 ~/.ssh/gitlab_backup
+          # GitLab.com's published host key (docs.gitlab.com/user/gitlab_com/,
+          # SHA256:eUXGGm1YGsMAS7vkcx6JOJdOGHPem5gQp4taiCfCLB8). Pinned so the backup can
+          # only ever be sent to the real GitLab.
+          echo 'gitlab.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAfuCHKVTjquxvt6CM6tdG4SLp1Btn/nOeHHE5UOzRdf' > ~/.ssh/known_hosts
+          export GIT_SSH_COMMAND="ssh -i $HOME/.ssh/gitlab_backup -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$HOME/.ssh/known_hosts"
+
+          git init --quiet --bare backup.git
+          cd backup.git
+          git fetch --quiet --no-tags "https://github.com/${GITHUB_REPOSITORY}.git" \
+            '+refs/heads/*:refs/heads/*' '+refs/tags/*:refs/tags/*'
+          git push "$GITLAB_REPO" '+refs/heads/*:refs/heads/*' '+refs/tags/*:refs/tags/*'
+          echo "Backed up $(git for-each-ref --format=x refs/heads | wc -l) branch(es) at $(git rev-parse --short main) on main." >> "$GITHUB_STEP_SUMMARY"
