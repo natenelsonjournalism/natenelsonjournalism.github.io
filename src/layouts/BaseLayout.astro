@@ -25,15 +25,15 @@ const shareImage = new URL('/og-default.png', Astro.site).href;
 const pageTitle = title ? `${title} · ${SITE.name}` : `${SITE.name} · ${SITE.role}`;
 
 const nav = [
-  { href: '/work/', label: 'Work' },
-  { href: '/investigations/', label: 'Investigations' },
-  { href: '/speaking/', label: 'Speaking' },
+  { href: '/journalism/', label: 'Journalism' },
+  { href: '/podcasts/', label: 'Podcasts' },
+  { href: '/projects/', label: 'Projects' },
   { href: '/about/', label: 'About' },
   { href: '/contact/', label: 'Contact' },
 ];
 
 const path = Astro.url.pathname;
-// "page" on the section's own page; "true" on pages inside it (e.g. a filter page).
+// "page" on the section's own page; "true" on pages inside it (e.g. an investigation).
 const current = (href: string) => (path === href ? 'page' : path.startsWith(href) ? 'true' : undefined);
 ---
 
@@ -65,7 +65,7 @@ const current = (href: string) => (path === href ? 'page' : path.startsWith(href
     <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <link rel="alternate" type="application/rss+xml" title={`${SITE.name}: published work`} href="/rss.xml" />
+    <link rel="alternate" type="application/rss+xml" title={`${SITE.name}: new work`} href="/rss.xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     {person && <PersonJsonLd />}
   </head>
@@ -92,8 +92,9 @@ const current = (href: string) => (path === href ? 'page' : path.startsWith(href
     </main>
     <footer class="site-footer">
       <p>
-        &copy; {new Date().getFullYear()} {SITE.name} · <a href="/contact/">Contact</a> ·
-        <a href="/rss.xml">RSS feed</a>
+        &copy; {new Date().getFullYear()} {SITE.name} · <a href="/contact/">Contact</a> · <a href="/rss.xml"
+          >RSS feed</a
+        >
       </p>
       <p>This site uses no cookies, trackers or scripts.</p>
     </footer>

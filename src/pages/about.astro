@@ -2,6 +2,19 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Placeholder from '../components/Placeholder.astro';
 import { BIOS, FILES, SITE } from '../config/site';
+import { formatDate, getAppearances, isoDate, type Appearance } from '../lib/content';
+
+const appearances = await getAppearances();
+const TYPES: { type: Appearance['data']['type']; label: string }[] = [
+  { type: 'talk', label: 'Talks' },
+  { type: 'panel', label: 'Panels' },
+  { type: 'podcast', label: 'Podcast guest spots' },
+  { type: 'tv', label: 'Television' },
+  { type: 'radio', label: 'Radio' },
+];
+const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data.type === t.type) })).filter(
+  (g) => g.items.length > 0,
+);
 ---
 
 <BaseLayout title="About" description={`About ${SITE.name}, ${SITE.role.toLowerCase()}.`} ogType="profile" person>
@@ -13,8 +26,8 @@ import { BIOS, FILES, SITE } from '../config/site';
           BIOS.long.map((paragraph, i) => <p class:list={{ lede: i === 0 }}>{paragraph}</p>)
         ) : (
           <Placeholder>
-            Long bio (about 250 words) goes here: your beat, where you’ve been published, notable investigations, and
-            how you work.
+            Long bio (about 250 words) goes here: your reporting beat, the podcasts you write, your side projects,
+            and how you work.
           </Placeholder>
         )
       }
@@ -53,4 +66,42 @@ import { BIOS, FILES, SITE } from '../config/site';
       }
     </div>
   </section>
+
+  {
+    groups.length > 0 && (
+      <section aria-labelledby="speaking-heading">
+        <h2 class="section-heading" id="speaking-heading">
+          Speaking and media
+        </h2>
+        <p class="stack">
+          To invite me to speak, see <a href="/contact/">Contact</a>.
+        </p>
+        {groups.map((group) => (
+          <section class="stack" aria-labelledby={`type-${group.type}`}>
+            <h3 class="subsection-heading" id={`type-${group.type}`}>
+              {group.label}
+            </h3>
+            <ul class="plain-list">
+              {group.items.map((a) => (
+                <li class="clip clip-compact">
+                  <p class="clip-title">
+                    {a.data.url ? (
+                      <a href={a.data.url} rel="noopener noreferrer">
+                        {a.data.title}
+                      </a>
+                    ) : (
+                      a.data.title
+                    )}
+                  </p>
+                  <p class="meta">
+                    {a.data.event_or_show} · <time datetime={isoDate(a.data.date)}>{formatDate(a.data.date)}</time>
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </section>
+    )
+  }
 </BaseLayout>

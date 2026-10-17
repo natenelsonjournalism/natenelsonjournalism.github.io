@@ -1,0 +1,31 @@
+---
+// One published story (feature article, or an investigation on the homepage).
+import { formatDate, isoDate, storyLink, type Story } from '../lib/content';
+
+interface Props {
+  story: Story;
+  /** Where the title links. Default: the original article (or its archived copy). */
+  href?: string;
+  /** Title, outlet and date only. */
+  compact?: boolean;
+  /** Heading level for the title, to keep the page outline correct. */
+  headingLevel?: 2 | 3;
+}
+
+const { story, compact = false, headingLevel = 3 } = Astro.props;
+const { title, outlet, date, summary } = story.data;
+const original = storyLink(story);
+const href = Astro.props.href ?? original.href;
+const external = Astro.props.href === undefined;
+const Heading = `h${headingLevel}` as 'h2' | 'h3';
+---
+
+<article class:list={['clip', { 'clip-compact': compact }]}>
+  <Heading class="clip-title">
+    {href ? <a href={href} rel={external ? 'noopener noreferrer' : undefined}>{title}</a> : title}
+    {external && original.archived && <span class="clip-note">(archived copy)</span>}
+    {external && !href && <span class="clip-note">(link no longer available)</span>}
+  </Heading>
+  <p class="meta">{outlet} · <time datetime={isoDate(date)}>{formatDate(date)}</time></p>
+  {!compact && <p class="clip-summary">{summary}</p>}
+</article>

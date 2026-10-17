@@ -53,8 +53,15 @@ deliberate design choice so the CSP can be `script-src 'none'`.
   hand; Markdown links in investigations get it from `src/lib/external-links-plugin.mjs`, so
   write links there in Markdown syntax (`[text](https://...)`), not raw `<a>` HTML.
 - No analytics, embeds, CDN links, or social widgets.
-- Interactivity is replaced by static generation: e.g. Work-page filters are separate
-  pages (`/work/topic/ransomware/`), and dark mode follows `prefers-color-scheme` (no toggle).
+- **Podcast audio is the one approved exception** (Nate, Oct 2026): episodes play in the
+  browser's own `<audio controls preload="none">` player, straight from the show's hosting
+  company, and nothing loads until the visitor presses play. No Spotify/Apple embeds
+  (they load third-party scripts and trackers for every visitor). Allowed audio hosts are
+  listed in `AUDIO_HOSTS` in `src/config/csp.mjs`, which adds them to the CSP's `media-src`;
+  the content schema rejects audio from any other host, and the verifier fails on `<audio>`
+  without `controls` and `preload="none"`, or from an unlisted host. `<video>` stays banned.
+- Interactivity is replaced by static generation, and dark mode follows
+  `prefers-color-scheme` (no toggle).
 
 - No phone numbers anywhere: the verifier fails on `tel:` links, phone-number Signal links
   and phone-number-shaped text.
@@ -100,9 +107,12 @@ from `<meta>` tags and some aren't possible at all:
   scripts and no forms, framing the site gives an attacker little to work with.
 - HTTPS and HSTS come from GitHub (`github.io` is on the browser HSTS preload list).
 
-Observatory results (https://developer.mozilla.org/en-US/observatory): not yet recorded.
-Nate runs the scan on the live site after the Phase 5 merge; record the grade, score and
-any findings here.
+Observatory results (https://developer.mozilla.org/en-US/observatory), scanned by Nate on
+2026-10-16 after the Phase 5 merge: **B, 75/100**. The score is consistent with the two
+header-only deductions above: no `X-Frame-Options`/`frame-ancestors` (−20) and no
+`X-Content-Type-Options` (−5). Neither can be fixed on GitHub Pages. Reaching A would mean
+moving to a host that allows custom headers (e.g. Cloudflare Pages with a `_headers` file).
+Re-scan after any hosting change.
 
 ## Metadata and discoverability
 
@@ -118,76 +128,120 @@ any findings here.
 - `@astrojs/sitemap` (official integration, approved by the plan) writes
   `sitemap-index.xml` + `sitemap-0.xml`; `public/robots.txt` points to it. The verifier fails
   if any page (except 404) is missing from the sitemap.
-- RSS feed of clips: `src/pages/rss.xml.ts` (hand-written, no dependency), at `/rss.xml`.
-- Professional profiles for JSON-LD `sameAs`: `PROFILES` in `src/config/site.ts`.
+- RSS feed of new work (investigations, features, podcast episodes): `src/pages/rss.xml.ts`
+  (hand-written, no dependency), at `/rss.xml`.
+- Professional profiles for JSON-LD `sameAs`: `PROFILES` and `ARCHIVES` in `src/config/site.ts`.
 
 ## Content
 
-All site content lives in three places. Astro checks every entry when the site builds;
-if something is wrong (a missing field, a misspelled topic, a bad date, a duplicate id,
-an investigation whose Markdown fails to render), the build stops and names the file, the
-entry and the problem. Nothing broken goes live.
+The site has three sections for Nate's three kinds of work (decided Oct 2026):
+**Journalism** (a few investigations, each with a short write-up page, plus a few features
+and links to the full archive at each outlet), **Podcasts** (shows he has written and/or
+hosted, with playable episodes) and **Projects** (side projects). Speaking and media
+appearances are a section of the About page.
 
-- `src/data/clips.yaml`: published articles.
-- `src/content/investigations/*.md`: one case study per file.
-- `src/data/appearances.yaml`: talks, podcasts, TV, radio, panels.
-- `src/config/topics.ts`: the fixed list of topics. Add a topic there before using it.
-- `src/config/site.ts`: name, homepage pitch, bios, CV/PGP file paths and contact channels.
-  A value left as `null` shows on the site as a clearly marked yellow "Placeholder" box,
-  so nothing fake is ever presented as real.
+Astro checks every entry when the site builds; if something is wrong (a missing field, a
+bad date, a duplicate id, a disallowed audio host, a write-up whose Markdown fails to
+render), the build stops and names the file, the entry and the problem. Nothing broken
+goes live.
+
+- `src/content/investigations/*.md`: one investigation per file, with its write-up.
+- `src/data/features.yaml`: feature articles.
+- `src/data/podcasts.yaml`: shows and their standout episodes.
+- `src/data/projects.yaml`: side projects.
+- `src/data/appearances.yaml`: talks, panels, podcast guest spots, TV, radio (About page).
+- `src/config/site.ts`: name, homepage pitch, bios, full-archive links (`ARCHIVES`),
+  profiles, CV/PGP file paths and contact channels. A value left as `null` (or an empty
+  list) shows on the site as a clearly marked yellow "Placeholder" box, so nothing fake is
+  ever presented as real.
 - Schemas: `src/content.config.ts`. Helpers for pages (sorting, archive links):
   `src/lib/content.ts`.
-
-### How to add a new clip
-
-Add an entry to `src/data/clips.yaml` (anywhere in the list; the site sorts by date):
-
-```yaml
-- id: wired-2026-hospital-ransomware   # unique; lowercase letters, numbers, hyphens
-  title: "Ransomware gang claims attack on regional hospital network"
-  outlet: Wired
-  date: 2026-09-18                     # YYYY-MM-DD
-  url: https://example.com/the-article # full https:// link
-  topics: [ransomware, cybercrime]     # from src/config/topics.ts
-  summary: "One or two sentences on what the story found."
-  featured: true                       # optional: show on the homepage (default false)
-  # archive_url: https://web.archive.org/web/...   # optional: archived copy
-  # link_status: dead                  # optional: set when the original link breaks
-```
-
+- Order: investigations, features and appearances sort by date (newest first). Podcasts
+  and projects appear in the order they're written in their file. The homepage shows up to
+  three stories and three projects marked `featured: true` (or the first three if none are).
 - Wrap any text containing a colon followed by a space (`: `) in double quotes. Quoting
   titles and summaries always is the safe habit.
-- When a link dies, set `link_status: dead`. If `archive_url` is set the site links to
-  the archive and labels it "(archived)"; otherwise the title shows without a link.
-- Once published, don't change an `id`: investigations refer to clips by it.
+- When a story's link dies, set `link_status: dead`. If `archive_url` is set the site links
+  to the archive and labels it; otherwise it says the original is no longer online.
 
 ### How to add an investigation
 
 Create `src/content/investigations/<short-name>.md`. The file name (without `.md`)
-becomes the page address, e.g. `/investigations/hospital-ransomware/`.
+becomes the page address, e.g. `/journalism/hospital-ransomware/`.
 
 ```markdown
 ---
 title: "Tracing a ransomware attack on a hospital network"
+outlet: Wired
 date: 2026-09-30
-outlets: [Wired]
-related_clips: [wired-2026-hospital-ransomware]   # clip ids from clips.yaml
+url: https://example.com/the-article          # the published story
+summary: "One or two sentences for the Journalism page."
 impact:
   - "Hospital disclosed the full scope of the breach"
   - "State regulator opened an inquiry"
-summary: "One or two sentences for the index page."
+featured: true                                 # optional: show on the homepage
+# archive_url: https://web.archive.org/web/... # optional
+# link_status: dead                            # optional: when the original link breaks
 ---
 
-The case study, in Markdown: how the story started, how it was reported, what changed.
+A short write-up, in Markdown: how the story started, how it was reported, what changed.
+Write links as [text](https://...).
 ```
 
-Every id in `related_clips` must exist in `clips.yaml`, or the build fails.
+### How to add a feature
+
+Add an entry to `src/data/features.yaml`:
+
+```yaml
+- id: wired-2026-router-flaw          # unique; lowercase letters, numbers, hyphens
+  title: "Unpatched router flaw exploited by state-backed hackers"
+  outlet: Wired
+  date: 2026-07-02                    # YYYY-MM-DD
+  url: https://example.com/the-article
+  summary: "One sentence on the story."
+  featured: true                      # optional
+```
+
+### How to add a podcast
+
+Add a show to `src/data/podcasts.yaml`:
+
+```yaml
+- id: the-show                        # unique
+  name: "The Show"
+  role: Writer and host
+  years: 2024–present                 # optional
+  description: "One or two sentences about the show."
+  cover: /images/podcasts/the-show.jpg  # optional; square image in public/, metadata stripped
+  links:                              # all optional
+    spotify: https://open.spotify.com/show/...
+    apple: https://podcasts.apple.com/...
+    website: https://...
+  episodes:
+    - title: "Episode title"
+      date: 2026-08-14
+      summary: "One sentence."         # optional
+      audio: https://.../episode.mp3   # optional: the episode's audio file, from the show's RSS feed
+      url: https://...                 # optional: the episode's web page
+      transcript: https://...          # optional, but helps accessibility (WCAG 1.2.1)
+```
+
+- `audio` is the `enclosure url` of the episode in the show's RSS feed. Its host, and every
+  host it redirects through (stats services, CDNs), must be in `AUDIO_HOSTS` in
+  `src/config/csp.mjs`, or the browser refuses to play it. The build names a missing first
+  host; the monthly site check follows redirects and names any missing later hop. After
+  adding a show, press play on the Cloudflare preview to confirm.
+
+### How to add a project
+
+Add an entry to `src/data/projects.yaml`: `id`, `name`, `summary`, and optionally `url`,
+`year` (e.g. `2024` or `2024–present`), `featured`, and `image` (a path in `public/`) with
+`image_alt` (a short description, or `""` if purely decorative).
 
 ### How to add an appearance
 
-Add an entry to `src/data/appearances.yaml`: `id` (unique, as for clips), `title`,
-`event_or_show`, `date`, `type` (`talk`, `podcast`, `tv`, `radio` or `panel`) and an
-optional `url`.
+Add an entry to `src/data/appearances.yaml`: `id` (unique), `title`, `event_or_show`,
+`date`, `type` (`talk`, `podcast`, `tv`, `radio` or `panel`) and an optional `url`.
 
 ## Design
 
@@ -200,10 +254,9 @@ No motion.
   WCAG AA contrast, so re-check if you change a colour). Fonts: Source Serif 4 (reading)
   and Inter (labels, navigation), self-hosted OFL files in `public/fonts/` with their
   licenses; `@font-face` rules in `src/styles/fonts.css`.
-- Pages: `src/pages/`. Shared pieces: `src/components/` (`ClipItem`, `ClipsByYear`,
-  `WorkFilters`, `FilteredWork`, `Placeholder`).
-- Work filter pages are generated only for topics, outlets and years that have clips.
-  Outlet pages use a slug of the outlet name, so spell each outlet identically every time.
+- Pages: `src/pages/` (Home, `journalism/` with one page per investigation, `podcasts`,
+  `projects`, `about`, `contact`, `404`). Shared pieces: `src/components/` (`StoryItem`,
+  `Episode`, `Placeholder`, `PersonJsonLd`).
 
 ## Never commit
 

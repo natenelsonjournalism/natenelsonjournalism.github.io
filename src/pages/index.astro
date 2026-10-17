@@ -1,14 +1,18 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ClipItem from '../components/ClipItem.astro';
+import StoryItem from '../components/StoryItem.astro';
 import { SITE } from '../config/site';
-import { getClips, getOutlets } from '../lib/content';
+import { getFeatures, getInvestigations, getPodcasts, getProjects, highlights, investigationPath } from '../lib/content';
 
-const clips = await getClips();
-const featured = clips.filter((c) => c.data.featured).slice(0, 5);
-const featuredIds = new Set(featured.map((c) => c.id));
-const recent = clips.filter((c) => !featuredIds.has(c.id)).slice(0, 5);
-const outlets = getOutlets(clips);
+// Investigations link to their write-up on this site; features to the original article.
+const allStories = [
+  ...(await getInvestigations()).map((story) => ({ story, href: investigationPath(story) as string | undefined })),
+  ...(await getFeatures()).map((story) => ({ story, href: undefined })),
+].sort((a, b) => b.story.data.date.getTime() - a.story.data.date.getTime());
+const featured = allStories.filter((s) => s.story.data.featured);
+const stories = (featured.length ? featured : allStories).slice(0, 3);
+const shows = (await getPodcasts()).slice(0, 3);
+const projects = highlights(await getProjects(), 3);
 ---
 
 <BaseLayout person>
@@ -16,39 +20,69 @@ const outlets = getOutlets(clips);
     <p class="eyebrow">{SITE.role}</p>
     <h1 id="intro-heading">{SITE.name}</h1>
     <p class="lede">{SITE.pitch.join(' ')}</p>
-    <p class="more-link"><a href="/work/">Read my work</a> · <a href="/contact/">Get in touch</a></p>
+    <p class="more-link"><a href="/about/">About me</a> · <a href="/contact/">Get in touch</a></p>
   </section>
 
   {
-    featured.length > 0 && (
-      <section aria-labelledby="featured-heading">
-        <h2 class="section-heading" id="featured-heading">Selected stories</h2>
-        {featured.map((clip) => (
-          <ClipItem clip={clip} />
-        ))}
-      </section>
-    )
-  }
-
-  {
-    recent.length > 0 && (
-      <section aria-labelledby="recent-heading">
-        <h2 class="section-heading" id="recent-heading">Recent work</h2>
-        {recent.map((clip) => (
-          <ClipItem clip={clip} compact />
+    stories.length > 0 && (
+      <section aria-labelledby="journalism-heading">
+        <h2 class="section-heading" id="journalism-heading">
+          Journalism
+        </h2>
+        {stories.map(({ story, href }) => (
+          <StoryItem story={story} href={href} />
         ))}
         <p class="more-link">
-          <a href="/work/">All work, by topic, outlet and year</a>
+          <a href="/journalism/">All journalism →</a>
         </p>
       </section>
     )
   }
 
   {
-    outlets.length > 0 && (
-      <section class="stack" aria-labelledby="outlets-heading">
-        <h2 class="section-heading" id="outlets-heading">Published in</h2>
-        <p>{outlets.map((o) => o.name).join(' · ')}</p>
+    shows.length > 0 && (
+      <section aria-labelledby="podcasts-heading">
+        <h2 class="section-heading" id="podcasts-heading">
+          Podcasts
+        </h2>
+        {shows.map((show) => (
+          <article class="clip clip-compact">
+            <h3 class="clip-title">
+              <a href={`/podcasts/#show-${show.id}`}>{show.data.name}</a>
+            </h3>
+            <p class="meta">{[show.data.role, show.data.years].filter(Boolean).join(' · ')}</p>
+          </article>
+        ))}
+        <p class="more-link">
+          <a href="/podcasts/">Listen →</a>
+        </p>
+      </section>
+    )
+  }
+
+  {
+    projects.length > 0 && (
+      <section aria-labelledby="projects-heading">
+        <h2 class="section-heading" id="projects-heading">
+          Projects
+        </h2>
+        {projects.map((p) => (
+          <article class="clip clip-compact">
+            <h3 class="clip-title">
+              {p.data.url ? (
+                <a href={p.data.url} rel="noopener noreferrer">
+                  {p.data.name}
+                </a>
+              ) : (
+                p.data.name
+              )}
+            </h3>
+            <p class="meta">{p.data.summary}</p>
+          </article>
+        ))}
+        <p class="more-link">
+          <a href="/projects/">All projects →</a>
+        </p>
       </section>
     )
   }

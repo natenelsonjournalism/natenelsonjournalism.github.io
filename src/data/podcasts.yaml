@@ -1,0 +1,34 @@
+# Podcasts Nate has written and/or hosted, in the order they should appear.
+# See "How to add a podcast" in CLAUDE.md.
+#
+# PLACEHOLDERS: every entry below is fake. Replace them with real shows in Phase 6.
+# They have no `audio:` yet, so each shows a placeholder where the player will be.
+
+- id: example-security-show
+  name: "Placeholder: The Example Security Podcast"
+  role: Writer
+  years: 2024–present
+  description: "Placeholder description. A weekly narrative show about the people behind major cyberattacks."
+  links:
+    spotify: https://example.com/spotify/example-security-podcast
+    apple: https://example.com/apple/example-security-podcast
+    website: https://example.com/example-security-podcast
+  episodes:
+    - title: "Placeholder: The ransomware negotiator"
+      date: 2026-08-14
+      summary: "Placeholder summary. What it's like to bargain with criminals over a hospital's data."
+      url: https://example.com/example-security-podcast/ransomware-negotiator
+    - title: "Placeholder: Inside a state hacking contractor"
+      date: 2026-03-02
+      summary: "Placeholder summary. Leaked files show how a private company sells hacking to governments."
+
+- id: example-interview-show
+  name: "Placeholder: Example Interviews"
+  role: Writer and host
+  years: "2025"
+  description: "Placeholder description. Conversations with security researchers about the flaws they found."
+  links:
+    website: https://example.com/example-interviews
+  episodes:
+    - title: "Placeholder: The bug that broke a city's parking meters"
+      date: 2025-10-09

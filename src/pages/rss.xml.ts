@@ -1,41 +1,67 @@
-// RSS feed of published clips at /rss.xml. Written by hand (a few lines) rather than
-// adding a dependency; every text value is XML-escaped.
+// RSS feed of new work at /rss.xml: investigations, features and podcast episodes.
+// Written by hand (a few lines) rather than adding a dependency; every text value is
+// XML-escaped.
 import type { APIRoute } from 'astro';
 import { SITE } from '../config/site';
-import { TOPICS } from '../config/topics';
-import { clipLink, getClips } from '../lib/content';
+import { getFeatures, getInvestigations, getPodcasts, investigationPath, storyLink } from '../lib/content';
 
 const escape = (text: string) =>
   text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 
-export const GET: APIRoute = async () => {
-  const clips = await getClips();
-  const items = clips.map((clip) => {
-    const { title, outlet, date, url, topics, summary } = clip.data;
-    const link = clipLink(clip).href ?? url;
-    return [
-      '    <item>',
-      `      <title>${escape(title)}</title>`,
-      `      <link>${escape(link)}</link>`,
-      `      <guid isPermaLink="false">${escape(clip.id)}</guid>`,
-      `      <pubDate>${date.toUTCString()}</pubDate>`,
-      `      <description>${escape(`${summary} (${outlet})`)}</description>`,
-      ...topics.map((t) => `      <category>${escape(TOPICS[t])}</category>`),
-      '    </item>',
-    ].join('\n');
-  });
+interface Item {
+  title: string;
+  link: string;
+  guid: string;
+  date: Date;
+  description: string;
+  category: string;
+}
 
-  const lastBuild = clips[0]?.data.date ?? new Date(0);
+export const GET: APIRoute = async () => {
+  const items: Item[] = [];
+  for (const inv of await getInvestigations()) {
+    const { title, outlet, date, summary } = inv.data;
+    const link = `${SITE.url}${investigationPath(inv)}`;
+    items.push({ title, link, guid: `investigation-${inv.id}`, date, description: `${summary} (${outlet})`, category: 'Investigation' });
+  }
+  for (const story of await getFeatures()) {
+    const { title, outlet, date, url, summary } = story.data;
+    const link = storyLink(story).href ?? url;
+    items.push({ title, link, guid: `feature-${story.id}`, date, description: `${summary} (${outlet})`, category: 'Feature' });
+  }
+  for (const show of await getPodcasts()) {
+    for (const [i, ep] of show.data.episodes.entries()) {
+      const link = ep.url ?? show.data.links.website ?? `${SITE.url}/podcasts/#show-${show.id}`;
+      const description = ep.summary ? `${ep.summary} (${show.data.name})` : show.data.name;
+      items.push({ title: ep.title, link, guid: `episode-${show.id}-${ep.date.toISOString().slice(0, 10)}-${i}`, date: ep.date, description, category: 'Podcast' });
+    }
+  }
+  items.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+  const body = items.map((item) =>
+    [
+      '    <item>',
+      `      <title>${escape(item.title)}</title>`,
+      `      <link>${escape(item.link)}</link>`,
+      `      <guid isPermaLink="false">${escape(item.guid)}</guid>`,
+      `      <pubDate>${item.date.toUTCString()}</pubDate>`,
+      `      <description>${escape(item.description)}</description>`,
+      `      <category>${item.category}</category>`,
+      '    </item>',
+    ].join('\n'),
+  );
+
+  const lastBuild = items[0]?.date ?? new Date(0);
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>${escape(`${SITE.name}: published work`)}</title>
-    <link>${SITE.url}/work/</link>
+    <title>${escape(`${SITE.name}: new work`)}</title>
+    <link>${SITE.url}/</link>
     <atom:link href="${SITE.url}/rss.xml" rel="self" type="application/rss+xml" />
-    <description>${escape(`New reporting by ${SITE.name}, ${SITE.role.toLowerCase()}.`)}</description>
+    <description>${escape(`New journalism and podcasts by ${SITE.name}.`)}</description>
     <language>en</language>
     <lastBuildDate>${lastBuild.toUTCString()}</lastBuildDate>
-${items.join('\n')}
+${body.join('\n')}
   </channel>
 </rss>
 `;

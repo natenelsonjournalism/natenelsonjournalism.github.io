@@ -2,7 +2,9 @@
 // Structured data telling search engines who this site is about (schema.org Person).
 // A JSON-LD data block is not executable, so the CSP's script-src 'none' still holds;
 // scripts/verify-build.mjs allows <script type="application/ld+json"> and nothing else.
-import { PROFILES, SITE } from '../config/site';
+import { ARCHIVES, PROFILES, SITE } from '../config/site';
+
+const sameAs = [...PROFILES, ...ARCHIVES].map((p) => p.url);
 
 const person = {
   '@context': 'https://schema.org',
@@ -11,7 +13,7 @@ const person = {
   jobTitle: SITE.role,
   description: SITE.description,
   url: `${SITE.url}/`,
-  ...(PROFILES.length > 0 && { sameAs: PROFILES.map((p) => p.url) }),
+  ...(sameAs.length > 0 && { sameAs }),
 };
 
 // Escape "<" so the JSON can never close the <script> element early.

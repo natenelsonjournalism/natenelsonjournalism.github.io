@@ -145,22 +145,51 @@ Design requirements:
 
 **Checks:** all CI workflows green; scan the live site with Mozilla Observatory and note the results in `CLAUDE.md`, including which findings are GitHub Pages header limitations (e.g. `frame-ancestors`, `X-Content-Type-Options`) rather than site issues.
 
+### Change of direction (October 2026, decided by Nate)
+
+Before Phase 6, the site was reorganised around Nate's three kinds of work. This
+replaces the clip-list design from earlier phases (topic/outlet/year filter pages,
+`clips.yaml`, a separate Speaking page):
+
+- **Journalism:** 3–5 investigations, each with a short write-up page, and 3–5 features,
+  plus "full archive" links to Nate's author page at each outlet. No live author-page
+  embedding (that would need scripts or fragile scraping).
+- **Podcasts:** shows Nate has written and/or hosted, each with 2–3 standout episodes that
+  play on the page in the browser's own audio player (`preload="none"`, nothing loads until
+  play is pressed). Spotify/Apple embeds rejected: they load third-party scripts and
+  trackers. Approved exception to "no third-party requests": audio from hosts listed in
+  `AUDIO_HOSTS` (`src/config/csp.mjs`).
+- **Projects:** a looser list of side projects.
+- **About** absorbs Speaking & media.
+- The site check runs monthly instead of weekly; security.txt expiry warns but never
+  blocks a deploy.
+
 ### Phase 6: Real content and launch
 
-1. Convert Nate's clips spreadsheet into `clips.yaml`; flag any rows with missing fields rather than guessing.
-2. For every clip, look up or prompt Nate to add a Wayback Machine `archive_url`.
-3. Replace all placeholders: bios, headshot, CV, investigations, appearances, contact details, PGP key and fingerprint.
-4. Search the repo for any remaining placeholder text (`example.com`, "Example Outlet", "PLACEHOLDER") and list it.
-5. Final review: proofread pages, re-run all checks, deploy.
+1. Journalism: Nate's chosen investigations (with write-ups drafted from the published
+   stories, for Nate to edit) and features; his author page URL(s) in `ARCHIVES`. Flag
+   anything missing rather than guessing; add Wayback Machine `archive_url`s where useful.
+2. Podcasts: shows, roles, descriptions, listen links, standout episodes with their audio
+   URLs from each show's RSS feed; add the audio hosts to `AUDIO_HOSTS` and confirm playback
+   on the Cloudflare preview. Cover art optional (metadata stripped).
+3. Projects.
+4. Replace all remaining placeholders: homepage pitch, bios, headshot, CV, appearances,
+   contact details, PGP key and fingerprint (and `Encryption:` in security.txt), profiles.
+5. Search the repo for any remaining placeholder text (`example.com`, "Example", "Placeholder")
+   and list it.
+6. Final review: proofread pages, re-run all checks, deploy.
 
-**Checks:** zero placeholders remain; all checks pass; live site reviewed on phone and desktop.
+**Checks:** zero placeholders remain; all checks pass; audio plays on the preview; live site
+reviewed on phone and desktop.
 
 ---
 
 ## Ongoing maintenance
 
-- **New clip:** add an entry to `src/data/clips.yaml`, commit, push. The site rebuilds automatically.
+- **New work:** add an investigation, feature, episode or project (see "Content" in
+  `CLAUDE.md`), commit, push. The site rebuilds automatically.
 - **Dependabot PRs:** review and merge; the build's `verify-build` step guards against regressions.
-- **Weekly link report:** when the dead-links issue appears, mark the clip `link_status: dead` and make sure it has an `archive_url`.
+- **Monthly site check:** when its issue appears, follow the fix steps it lists (e.g. mark a
+  story `link_status: dead` and add an `archive_url`, or add a podcast audio host).
 - **Every year:** bump `Expires` in `security.txt` (CI will remind you), and confirm your PGP key hasn't expired.
 - **Never commit:** drafts, source notes, unpublished documents, or files you haven't scrubbed of metadata. Public repo history is permanent.

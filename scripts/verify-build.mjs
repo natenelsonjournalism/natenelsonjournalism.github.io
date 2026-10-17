@@ -9,7 +9,9 @@
 //       browsers never execute)
 //     - must not use style="" or on*="" (event handler) attributes
 //     - must not load resources (src, srcset, poster, data, <link href>,
-//       CSS url()) from any host other than our own
+//       CSS url()) from any host other than our own. Sole exception: podcast
+//       <audio> from a host in AUDIO_HOSTS (src/config/csp.mjs), which must have
+//       controls and preload="none" so nothing loads until the visitor presses play
 //   CSS files
 //     - must not reference url() / @import on another host
 //   Sitemap
@@ -30,7 +32,7 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { join, relative, extname, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { CSP } from '../src/config/csp.mjs';
+import { CSP, isAllowedAudioUrl } from '../src/config/csp.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const dist = join(root, 'dist');
@@ -148,7 +150,8 @@ function checkMarkup(file, markup, { isHtml }) {
 
       if (['src', 'poster', 'data', 'background'].includes(name) || (name === 'href' && tag === 'link')) {
         const reason = externalReason(value);
-        if (reason) fail(file, `<${tag} ${name}="${value}"> → ${reason}`);
+        const allowedAudio = isHtml && tag === 'audio' && name === 'src' && isAllowedAudioUrl(decodeEntities(value).trim());
+        if (reason && !allowedAudio) fail(file, `<${tag} ${name}="${value}"> → ${reason}`);
       }
       if (name === 'srcset' || name === 'imagesrcset') {
         for (const candidate of decodeEntities(value).split(',')) {
@@ -172,6 +175,14 @@ function checkMarkup(file, markup, { isHtml }) {
         const reason = externalReason(value);
         if (reason) fail(file, `SVG <${tag} ${name}="${value}"> → ${reason}`);
       }
+    }
+
+    if (isHtml && tag === 'audio') {
+      if ((get('preload') ?? '').toLowerCase() !== 'none') fail(file, '<audio> must have preload="none" (load nothing until the visitor presses play)');
+      if (get('controls') === undefined) fail(file, '<audio> must have controls');
+    }
+    if (isHtml && (tag === 'video' || (tag === 'source' && externalReason(get('src') ?? '')))) {
+      fail(file, `<${tag}> is not allowed (podcast audio uses <audio src> directly)`);
     }
 
     if (isHtml && tag === 'meta' && (get('http-equiv') ?? '').toLowerCase() === 'content-security-policy') {
