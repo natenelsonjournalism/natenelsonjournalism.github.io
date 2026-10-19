@@ -16,9 +16,9 @@
     "a11y": "node scripts/check-a11y.mjs"
   },
   "dependencies": {
-    "@astrojs/markdown-satteri": "0.4.3",
+    "@astrojs/markdown-satteri": "0.4.4",
     "@astrojs/sitemap": "3.7.4",
-    "astro": "7.3.8"
+    "astro": "7.4.0"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
