@@ -1,29 +1,3 @@
 # Talks, podcasts, TV, radio and panels. See "How to add an appearance" in CLAUDE.md.
-#
-# PLACEHOLDERS: every entry below is fake. Replace them with real appearances in Phase 6.
-
-- id: example-2026-security-conference-talk
-  title: "Placeholder: What ransomware negotiators won't tell reporters"
-  event_or_show: Example Security Conference
-  date: 2026-08-07
-  type: talk
-  url: https://example.com/talks/ransomware-negotiators
-
-- id: example-2026-podcast
-  title: "Placeholder: Covering nation-state hacking without the hype"
-  event_or_show: The Example Podcast
-  date: 2026-05-14
-  type: podcast
-  url: https://example.com/podcast/episode-42
-
-- id: example-2025-tv-interview
-  title: "Placeholder: Explaining a major breach on the evening news"
-  event_or_show: Example News Tonight
-  date: 2025-12-03
-  type: tv
-
-- id: example-2025-panel
-  title: "Placeholder: Journalism and disclosure, panel discussion"
-  event_or_show: Example Journalism Summit
-  date: 2025-06-21
-  type: panel
+# The "Speaking and media" section of the About page appears once there's an entry here.
+[]

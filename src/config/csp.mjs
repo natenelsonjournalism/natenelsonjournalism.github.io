@@ -13,7 +13,16 @@
  *
  * Example: ['https://www.podtrac.com', 'https://traffic.megaphone.fm', 'https://*.megaphone.fm']
  */
-export const AUDIO_HOSTS = [];
+export const AUDIO_HOSTS = [
+  // Darknet Diaries: Podtrac (download stats), then PRX's Dovetail and its CDN.
+  'https://www.podtrac.com',
+  'https://dovetail.prxu.org',
+  'https://dovetail-cdn.prxu.org',
+  // Malicious Life: Podscribe and Claritas (download stats), then RedCircle.
+  'https://pscrb.fm',
+  'https://clrtpod.com',
+  'https://*.redcircle.com',
+];
 
 export const CSP = [
   "default-src 'none'",

@@ -31,6 +31,7 @@ export const GET: APIRoute = async () => {
   }
   for (const show of await getPodcasts()) {
     for (const [i, ep] of show.data.episodes.entries()) {
+      if (!ep.date) continue;
       const link = ep.url ?? show.data.links.website ?? `${SITE.url}/podcasts/#show-${show.id}`;
       const description = ep.summary ? `${ep.summary} (${show.data.name})` : show.data.name;
       items.push({ title: ep.title, link, guid: `episode-${show.id}-${ep.date.toISOString().slice(0, 10)}-${i}`, date: ep.date, description, category: 'Podcast' });

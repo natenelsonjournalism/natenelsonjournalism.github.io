@@ -138,7 +138,7 @@ const features = defineCollection({
 const episode = z
   .object({
     title: z.string().min(1),
-    date,
+    date: date.optional(), // optional: undated episodes are left out of the RSS feed
     summary: z.string().min(1).optional(),
     // Direct link to the episode's audio file (from the show's RSS feed).
     audio: audioUrl.optional(),

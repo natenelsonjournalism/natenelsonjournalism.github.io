@@ -1,34 +1,44 @@
 # Podcasts Nate has written and/or hosted, in the order they should appear.
 # See "How to add a podcast" in CLAUDE.md.
 #
-# PLACEHOLDERS: every entry below is fake. Replace them with real shows in Phase 6.
-# They have no `audio:` yet, so each shows a placeholder where the player will be.
+# An episode with `audio:` plays on the page; one without links to its page instead. The
+# audio address is the episode's `enclosure url` in the show's RSS feed, and its hosts
+# must be in AUDIO_HOSTS (src/config/csp.mjs).
 
-- id: example-security-show
-  name: "Placeholder: The Example Security Podcast"
-  role: Writer
-  years: 2024–present
-  description: "Placeholder description. A weekly narrative show about the people behind major cyberattacks."
+- id: darknet-diaries
+  name: "Darknet Diaries"
+  role: Scriptwriter and researcher
+  description: "True stories from the dark side of the internet: hackers, breaches, cybercrime and the people behind them, hosted by Jack Rhysider."
   links:
-    spotify: https://example.com/spotify/example-security-podcast
-    apple: https://example.com/apple/example-security-podcast
-    website: https://example.com/example-security-podcast
+    apple: https://podcasts.apple.com/us/podcast/darknet-diaries/id1296350485
+    website: https://darknetdiaries.com/
   episodes:
-    - title: "Placeholder: The ransomware negotiator"
-      date: 2026-08-14
-      summary: "Placeholder summary. What it's like to bargain with criminals over a hospital's data."
-      url: https://example.com/example-security-podcast/ransomware-negotiator
-    - title: "Placeholder: Inside a state hacking contractor"
-      date: 2026-03-02
-      summary: "Placeholder summary. Leaked files show how a private company sells hacking to governments."
+    - title: "177: National Public Data"
+      date: 2026-07-21
+      summary: "The hacker known as USDoD, and the massive breach of background-check company National Public Data."
+      audio: https://www.podtrac.com/pts/redirect.mp3/dovetail.prxu.org/7057/791c66f0-0bfc-420d-96a3-816c78a17f4c/darknet-diaries-ep177-national-public-data.mp3
+      url: https://darknetdiaries.com/episode/177/
+      transcript: https://darknetdiaries.com/transcript/177/
+    - title: "169: MoD"
+      date: 2026-01-20
+      summary: "Masters of Deception, the New York hacker crew that feuded with the Legion of Doom in the early 1990s."
+      audio: https://www.podtrac.com/pts/redirect.mp3/dovetail.prxu.org/7057/9d4c34be-a7df-41c7-a0da-5269b660e688/darknet-diaries-ep169-mod.mp3
+      url: https://darknetdiaries.com/episode/169/
+      transcript: https://darknetdiaries.com/transcript/169/
 
-- id: example-interview-show
-  name: "Placeholder: Example Interviews"
-  role: Writer and host
-  years: "2025"
-  description: "Placeholder description. Conversations with security researchers about the flaws they found."
+- id: malicious-life
+  name: "Malicious Life"
+  role: Co-creator and scriptwriter
+  description: "Untold stories from the history of cybersecurity, hosted by Ran Levi."
   links:
-    website: https://example.com/example-interviews
+    apple: https://podcasts.apple.com/us/podcast/malicious-life/id1252417787
+    website: https://malicious.life/
   episodes:
-    - title: "Placeholder: The bug that broke a city's parking meters"
-      date: 2025-10-09
+    - title: "Operation Snow White, Part 1"
+      audio: https://pscrb.fm/rss/p/clrtpod.com/m/audio3.redcircle.com/episodes/1b14cfa5-e467-40fc-ae9b-73089e1cb0ed/stream.mp3
+      summary: "How the Church of Scientology mounted the largest known infiltration of the US government."
+      url: https://podcasts.apple.com/us/podcast/operation-snow-white-part-1/id1252417787?i=1000671435171
+    - title: "The Y2K Bug, Part 1"
+      audio: https://pscrb.fm/rss/p/clrtpod.com/m/audio3.redcircle.com/episodes/fbe18f2d-76f0-491d-bebb-5ddd5a929f33/stream.mp3
+      summary: "Computer scientist Bob Bemer, and his decades-long warnings about the Y2K bug."
+      url: https://podcasts.apple.com/us/podcast/the-y2k-bug-part-1/id1252417787?i=1000650971906
