@@ -3,6 +3,7 @@ title: "Scottish Govt Suffers Potentially Widening Data Breach at Prosecutor's O
 outlet: Dark Reading
 date: 2026-08-14
 url: https://www.darkreading.com/cyberattacks-data-breaches/scottish-govt-data-breach-prosecutors-office
+archive_url: https://web.archive.org/web/20261020183718/https://www.darkreading.com/cyberattacks-data-breaches/scottish-govt-data-breach-prosecutors-office
 summary: "Scotland's prosecution service disclosed a breach at an unnamed supplier. I identified the likely vendor, and showed the breach could reach well beyond one office."
 impact:
   - "Identified the undisclosed third-party vendor behind a major Scottish government data breach"

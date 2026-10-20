@@ -9,6 +9,7 @@
   name: "Darknet Diaries"
   role: Scriptwriter and researcher
   description: "True stories from the dark side of the internet: hackers, breaches, cybercrime and the people behind them, hosted by Jack Rhysider."
+  cover: /images/podcasts/darknet-diaries.jpg
   links:
     apple: https://podcasts.apple.com/us/podcast/darknet-diaries/id1296350485
     website: https://darknetdiaries.com/
@@ -30,6 +31,7 @@
   name: "Malicious Life"
   role: Co-creator and scriptwriter
   description: "Untold stories from the history of cybersecurity, hosted by Ran Levi."
+  cover: /images/podcasts/malicious-life.jpg
   links:
     apple: https://podcasts.apple.com/us/podcast/malicious-life/id1252417787
     website: https://malicious.life/
