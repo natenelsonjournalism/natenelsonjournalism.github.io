@@ -164,7 +164,7 @@ goes live.
 - `src/data/podcasts.yaml`: shows and their standout episodes.
 - `src/data/projects.yaml`: side projects.
 - `src/data/appearances.yaml`: talks, panels, podcast guest spots, TV, radio (About page).
-- `src/config/site.ts`: name, homepage pitch, bios, full-archive links (`ARCHIVES`),
+- `src/config/site.ts`: name, homepage tagline, bios, full-archive links (`ARCHIVES`),
   profiles, headshot and contact channel (Signal username only; Nate dropped the CV, PGP key,
   SecureDrop and the public email address in Oct 2026). A value left as `null` (or an empty
   list) shows on the site as a clearly marked yellow "Placeholder" box, so nothing fake is
@@ -173,7 +173,7 @@ goes live.
   `src/lib/content.ts`.
 - Order: investigations, features and appearances sort by date (newest first). Podcasts
   and projects appear in the order they're written in their file. The homepage shows up to
-  three stories and three projects marked `featured: true` (or the first three if none are).
+  two stories and three projects marked `featured: true` (or the first ones if none are).
 - Wrap any text containing a colon followed by a space (`: `) in double quotes. Quoting
   titles and summaries always is the safe habit.
 - When a story's link dies, set `link_status: dead`. If `archive_url` is set the site links

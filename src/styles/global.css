@@ -260,6 +260,27 @@ main {
   margin-bottom: 0.5rem;
 }
 
+/* Homepage: name and tagline, centred in a band near the top of the screen. */
+.home-intro {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 45vh;
+  text-align: center;
+}
+
+.home-intro h1 {
+  font-size: clamp(2.6rem, 1.8rem + 4vw, 4.5rem);
+  margin-bottom: 0.5rem;
+}
+
+.home-tagline {
+  font-family: var(--font-sans);
+  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
+  color: var(--muted);
+  margin: 0;
+}
+
 .lede {
   font-size: 1.3rem;
   line-height: 1.5;

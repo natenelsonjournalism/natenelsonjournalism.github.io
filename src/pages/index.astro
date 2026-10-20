@@ -10,18 +10,16 @@ const allStories = [
   ...(await getFeatures()).map((story) => ({ story, href: undefined })),
 ].sort((a, b) => b.story.data.date.getTime() - a.story.data.date.getTime());
 const featured = allStories.filter((s) => s.story.data.featured);
-const stories = (featured.length ? featured : allStories).slice(0, 3);
+const stories = (featured.length ? featured : allStories).slice(0, 2);
 const shows = (await getPodcasts()).slice(0, 3);
 const projects = highlights(await getProjects(), 3);
 ---
 
 <BaseLayout person>
-  <section class="page-intro" aria-labelledby="intro-heading">
-    <p class="eyebrow">{SITE.role}</p>
-    <h1 id="intro-heading">{SITE.name}</h1>
-    <p class="lede">{SITE.pitch.join(' ')}</p>
-    <p class="more-link"><a href="/about/">About me</a> · <a href="/contact/">Get in touch</a></p>
-  </section>
+  <header class="home-intro">
+    <h1>{SITE.name}</h1>
+    <p class="home-tagline">{SITE.tagline}</p>
+  </header>
 
   {
     stories.length > 0 && (
