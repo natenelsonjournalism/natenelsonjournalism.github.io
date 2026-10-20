@@ -7,11 +7,8 @@ export const SITE = {
   role: 'Cybersecurity journalist and podcast scriptwriter',
   url: 'https://natenelsonjournalism.github.io',
 
-  /** Homepage pitch: two sentences. */
-  pitch: [
-    'I report on cybersecurity for Dark Reading and write scripts for podcasts, including Darknet Diaries.',
-    'My reporting has gotten a leaking Vatican app fixed and named the vendor behind a government data breach.',
-  ],
+  /** The line under Nate's name at the top of the homepage. */
+  tagline: 'Cybersecurity journalist, podcast scriptwriter',
 
   /** Default meta description for pages that don't set their own. */
   description:
