@@ -1,23 +1,8 @@
 # Side projects, in the order they should appear (put the one you like best first).
 # See "How to add a project" in CLAUDE.md.
-#
-# PLACEHOLDERS: every entry below is fake. Replace them with real projects in Phase 6.
 
-- id: example-newsletter
-  name: "Placeholder: A small newsletter"
-  summary: "Placeholder summary. A monthly roundup of security stories that didn't get enough attention."
-  url: https://example.com/newsletter
-  year: 2025–present
+- id: football-the-board-game
+  name: "Football: The Board Game"
+  summary: "A board game (and mobile game) that simulates and abstracts the sport of football and its strategy."
+  url: https://soccer.nathanieltnelson1.workers.dev/
   featured: true
-
-- id: example-tool
-  name: "Placeholder: A tool for checking breach notices"
-  summary: "Placeholder summary. A script that tracks new data breach filings with state regulators."
-  url: https://example.com/breach-notices
-  year: 2024
-  featured: true
-
-- id: example-offline-project
-  name: "Placeholder: A project with no link"
-  summary: "Placeholder summary. Shows how a project without a web page looks."
-  year: 2023

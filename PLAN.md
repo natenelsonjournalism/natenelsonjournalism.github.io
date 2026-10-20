@@ -173,8 +173,10 @@ replaces the clip-list design from earlier phases (topic/outlet/year filter page
    URLs from each show's RSS feed; add the audio hosts to `AUDIO_HOSTS` and confirm playback
    on the Cloudflare preview. Cover art optional (metadata stripped).
 3. Projects.
-4. Replace all remaining placeholders: homepage pitch, bios, headshot, CV, appearances,
-   contact details, PGP key and fingerprint (and `Encryption:` in security.txt), profiles.
+4. Replace all remaining placeholders: homepage pitch, bios, headshot, contact details
+   (Signal username), profiles. Nate dropped the CV, PGP key, SecureDrop, public email and
+   appearances for now (Oct 2026); the About page shows "Speaking and media" again once
+   `appearances.yaml` has an entry.
 5. Search the repo for any remaining placeholder text (`example.com`, "Example", "Placeholder")
    and list it.
 6. Final review: proofread pages, re-run all checks, deploy.
@@ -191,5 +193,5 @@ reviewed on phone and desktop.
 - **Dependabot PRs:** review and merge; the build's `verify-build` step guards against regressions.
 - **Monthly site check:** when its issue appears, follow the fix steps it lists (e.g. mark a
   story `link_status: dead` and add an `archive_url`, or add a podcast audio host).
-- **Every year:** bump `Expires` in `security.txt` (CI will remind you), and confirm your PGP key hasn't expired.
+- **Every year:** bump `Expires` in `security.txt` (CI will remind you).
 - **Never commit:** drafts, source notes, unpublished documents, or files you haven't scrubbed of metadata. Public repo history is permanent.

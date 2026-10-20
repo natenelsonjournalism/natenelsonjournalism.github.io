@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Placeholder from '../components/Placeholder.astro';
-import { BIOS, FILES, SITE } from '../config/site';
+import { BIOS, HEADSHOT, SITE } from '../config/site';
 import { formatDate, getAppearances, isoDate, type Appearance } from '../lib/content';
 
 const appearances = await getAppearances();
@@ -31,19 +31,16 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
           </Placeholder>
         )
       }
-      <p>
-        {
-          FILES.cv ? (
-            <a href={FILES.cv} download>Download my CV (PDF)</a>
-          ) : (
-            <Placeholder as="span">CV download link (PDF, metadata stripped)</Placeholder>
-          )
-        }
-      </p>
     </div>
-    <Placeholder>
-      <span class="headshot-placeholder">Headshot (EXIF and location data stripped)</span>
-    </Placeholder>
+    {
+      HEADSHOT ? (
+        <img class="headshot" src={HEADSHOT.src} alt={HEADSHOT.alt} width="448" height="448" />
+      ) : (
+        <Placeholder>
+          <span class="headshot-placeholder">Headshot (EXIF and location data stripped)</span>
+        </Placeholder>
+      )
+    }
   </div>
 
   <section class="stack" aria-labelledby="bio-heading">

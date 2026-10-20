@@ -48,7 +48,7 @@ deliberate design choice so the CSP can be `script-src 'none'`.
     don't use `define:vars` (it emits inline styles).
   - Don't add client islands (`client:*` directives), view transitions, or prefetch.
 - `src`, `srcset`, `poster`, `<link href>`, CSS `url()` and `@import` must be same-origin.
-  Fonts, images and the PGP key are self-hosted under `public/` or `src/assets/`.
+  Fonts and images are self-hosted under `public/` or `src/assets/`.
   Outbound `<a href>` links to articles are fine.
 - Every link to another site must carry `rel="noopener noreferrer"`. Components add it by
   hand; Markdown links in investigations get it from `src/lib/external-links-plugin.mjs`, so
@@ -165,7 +165,8 @@ goes live.
 - `src/data/projects.yaml`: side projects.
 - `src/data/appearances.yaml`: talks, panels, podcast guest spots, TV, radio (About page).
 - `src/config/site.ts`: name, homepage pitch, bios, full-archive links (`ARCHIVES`),
-  profiles, CV/PGP file paths and contact channels. A value left as `null` (or an empty
+  profiles, headshot and contact channel (Signal username only; Nate dropped the CV, PGP key,
+  SecureDrop and the public email address in Oct 2026). A value left as `null` (or an empty
   list) shows on the site as a clearly marked yellow "Placeholder" box, so nothing fake is
   ever presented as real.
 - Schemas: `src/content.config.ts`. Helpers for pages (sorting, archive links):
@@ -233,7 +234,7 @@ Add a show to `src/data/podcasts.yaml`:
     website: https://...
   episodes:
     - title: "Episode title"
-      date: 2026-08-14
+      date: 2026-08-14                 # optional; undated episodes are left out of the RSS feed
       summary: "One sentence."         # optional
       audio: https://.../episode.mp3   # optional: the episode's audio file, from the show's RSS feed
       url: https://...                 # optional: the episode's web page
@@ -244,7 +245,8 @@ Add a show to `src/data/podcasts.yaml`:
   host it redirects through (stats services, CDNs), must be in `AUDIO_HOSTS` in
   `src/config/csp.mjs`, or the browser refuses to play it. The build names a missing first
   host; the monthly site check follows redirects and names any missing later hop. After
-  adding a show, press play on the Cloudflare preview to confirm.
+  adding a show, press play on the Cloudflare preview to confirm. Without `audio`, the
+  episode title links to its page instead.
 
 ### How to add a project
 

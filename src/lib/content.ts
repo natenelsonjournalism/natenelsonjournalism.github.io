@@ -22,10 +22,11 @@ export async function getFeatures(): Promise<Feature[]> {
   return (await getCollection('features')).sort(newestFirst);
 }
 
-/** Shows in the order they appear in podcasts.yaml; episodes newest first. */
+/** Shows in the order they appear in podcasts.yaml; episodes newest first (undated ones last, in file order). */
 export async function getPodcasts(): Promise<Podcast[]> {
   const shows = (await getCollection('podcasts')).sort(fileOrder);
-  for (const show of shows) show.data.episodes.sort((a, b) => b.date.getTime() - a.date.getTime());
+  const time = (d: Date | undefined) => d?.getTime() ?? 0; // undated sorts last (stable: file order kept)
+  for (const show of shows) show.data.episodes.sort((a, b) => time(b.date) - time(a.date));
   return shows;
 }
 

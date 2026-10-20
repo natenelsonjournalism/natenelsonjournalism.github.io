@@ -6,6 +6,7 @@ import { SITE } from '../config/site';
 import { getPodcasts } from '../lib/content';
 
 const shows = await getPodcasts();
+const hasAudio = shows.some((show) => show.data.episodes.some((ep) => ep.audio));
 const LISTEN = [
   { key: 'spotify', label: 'Spotify' },
   { key: 'apple', label: 'Apple Podcasts' },
@@ -13,14 +14,22 @@ const LISTEN = [
 ] as const;
 ---
 
-<BaseLayout title="Podcasts" description={`Podcasts written and hosted by ${SITE.name}.`}>
+<BaseLayout title="Podcasts" description={`Podcasts written by ${SITE.name}.`}>
   <div class="page-intro">
     <h1>Podcasts</h1>
-    <p class="lede">Shows I’ve written and hosted. Press play to listen here, or open them in your podcast app.</p>
-    <p class="meta">
-      Nothing loads until you press play. Then the audio streams from the show’s hosting company, just as it would in
-      a podcast app.
-    </p>
+    {
+      hasAudio ? (
+        <>
+          <p class="lede">Shows I’ve written. Press play to listen here, or open them in your podcast app.</p>
+          <p class="meta">
+            Nothing loads until you press play. Then the audio streams from the show’s hosting company, just as it
+            would in a podcast app.
+          </p>
+        </>
+      ) : (
+        <p class="lede">Shows I’ve written and researched, with a few episodes I’m proud of.</p>
+      )
+    }
   </div>
 
   {shows.length === 0 && <Placeholder>Your podcasts go here (src/data/podcasts.yaml).</Placeholder>}

@@ -1,29 +1,17 @@
 # Feature articles (3–5 is plenty). Order doesn't matter: the site sorts by date.
 # See "How to add a feature" in CLAUDE.md.
-#
-# PLACEHOLDERS: every entry below is fake (Example Outlet, example.com). Replace them
-# with real stories in Phase 6.
 
-- id: example-2026-router-zero-day
-  title: "Placeholder: Unpatched router flaw exploited by state-backed hackers"
-  outlet: Example Daily
-  date: 2026-07-02
-  url: https://example.com/articles/router-zero-day
-  summary: "Placeholder summary. A zero-day in widely used home routers, and the espionage campaign built on it."
+- id: dark-reading-2026-ai-slop-cyberattacks
+  title: "AI Slop Isn't Just for Social Media; It's Ruining Cyberattacks, Too"
+  outlet: Dark Reading
+  date: 2026-10-15
+  url: https://www.darkreading.com/threat-intelligence/ai-slop-ruining-cyberattacks
+  summary: "A data-informed reality check on the hype around AI cyberattacks."
   featured: true
 
-- id: example-2026-data-broker-rules
-  title: "Placeholder: New data broker rules face first legal challenge"
-  outlet: Example Outlet
-  date: 2026-04-11
-  url: https://example.com/articles/data-broker-rules
-  summary: "Placeholder summary. What the new rules require, who is suing, and what it means for people's location data."
-
-- id: example-2025-defunct-site-story
-  title: "Placeholder: Story whose original page no longer exists"
-  outlet: Example Gazette
-  date: 2025-03-05
-  url: https://example.com/articles/gone
-  archive_url: https://example.com/archive/articles/gone
-  link_status: dead
-  summary: "Placeholder summary. Shows a dead link: the site links to the archived copy and labels it."
+- id: dark-reading-2026-yellow-teams-ai-security
+  title: "'Yellow Teams' Are Defining the Future of AI Security"
+  outlet: Dark Reading
+  date: 2026-07-13
+  url: https://www.darkreading.com/cybersecurity-operations/yellow-teams-defining-future-ai-security
+  summary: "A deep dive into the engineers and teams building the AI cyberdefenses of the future."
