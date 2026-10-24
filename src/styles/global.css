@@ -80,7 +80,7 @@ h4 {
 }
 
 h1 {
-  font-size: clamp(2.1rem, 1.6rem + 2.5vw, 3rem);
+  font-size: clamp(1.6rem, 1.35rem + 1.2vw, 2rem);
   font-weight: 700;
   letter-spacing: -0.01em;
   margin-top: 0;
@@ -293,8 +293,6 @@ main {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--muted);
-  border-top: 1px solid var(--rule);
-  padding-top: 1rem;
   margin: 3rem 0 1.25rem;
   max-width: var(--measure);
 }
@@ -335,16 +333,11 @@ main {
 
 .clip {
   padding-block: 1.1rem;
-  border-bottom: 1px solid var(--rule);
   max-width: var(--measure);
 }
 
 .clip:first-child {
   padding-top: 0;
-}
-
-.clip:last-child {
-  border-bottom: 0;
 }
 
 .clip-title {
@@ -396,7 +389,6 @@ main {
 
 .investigation-card {
   padding-block: 1.25rem;
-  border-bottom: 1px solid var(--rule);
   max-width: var(--measure);
 }
 
@@ -431,7 +423,6 @@ main {
 }
 
 .show + .show {
-  border-top: 1px solid var(--rule);
   padding-top: 2rem;
 }
 
@@ -472,7 +463,6 @@ main {
 
 .episode {
   padding: 1rem 0 1.1rem;
-  border-top: 1px solid var(--rule);
 }
 
 .episode:first-of-type {
@@ -496,11 +486,6 @@ main {
   gap: 0.75rem 1.25rem;
   max-width: var(--measure);
   padding-block: 1.1rem;
-  border-bottom: 1px solid var(--rule);
-}
-
-.project:last-child {
-  border-bottom: 0;
 }
 
 @media (min-width: 36rem) {
