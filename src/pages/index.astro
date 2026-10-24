@@ -1,7 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Prompt from '../components/Prompt.astro';
 import StoryItem from '../components/StoryItem.astro';
-import { SITE } from '../config/site';
+import { ABOUT, SITE } from '../config/site';
 import { getFeatures, getInvestigations, getPodcasts, getProjects, highlights, investigationPath } from '../lib/content';
 
 // Investigations link to their write-up on this site; features to the original article.
@@ -17,21 +18,46 @@ const projects = highlights(await getProjects(), 3);
 
 <BaseLayout person>
   <header class="home-intro">
-    <h1>{SITE.name}</h1>
-    <p class="home-tagline">{SITE.tagline}</p>
+    <div class="term">
+      <div class="term-bar" aria-hidden="true">
+        <span class="term-dot"></span><span class="term-dot"></span><span class="term-dot"></span>
+        <span class="term-title">nate@nelson: ~</span>
+      </div>
+      <div class="term-body">
+        <Prompt command="whoami" />
+        <h1>{SITE.name}</h1>
+        <p class="home-tagline">{SITE.tagline}</p>
+        {
+          ABOUT && (
+            <details class="term-more">
+              <summary>
+                <span aria-hidden="true"><span class="ps1">$</span> cat about.txt</span><span class="visually-hidden">About me</span>
+              </summary>
+              <p>{ABOUT[0]}</p>
+              <p>
+                <a href="/about/">Read more about me</a>
+              </p>
+            </details>
+          )
+        }
+        <Prompt cursor />
+      </div>
+    </div>
   </header>
 
   {
     stories.length > 0 && (
       <section aria-labelledby="journalism-heading">
         <h2 class="section-heading" id="journalism-heading">
-          Journalism
+          <span class="ps1" aria-hidden="true">$ ls ~/</span>journalism
         </h2>
         {stories.map(({ story, href }) => (
           <StoryItem story={story} href={href} />
         ))}
         <p class="more-link">
-          <a href="/journalism/">All journalism →</a>
+          <a href="/journalism/">
+            <span aria-hidden="true">$ cd ~/</span><span class="visually-hidden">All </span>journalism
+          </a>
         </p>
       </section>
     )
@@ -41,7 +67,7 @@ const projects = highlights(await getProjects(), 3);
     shows.length > 0 && (
       <section aria-labelledby="podcasts-heading">
         <h2 class="section-heading" id="podcasts-heading">
-          Podcasts
+          <span class="ps1" aria-hidden="true">$ ls ~/</span>podcasts
         </h2>
         {shows.map((show) => (
           <article class="clip clip-compact">
@@ -52,7 +78,9 @@ const projects = highlights(await getProjects(), 3);
           </article>
         ))}
         <p class="more-link">
-          <a href="/podcasts/">Listen →</a>
+          <a href="/podcasts/">
+            <span aria-hidden="true">$ cd ~/</span><span class="visually-hidden">All </span>podcasts
+          </a>
         </p>
       </section>
     )
@@ -62,7 +90,7 @@ const projects = highlights(await getProjects(), 3);
     projects.length > 0 && (
       <section aria-labelledby="projects-heading">
         <h2 class="section-heading" id="projects-heading">
-          Projects
+          <span class="ps1" aria-hidden="true">$ ls ~/</span>projects
         </h2>
         {projects.map((p) => (
           <article class="clip clip-compact">
@@ -79,7 +107,9 @@ const projects = highlights(await getProjects(), 3);
           </article>
         ))}
         <p class="more-link">
-          <a href="/projects/">All projects →</a>
+          <a href="/projects/">
+            <span aria-hidden="true">$ cd ~/</span><span class="visually-hidden">All </span>projects
+          </a>
         </p>
       </section>
     )

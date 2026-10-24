@@ -1,0 +1,13 @@
+---
+// A decorative shell prompt line, e.g. "$ ls ~/podcasts". Hidden from screen readers:
+// the real heading or text that follows it says the same thing in plain words.
+interface Props {
+  command?: string;
+  /** End the line with a blinking cursor (blinks a few times, then stays solid). */
+  cursor?: boolean;
+}
+
+const { command = '', cursor = false } = Astro.props;
+---
+
+<p class="prompt" aria-hidden="true"><span class="ps1">$</span> {command}{cursor && <span class="cursor" />}</p>

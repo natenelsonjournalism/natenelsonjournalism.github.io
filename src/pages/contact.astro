@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Placeholder from '../components/Placeholder.astro';
+import Prompt from '../components/Prompt.astro';
 import { CONTACT, PROFILES, SITE } from '../config/site';
 
 const linkedin = PROFILES.find((p) => p.label === 'LinkedIn');
@@ -8,6 +9,7 @@ const { signal } = CONTACT;
 ---
 
 <BaseLayout title="Contact" description={`How to reach ${SITE.name}.`}>
+  <Prompt command="cat contact.txt" />
   <h1 class="visually-hidden">Contact</h1>
   <div class="contact-lines">
     {

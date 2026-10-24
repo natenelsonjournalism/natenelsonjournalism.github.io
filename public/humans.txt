@@ -1,0 +1,13 @@
+/* TEAM */
+Journalist and scriptwriter: Nate Nelson
+Contact: https://natenelsonjournalism.github.io/contact/
+
+/* SITE */
+Built with: Astro, hand-written HTML and CSS
+Fonts: Source Serif 4, JetBrains Mono (self-hosted, SIL Open Font License)
+JavaScript: none
+Cookies: none
+Trackers: none
+
+$ echo "thanks for reading the fine print"
+thanks for reading the fine print

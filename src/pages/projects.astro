@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Placeholder from '../components/Placeholder.astro';
+import Prompt from '../components/Prompt.astro';
 import { SITE } from '../config/site';
 import { getProjects } from '../lib/content';
 
@@ -8,6 +9,7 @@ const projects = await getProjects();
 ---
 
 <BaseLayout title="Projects" description={`Side projects by ${SITE.name}.`}>
+  <Prompt command="ls ~/projects" />
   <h1 class="page-lead">Things I make on the side.</h1>
 
   {projects.length === 0 && <Placeholder>Your projects go here (src/data/projects.yaml).</Placeholder>}

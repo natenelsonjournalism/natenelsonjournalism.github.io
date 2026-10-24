@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Placeholder from '../../components/Placeholder.astro';
+import Prompt from '../../components/Prompt.astro';
 import StoryItem from '../../components/StoryItem.astro';
 import { ARCHIVES, SITE } from '../../config/site';
 import { formatDate, getFeatures, getInvestigations, investigationPath, isoDate } from '../../lib/content';
@@ -10,6 +11,7 @@ const features = await getFeatures();
 ---
 
 <BaseLayout title="Journalism" description={`Investigations and feature stories by ${SITE.name}.`}>
+  <Prompt command="ls ~/journalism --recent" />
   <h1>Notable Recent Stories</h1>
 
   {

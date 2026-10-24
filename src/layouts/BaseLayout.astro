@@ -25,19 +25,36 @@ const shareImage = new URL('/og-default.png', Astro.site).href;
 const pageTitle = title ? `${title} · ${SITE.name}` : `${SITE.name} · ${SITE.role}`;
 
 const nav = [
-  { href: '/journalism/', label: 'Journalism' },
-  { href: '/podcasts/', label: 'Podcasts' },
-  { href: '/projects/', label: 'Projects' },
-  { href: '/about/', label: 'About' },
-  { href: '/contact/', label: 'Contact' },
+  { href: '/journalism/', label: 'journalism' },
+  { href: '/podcasts/', label: 'podcasts' },
+  { href: '/projects/', label: 'projects' },
+  { href: '/about/', label: 'about' },
+  { href: '/contact/', label: 'contact' },
 ];
 
 const path = Astro.url.pathname;
 // "page" on the section's own page; "true" on pages inside it (e.g. an investigation).
 const current = (href: string) => (path === href ? 'page' : path.startsWith(href) ? 'true' : undefined);
+// The header reads like a shell prompt: "nate@nelson:~/podcasts$" (top-level folder only).
+const section = path.split('/').filter(Boolean)[0];
+const cwd = section ? `~/${section}` : '~';
+
+// Shown to anyone who opens "View source". Not a script: browsers ignore HTML comments.
+const sourceNote = `<!--
+  _  _      _         _  _     _
+ | \\| |__ _| |_ ___  | \\| |___| |___ ___ _ _
+ | .\` / _\` |  _/ -_) | .\` / -_) (_-</ _ \\ ' \\
+ |_|\\_\\__,_|\\__\\___| |_|\\_\\___|_/__/\\___/_||_|
+
+  Hello, fellow source reader.
+  No JavaScript, no cookies, no trackers, no third-party requests.
+  Found a security problem? /.well-known/security.txt
+  Have a tip? Signal is on /contact/.
+-->`;
 ---
 
 <!doctype html>
+<Fragment set:html={sourceNote} />
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -72,14 +89,18 @@ const current = (href: string) => (path === href ? 'page' : path.startsWith(href
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header">
-      <a class="site-name" href="/" aria-current={path === '/' ? 'page' : undefined}>{SITE.name}</a>
+      <p class="site-prompt">
+        <a class="site-name" href="/" aria-current={path === '/' ? 'page' : undefined}>
+          <span aria-hidden="true">nate@nelson</span><span class="visually-hidden">{SITE.name}, home</span>
+        </a><span class="site-cwd" aria-hidden="true">:{cwd}$</span>
+      </p>
       <nav class="site-nav" aria-label="Main">
         <ul>
           {
             nav.map((item) => (
               <li>
                 <a href={item.href} aria-current={current(item.href)}>
-                  {item.label}
+                  <span class="nav-dir" aria-hidden="true">~/</span>{item.label}
                 </a>
               </li>
             ))

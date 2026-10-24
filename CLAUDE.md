@@ -258,18 +258,30 @@ Add an entry to `src/data/appearances.yaml`: `id` (unique), `title`, `event_or_s
 
 ## Design
 
-Clean, editorial, typography-led. Credible rather than "hacker aesthetic": no
-green-on-black terminals or matrix effects. Homepage stays short. Light/dark via
+Editorial reading with a command-line accent (Nate, Oct 2026): serif body text, monospace
+navigation, labels and dates, and decorative shell prompts (`$ ls ~/podcasts`) above page
+titles. The homepage puts Nate's name in a terminal window (dark in both themes) with a
+`$ cat about.txt` that opens in place using `<details>`, no script. Credible, not a
+costume: no matrix effects or green-on-black pages. Homepage stays short. Light/dark via
 `prefers-color-scheme`, both WCAG AA. Responsive to 320px. Visible focus styles.
-No motion.
+The only motion is the blinking cursor, which stops after five blinks (WCAG 2.2.2) and
+never runs for visitors who ask for reduced motion.
+
+- Prompt text is decoration: mark it `aria-hidden="true"` (the `Prompt` component does)
+  and keep a real heading or link text for screen readers. Where a link's visible text is
+  a command (`$ cd ~/journalism`), hide the command part and keep the plain word visible
+  (or add a visually hidden label) so the link still has a sensible name.
+- Easter eggs: an ASCII-art note in an HTML comment at the top of every page (in
+  `BaseLayout.astro`), `public/humans.txt`, a line in `security.txt`, and a
+  "command not found" 404 page.
 
 - Styles: `src/styles/global.css` (colour tokens at the top; both themes checked for
   WCAG AA contrast, so re-check if you change a colour). Fonts: Source Serif 4 (reading)
-  and Inter (labels, navigation), self-hosted OFL files in `public/fonts/` with their
+  and JetBrains Mono (labels, navigation, dates, prompts), self-hosted OFL files in `public/fonts/` with their
   licenses; `@font-face` rules in `src/styles/fonts.css`.
 - Pages: `src/pages/` (Home, `journalism/` with one page per investigation, `podcasts`,
   `projects`, `about`, `contact`, `404`). Shared pieces: `src/components/` (`StoryItem`,
-  `Episode`, `Placeholder`, `PersonJsonLd`).
+  `Episode`, `Placeholder`, `PersonJsonLd`, `Prompt`).
 
 ## Never commit
 

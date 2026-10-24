@@ -59,11 +59,9 @@ export function highlights<T extends { data: { featured: boolean } }>(items: T[]
   return (featured.length ? featured : items).slice(0, count);
 }
 
-const dateFormat = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
-
-/** Formats a content date (stored as UTC midnight) as e.g. "September 18, 2026". */
+/** Formats a content date for display, log-style: e.g. "2026-09-18". */
 export function formatDate(date: Date): string {
-  return dateFormat.format(date);
+  return isoDate(date);
 }
 
 /** Machine-readable date for <time datetime="">. */
