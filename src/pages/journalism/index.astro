@@ -10,10 +10,7 @@ const features = await getFeatures();
 ---
 
 <BaseLayout title="Journalism" description={`Investigations and feature stories by ${SITE.name}.`}>
-  <div class="page-intro">
-    <h1>Journalism</h1>
-    <p class="lede">A few stories I’m proudest of. The full archive is linked at the bottom.</p>
-  </div>
+  <h1>Notable Recent Stories</h1>
 
   {
     investigations.length > 0 && (
@@ -30,12 +27,6 @@ const features = await getFeatures();
               {inv.data.outlet} · <time datetime={isoDate(inv.data.date)}>{formatDate(inv.data.date)}</time>
             </p>
             <p>{inv.data.summary}</p>
-            <p class="label">Impact</p>
-            <ul class="impact-inline">
-              {inv.data.impact.map((item) => (
-                <li>{item}</li>
-              ))}
-            </ul>
           </article>
         ))}
       </section>
@@ -63,7 +54,7 @@ const features = await getFeatures();
           {ARCHIVES.map((a) => (
             <li>
               <a href={a.url} rel="noopener noreferrer">
-                All my reporting at {a.outlet} →
+                My {a.outlet} author’s page →
               </a>
             </li>
           ))}

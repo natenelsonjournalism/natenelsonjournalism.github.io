@@ -190,10 +190,7 @@ title: "Tracing a ransomware attack on a hospital network"
 outlet: Wired
 date: 2026-09-30
 url: https://example.com/the-article          # the published story
-summary: "One or two sentences for the Journalism page."
-impact:
-  - "Hospital disclosed the full scope of the breach"
-  - "State regulator opened an inquiry"
+summary: "One or two sentences for the Journalism page: what the story found and what changed."
 featured: true                                 # optional: show on the homepage
 # archive_url: https://web.archive.org/web/... # optional
 # link_status: dead                            # optional: when the original link breaks

@@ -414,39 +414,6 @@ main {
   text-decoration-color: var(--accent);
 }
 
-.impact {
-  max-width: var(--measure);
-  margin: 1.5rem 0 2rem;
-  padding: 1.1rem 1.4rem;
-  border-left: 4px solid var(--accent);
-  background: var(--surface);
-}
-
-.impact h2 {
-  font-family: var(--font-sans);
-  font-size: 0.85rem;
-  font-weight: 650;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--muted);
-  margin: 0 0 0.5rem;
-}
-
-.impact ul {
-  margin: 0;
-  padding-left: 1.2rem;
-}
-
-.impact li + li {
-  margin-top: 0.35rem;
-}
-
-.impact-inline {
-  margin: 0.25rem 0 0;
-  padding-left: 1.2rem;
-  font-size: 1rem;
-}
-
 .archive-links li + li {
   margin-top: 0.4rem;
 }

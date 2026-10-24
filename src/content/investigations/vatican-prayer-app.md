@@ -4,10 +4,7 @@ outlet: Dark Reading
 date: 2026-07-23
 url: https://www.darkreading.com/vulnerabilities-threats/vatican-official-prayer-app-leaks-700k-pii
 archive_url: https://web.archive.org/web/20261020183346/https://www.darkreading.com/vulnerabilities-threats/vatican-official-prayer-app-leaks-700k-pii
-summary: "The Pope's official prayer app, Click to Pray, was exposing the names and email addresses of more than 700,000 users to anyone who asked. It was fixed after my story ran."
-impact:
-  - "The app's API was fixed after publication, protecting the personal information of more than 700,000 users"
-  - "The flaw had gone unfixed for six months after a security researcher first reported it"
+summary: "The Pope's official prayer app was leaking PII belonging to more than 700,000 users. The issue was fixed after my story ran."
 featured: true
 ---
 
