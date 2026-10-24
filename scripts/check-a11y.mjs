@@ -23,6 +23,7 @@ const axeSource = await readFile(createRequire(import.meta.url).resolve('axe-cor
 const TYPES = {
   '.html': 'text/html; charset=utf-8',
   '.css': 'text/css',
+  '.js': 'text/javascript',
   '.svg': 'image/svg+xml',
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
@@ -79,6 +80,11 @@ try {
     for (const path of pages) {
       await page.goto(base + path, { waitUntil: 'load' });
       await page.evaluate(() => document.fonts.ready);
+      // The homepage hides each command's output until it runs: check every one.
+      if (path === '/' && colorScheme === 'light' && !pages.some((p) => p.startsWith('/#'))) {
+        const ids = await page.evaluate(() => [...document.querySelectorAll('.cli-out[id]')].map((e) => e.id));
+        pages.push(...ids.map((id) => `/#${id}`));
+      }
       await page.evaluate(axeSource);
       const results = await page.evaluate(() =>
         // @ts-expect-error: axe is injected above

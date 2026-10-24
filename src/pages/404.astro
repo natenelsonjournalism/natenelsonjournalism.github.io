@@ -3,14 +3,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Prompt from '../components/Prompt.astro';
 
 const places = [
-  { href: '/', dir: '~', label: 'Home' },
-  { href: '/journalism/', dir: '~/journalism', label: 'Journalism' },
-  { href: '/podcasts/', dir: '~/podcasts', label: 'Podcasts' },
-  { href: '/contact/', dir: '~/contact', label: 'Contact' },
+  { href: '/', command: 'cd ~', label: 'Home' },
+  { href: '/#stories', command: 'stories', label: 'My journalism' },
+  { href: '/#podcasts', command: 'podcasts', label: 'My podcasts' },
+  { href: '/#contact', command: 'contact', label: 'Contact me' },
 ];
 ---
 
-<BaseLayout title="Page not found" noindex>
+<BaseLayout title="Page not found" noindex cwd="~/???">
   <div class="page-intro">
     <p class="prompt" aria-hidden="true">bash: cd: no such file or directory</p>
     <h1 class="page-lead">Page not found. It may have moved, or the link may have a typo.</h1>
@@ -20,7 +20,7 @@ const places = [
         places.map((p) => (
           <li>
             <a href={p.href}>
-              <span aria-hidden="true">$ cd {p.dir}</span>
+              <span aria-hidden="true">$ {p.command}</span>
               <span class="cmd-comment">
                 <span aria-hidden="true"># </span>
                 {p.label}

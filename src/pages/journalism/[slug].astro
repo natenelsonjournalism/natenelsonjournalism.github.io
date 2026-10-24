@@ -15,11 +15,11 @@ const { Content } = await render(inv);
 const original = storyLink(inv);
 ---
 
-<BaseLayout title={inv.data.title} description={inv.data.summary} ogType="article">
+<BaseLayout title={inv.data.title} description={inv.data.summary} ogType="article" cwd="~/stories">
   <article>
     <div class="page-intro">
-      <Prompt command={`cat ~/journalism/${inv.id}.md`} />
-      <p class="eyebrow"><a href="/journalism/">Journalism</a> · Investigation</p>
+      <p class="back-link"><a href="/#stories">← Back to all stories</a></p>
+      <Prompt command={`cat ${inv.id}.md`} />
       <h1>{inv.data.title}</h1>
       <p class="meta">
         {inv.data.outlet} · <time datetime={isoDate(inv.data.date)}>{formatDate(inv.data.date)}</time>

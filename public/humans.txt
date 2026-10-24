@@ -1,11 +1,11 @@
 /* TEAM */
 Journalist and scriptwriter: Nate Nelson
-Contact: https://natenelsonjournalism.github.io/contact/
+Contact: https://natenelsonjournalism.github.io/#contact
 
 /* SITE */
 Built with: Astro, hand-written HTML and CSS
 Fonts: Source Serif 4, JetBrains Mono (self-hosted, SIL Open Font License)
-JavaScript: none
+JavaScript: one small file for the command box (/cli.js), nothing else
 Cookies: none
 Trackers: none
 

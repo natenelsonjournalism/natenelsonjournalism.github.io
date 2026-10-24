@@ -9,7 +9,7 @@ interface Props {
   /** Title, outlet and date only. */
   compact?: boolean;
   /** Heading level for the title, to keep the page outline correct. */
-  headingLevel?: 2 | 3;
+  headingLevel?: 2 | 3 | 4;
 }
 
 const { story, compact = false, headingLevel = 3 } = Astro.props;
@@ -17,7 +17,7 @@ const { title, outlet, date, summary } = story.data;
 const original = storyLink(story);
 const href = Astro.props.href ?? original.href;
 const external = Astro.props.href === undefined;
-const Heading = `h${headingLevel}` as 'h2' | 'h3';
+const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
 ---
 
 <article class:list={['clip', { 'clip-compact': compact }]}>

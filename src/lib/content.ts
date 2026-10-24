@@ -53,12 +53,6 @@ export function storyLink(story: Story): { href: string | undefined; archived: b
   return { href: undefined, archived: false };
 }
 
-/** Homepage picks: the items marked `featured`, or the first few if none are. */
-export function highlights<T extends { data: { featured: boolean } }>(items: T[], count: number): T[] {
-  const featured = items.filter((i) => i.data.featured);
-  return (featured.length ? featured : items).slice(0, count);
-}
-
 /** Formats a content date for display, log-style: e.g. "2026-09-18". */
 export function formatDate(date: Date): string {
   return isoDate(date);
