@@ -2,7 +2,7 @@
 import '../styles/global.css';
 import { CSP } from '../config/csp.mjs';
 import PersonJsonLd from '../components/PersonJsonLd.astro';
-import { PROFILES, SITE } from '../config/site';
+import { SITE } from '../config/site';
 
 interface Props {
   title?: string;
@@ -91,16 +91,7 @@ const current = (href: string) => (path === href ? 'page' : path.startsWith(href
       <slot />
     </main>
     <footer class="site-footer">
-      <p>
-        &copy; {new Date().getFullYear()} {SITE.name}{' · '}<a href="/contact/">Contact</a>{
-          PROFILES.map((p) => (
-            <>
-              {' · '}<a href={p.url} rel="noopener noreferrer">{p.label}</a>
-            </>
-          ))
-        }{' · '}<a href="/rss.xml">RSS feed</a>
-      </p>
-      <p>This site uses no cookies, trackers or scripts.</p>
+      <p>&copy; {new Date().getFullYear()} {SITE.name} · This site uses no cookies, trackers or scripts.</p>
     </footer>
   </body>
 </html>
