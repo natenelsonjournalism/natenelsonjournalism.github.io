@@ -3,6 +3,6 @@
 
 - id: football-the-board-game
   name: "Football: The Board Game"
-  summary: "A board game (and mobile game) that simulates and abstracts the sport of football and its strategy."
+  summary: "A game that simulates, and abstracts, the sport of football and its strategy."
   url: https://soccer.nathanieltnelson1.workers.dev/
   featured: true
