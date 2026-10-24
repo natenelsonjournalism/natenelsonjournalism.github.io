@@ -569,17 +569,6 @@ h1 + .project {
   text-align: center;
 }
 
-.bio-box {
-  max-width: var(--measure);
-  padding: 1rem 1.25rem;
-  background: var(--surface);
-  border-radius: 4px;
-}
-
-.bio-box p:last-child {
-  margin-bottom: 0;
-}
-
 /* ---------- Contact ---------- */
 
 .contact-lines {
