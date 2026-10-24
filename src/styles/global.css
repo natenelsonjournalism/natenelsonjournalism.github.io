@@ -422,6 +422,10 @@ main {
   padding-block: 0.5rem 1.5rem;
 }
 
+h1 + .show {
+  margin-top: 2rem;
+}
+
 .show + .show {
   padding-top: 2rem;
 }

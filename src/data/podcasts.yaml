@@ -8,7 +8,7 @@
 - id: darknet-diaries
   name: "Darknet Diaries"
   role: Scriptwriter and researcher
-  description: "True stories from the dark side of the internet: hackers, breaches, cybercrime and the people behind them, hosted by Jack Rhysider."
+  description: "True stories from the dark side of the internet: hackers, breaches, cybercrime and the people behind them."
   cover: /images/podcasts/darknet-diaries.jpg
   links:
     apple: https://podcasts.apple.com/us/podcast/darknet-diaries/id1296350485
@@ -16,13 +16,13 @@
   episodes:
     - title: "177: National Public Data"
       date: 2026-07-21
-      summary: "The hacker known as USDoD, and the massive breach of background-check company National Public Data."
+      summary: "How one man in Florida stole all of your personal data, then lost it."
       audio: https://www.podtrac.com/pts/redirect.mp3/dovetail.prxu.org/7057/791c66f0-0bfc-420d-96a3-816c78a17f4c/darknet-diaries-ep177-national-public-data.mp3
       url: https://darknetdiaries.com/episode/177/
       transcript: https://darknetdiaries.com/transcript/177/
     - title: "169: MoD"
       date: 2026-01-20
-      summary: "Masters of Deception, the New York hacker crew that feuded with the Legion of Doom in the early 1990s."
+      summary: "When half the country loses phone service, police hunt down a gang of teenagers they think did it."
       audio: https://www.podtrac.com/pts/redirect.mp3/dovetail.prxu.org/7057/9d4c34be-a7df-41c7-a0da-5269b660e688/darknet-diaries-ep169-mod.mp3
       url: https://darknetdiaries.com/episode/169/
       transcript: https://darknetdiaries.com/transcript/169/
@@ -30,7 +30,7 @@
 - id: malicious-life
   name: "Malicious Life"
   role: Co-creator and scriptwriter
-  description: "Untold stories from the history of cybersecurity, hosted by Ran Levi."
+  description: "Untold stories from the history of cybersecurity."
   cover: /images/podcasts/malicious-life.jpg
   links:
     apple: https://podcasts.apple.com/us/podcast/malicious-life/id1252417787
@@ -42,5 +42,5 @@
       url: https://podcasts.apple.com/us/podcast/operation-snow-white-part-1/id1252417787?i=1000671435171
     - title: "The Y2K Bug, Part 1"
       audio: https://pscrb.fm/rss/p/clrtpod.com/m/audio3.redcircle.com/episodes/fbe18f2d-76f0-491d-bebb-5ddd5a929f33/stream.mp3
-      summary: "Computer scientist Bob Bemer, and his decades-long warnings about the Y2K bug."
+      summary: "Why smart people thought the world might just end on January 1, 2000."
       url: https://podcasts.apple.com/us/podcast/the-y2k-bug-part-1/id1252417787?i=1000650971906
