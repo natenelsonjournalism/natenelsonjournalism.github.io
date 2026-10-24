@@ -1,64 +1,40 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Placeholder from '../components/Placeholder.astro';
-import { CONTACT, SITE } from '../config/site';
+import { CONTACT, PROFILES, SITE } from '../config/site';
 
+const linkedin = PROFILES.find((p) => p.label === 'LinkedIn');
 const { signal } = CONTACT;
 ---
 
-<BaseLayout title="Contact" description={`How to reach ${SITE.name}, including secure contact for sources.`}>
-  <div class="page-intro">
-    <h1>Contact</h1>
-    <p class="lede">
-      The best way to reach me is Signal, for assignments, interviews and speaking invitations as well as tips. If
-      you’re a source, read the section below first.
-    </p>
+<BaseLayout title="Contact" description={`How to reach ${SITE.name}.`}>
+  <h1 class="visually-hidden">Contact</h1>
+  <div class="contact-lines">
+    {
+      linkedin ? (
+        <p>
+          For conference or speaking invitations, find me on{' '}
+          <a href={linkedin.url} rel="noopener noreferrer">
+            LinkedIn
+          </a>
+          .
+        </p>
+      ) : (
+        <Placeholder>LinkedIn link (set PROFILES in src/config/site.ts).</Placeholder>
+      )
+    }
+    {
+      signal ? (
+        <p>
+          For tips (vulnerabilities, threat intelligence, etc.), reach out on{' '}
+          <a href={signal} rel="noopener noreferrer">
+            Signal
+          </a>
+          .
+        </p>
+      ) : (
+        <Placeholder>Signal username link (a username link, never a phone number).</Placeholder>
+      )
+    }
   </div>
-
-  <section class="stack" aria-labelledby="signal-heading">
-    <h2 class="section-heading" id="signal-heading">Signal</h2>
-    <div class="channel">
-      {
-        signal ? (
-          <p>
-            Username: <span class="mono">{signal}</span>. In Signal, start a new chat and search for the username.
-          </p>
-        ) : (
-          <Placeholder>Signal username (a username, never a phone number).</Placeholder>
-        )
-      }
-    </div>
-  </section>
-
-  <section class="stack" aria-labelledby="sources-heading">
-    <h2 class="section-heading" id="sources-heading">Sources: contacting me securely</h2>
-    <p>
-      If you have information you think the public should know, I want to hear from you. Turn on disappearing
-      messages in our Signal chat before you say anything sensitive.
-    </p>
-
-    <h3>If this is your first time contacting a journalist</h3>
-    <ul class="advice">
-      <li>
-        <strong>Use your own device on your own network.</strong> Not a work laptop or phone, and not office or
-        employer Wi-Fi. Employers can often see what happens on their devices and networks.
-      </li>
-      <li>
-        <strong>Don’t contact me from work accounts.</strong> That includes work email, chat and phone lines, even for a
-        first “hello.”
-      </li>
-      <li>
-        <strong>Start with a short message.</strong> Say roughly what it’s about and how you’d like to talk. Don’t send
-        documents until we’ve agreed on a safe way to do it.
-      </li>
-      <li>
-        <strong>What I can promise:</strong> I won’t name you or describe you in a way that identifies you without your
-        agreement, and I’ll be clear with you about how I plan to use what you tell me.
-      </li>
-      <li>
-        <strong>What I can’t promise:</strong> no channel is perfectly secure, and I can’t control what your devices,
-        employer or service providers record. If your safety is at risk, tell me early so we can plan around it.
-      </li>
-    </ul>
-  </section>
 </BaseLayout>

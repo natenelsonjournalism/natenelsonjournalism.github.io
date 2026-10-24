@@ -165,7 +165,7 @@ goes live.
 - `src/data/projects.yaml`: side projects.
 - `src/data/appearances.yaml`: talks, panels, podcast guest spots, TV, radio (About page).
 - `src/config/site.ts`: name, homepage tagline, bios, full-archive links (`ARCHIVES`),
-  profiles, headshot and contact channel (Signal username only; Nate dropped the CV, PGP key,
+  profiles, headshot and contact channels (a Signal username link, and LinkedIn from `PROFILES`; Nate dropped the CV, PGP key,
   SecureDrop and the public email address in Oct 2026). A value left as `null` (or an empty
   list) shows on the site as a clearly marked yellow "Placeholder" box, so nothing fake is
   ever presented as real.

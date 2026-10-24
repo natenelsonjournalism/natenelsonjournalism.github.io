@@ -64,9 +64,12 @@ export const HEADSHOT: { src: string; alt: string } | null = {
   alt: 'Nate Nelson, smiling, in a suit and tie in front of a stone and brick wall.',
 };
 
-/** Contact channels (Contact page). `null` = not set up yet. No email, by Nate's choice. */
+/**
+ * Contact page. `null` = not set up yet. No email, by Nate's choice. LinkedIn comes from PROFILES.
+ * `signal` is a Signal *username* link (signal.me/#eu/...), never a phone-number link (#p/).
+ */
 export const CONTACT: {
   signal: string | null;
 } = {
-  signal: 'natenelsonjournalism.01', // a Signal *username*, never a phone number
+  signal: 'https://signal.me/#eu/F0OEcy7_duOY82vjqkvXsN16RFDcoIRwiqZQeoPV4F0FFXLzCY1LOoXfdfZdbNLx',
 };
