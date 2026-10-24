@@ -80,7 +80,7 @@ h4 {
 }
 
 h1 {
-  font-size: clamp(2.1rem, 1.6rem + 2.5vw, 3rem);
+  font-size: clamp(1.6rem, 1.35rem + 1.2vw, 2rem);
   font-weight: 700;
   letter-spacing: -0.01em;
   margin-top: 0;
@@ -88,6 +88,13 @@ h1 {
 
 h2 {
   font-size: 1.6rem;
+}
+
+/* A page title written as a lead-in line ("Recent shows I've written:"), set smaller. */
+h1.page-lead {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0;
 }
 
 h3 {
@@ -140,6 +147,19 @@ kbd,
 .mono {
   font-family: var(--font-mono);
   font-size: 0.9em;
+}
+
+/* Read by screen readers, hidden on screen. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* ---------- Page frame ---------- */
@@ -260,6 +280,27 @@ main {
   margin-bottom: 0.5rem;
 }
 
+/* Homepage: name and tagline, centred in a band near the top of the screen. */
+.home-intro {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 45vh;
+  text-align: center;
+}
+
+.home-intro h1 {
+  font-size: clamp(2.6rem, 1.8rem + 4vw, 4.5rem);
+  margin-bottom: 0.5rem;
+}
+
+.home-tagline {
+  font-family: var(--font-sans);
+  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
+  color: var(--muted);
+  margin: 0;
+}
+
 .lede {
   font-size: 1.3rem;
   line-height: 1.5;
@@ -272,8 +313,6 @@ main {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--muted);
-  border-top: 1px solid var(--rule);
-  padding-top: 1rem;
   margin: 3rem 0 1.25rem;
   max-width: var(--measure);
 }
@@ -314,16 +353,11 @@ main {
 
 .clip {
   padding-block: 1.1rem;
-  border-bottom: 1px solid var(--rule);
   max-width: var(--measure);
 }
 
 .clip:first-child {
   padding-top: 0;
-}
-
-.clip:last-child {
-  border-bottom: 0;
 }
 
 .clip-title {
@@ -375,7 +409,6 @@ main {
 
 .investigation-card {
   padding-block: 1.25rem;
-  border-bottom: 1px solid var(--rule);
   max-width: var(--measure);
 }
 
@@ -391,39 +424,6 @@ main {
 
 .investigation-card h3 a:hover {
   text-decoration-color: var(--accent);
-}
-
-.impact {
-  max-width: var(--measure);
-  margin: 1.5rem 0 2rem;
-  padding: 1.1rem 1.4rem;
-  border-left: 4px solid var(--accent);
-  background: var(--surface);
-}
-
-.impact h2 {
-  font-family: var(--font-sans);
-  font-size: 0.85rem;
-  font-weight: 650;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--muted);
-  margin: 0 0 0.5rem;
-}
-
-.impact ul {
-  margin: 0;
-  padding-left: 1.2rem;
-}
-
-.impact li + li {
-  margin-top: 0.35rem;
-}
-
-.impact-inline {
-  margin: 0.25rem 0 0;
-  padding-left: 1.2rem;
-  font-size: 1rem;
 }
 
 .archive-links li + li {
@@ -442,8 +442,12 @@ main {
   padding-block: 0.5rem 1.5rem;
 }
 
+h1 + .show,
+h1 + .project {
+  margin-top: 2rem;
+}
+
 .show + .show {
-  border-top: 1px solid var(--rule);
   padding-top: 2rem;
 }
 
@@ -484,7 +488,6 @@ main {
 
 .episode {
   padding: 1rem 0 1.1rem;
-  border-top: 1px solid var(--rule);
 }
 
 .episode:first-of-type {
@@ -508,11 +511,6 @@ main {
   gap: 0.75rem 1.25rem;
   max-width: var(--measure);
   padding-block: 1.1rem;
-  border-bottom: 1px solid var(--rule);
-}
-
-.project:last-child {
-  border-bottom: 0;
 }
 
 @media (min-width: 36rem) {
@@ -571,43 +569,13 @@ main {
   text-align: center;
 }
 
-.bio-box {
-  max-width: var(--measure);
-  padding: 1rem 1.25rem;
-  background: var(--surface);
-  border-radius: 4px;
-}
-
-.bio-box p:last-child {
-  margin-bottom: 0;
-}
-
 /* ---------- Contact ---------- */
 
-.channel {
+.contact-lines {
   max-width: var(--measure);
-  margin: 0 0 1.75rem;
+  font-size: 1.15rem;
 }
 
-.channel h3 {
-  margin: 0 0 0.35rem;
-}
-
-.fingerprint {
-  display: block;
-  padding: 0.75rem 1rem;
-  background: var(--surface);
-  border-radius: 4px;
-  font-family: var(--font-mono);
-  font-size: 1rem;
-  line-height: 1.7;
-  word-spacing: 0.2em;
-  overflow-wrap: anywhere;
-}
-
-.advice li + li {
-  margin-top: 0.5rem;
-}
 
 /* ---------- Motion ---------- */
 

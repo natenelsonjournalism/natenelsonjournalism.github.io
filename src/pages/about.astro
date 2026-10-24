@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Placeholder from '../components/Placeholder.astro';
-import { BIOS, HEADSHOT, SITE } from '../config/site';
+import { ABOUT, HEADSHOT, SITE } from '../config/site';
 import { formatDate, getAppearances, isoDate, type Appearance } from '../lib/content';
 
 const appearances = await getAppearances();
@@ -20,17 +20,8 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
 <BaseLayout title="About" description={`About ${SITE.name}, ${SITE.role.toLowerCase()}.`} ogType="profile" person>
   <div class="about-intro">
     <div class="prose">
-      <h1>About</h1>
-      {
-        BIOS.long ? (
-          BIOS.long.map((paragraph, i) => <p class:list={{ lede: i === 0 }}>{paragraph}</p>)
-        ) : (
-          <Placeholder>
-            Long bio (about 250 words) goes here: your reporting beat, the podcasts you write, your side projects,
-            and how you work.
-          </Placeholder>
-        )
-      }
+      <h1 class="visually-hidden">About</h1>
+      {ABOUT ? ABOUT.map((paragraph) => <p>{paragraph}</p>) : <Placeholder>About text goes here.</Placeholder>}
     </div>
     {
       HEADSHOT ? (
@@ -42,27 +33,6 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
       )
     }
   </div>
-
-  <section class="stack" aria-labelledby="bio-heading">
-    <h2 class="section-heading" id="bio-heading">Bio for event organizers and editors</h2>
-    <p>Feel free to copy and use either version.</p>
-
-    <h3>One line</h3>
-    <div class="bio-box">
-      {BIOS.oneLine ? <p>{BIOS.oneLine}</p> : <Placeholder>One-line bio, for bylines and introductions.</Placeholder>}
-    </div>
-
-    <h3>Short (about 75 words)</h3>
-    <div class="bio-box">
-      {
-        BIOS.short ? (
-          <p>{BIOS.short}</p>
-        ) : (
-          <Placeholder>About 75 words, for event programs and contributor notes.</Placeholder>
-        )
-      }
-    </div>
-  </section>
 
   {
     groups.length > 0 && (

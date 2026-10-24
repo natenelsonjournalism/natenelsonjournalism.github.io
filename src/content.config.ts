@@ -112,7 +112,6 @@ const investigations = defineCollection({
       archive_url: httpsUrl.optional(),
       link_status: linkStatus,
       summary: z.string().min(1),
-      impact: z.array(z.string().min(1)).min(1, { error: 'List at least one impact.' }),
       featured: z.boolean().default(false),
     })
     .strict(),

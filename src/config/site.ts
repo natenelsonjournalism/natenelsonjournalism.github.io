@@ -7,11 +7,8 @@ export const SITE = {
   role: 'Cybersecurity journalist and podcast scriptwriter',
   url: 'https://natenelsonjournalism.github.io',
 
-  /** Homepage pitch: two sentences. */
-  pitch: [
-    'I report on cybersecurity for Dark Reading and write scripts for podcasts, including Darknet Diaries.',
-    'My reporting has gotten a leaking Vatican app fixed and named the vendor behind a government data breach.',
-  ],
+  /** The line under Nate's name at the top of the homepage. */
+  tagline: 'Cybersecurity journalist, podcast scriptwriter',
 
   /** Default meta description for pages that don't set their own. */
   description:
@@ -34,29 +31,17 @@ export const ARCHIVES: { outlet: string; url: string }[] = [
   { outlet: 'Dark Reading', url: 'https://www.darkreading.com/author/nate-nelson' },
 ];
 
-/** Bios in three lengths (About page). `null` = not written yet. */
-export const BIOS: { oneLine: string | null; short: string | null; long: string[] | null } = {
-  // ~1 line, for bylines and introductions.
-  oneLine: 'Nate Nelson is a cybersecurity journalist and podcast scriptwriter.',
-  // ~75 words, for event programs and contributor notes.
-  short:
-    'Nate Nelson is a cybersecurity journalist and podcast scriptwriter. He reports for Dark Reading, where his ' +
-    'investigations got the Vatican’s official prayer app fixed after it exposed the data of more than 700,000 users, ' +
-    'and identified the vendor behind a Scottish government data breach. He is a scriptwriter and researcher for ' +
-    'Darknet Diaries, and co-created and wrote Malicious Life, a podcast about the history of cybersecurity.',
-  // A few short paragraphs, one string each, for the About page itself.
-  long: [
-    'I’m a cybersecurity journalist and podcast scriptwriter. I report for Dark Reading on data breaches, ' +
-      'vulnerabilities and the people who exploit them, and on how AI is changing both attack and defense.',
-    'My investigations have pushed organizations to act. After I reported that the Vatican’s official prayer app ' +
-      'was exposing the personal information of more than 700,000 users, it was fixed. When Scotland’s prosecution ' +
-      'service disclosed a breach at an unnamed supplier, I identified the vendor.',
-    'I also write for podcasts. I’m a scriptwriter and researcher for Darknet Diaries, and I co-created and wrote ' +
-      'Malicious Life, which tells untold stories from the history of cybersecurity.',
-    'Away from the news, I design games. Football: The Board Game simulates the sport and its strategy, on a ' +
-      'tabletop or a phone.',
-  ],
-};
+/** The About page text: one string per paragraph. `null` = not written yet. */
+export const ABOUT: string[] | null = [
+  'I’m a journalist and scriptwriter. I cover daily news for Dark Reading, the most widely read cybersecurity ' +
+    'website among Chief Information Security Officers (CISOs). I also write long form stories for Darknet ' +
+    'Diaries, the most popular show in cybersecurity across all media.',
+  'I began my career as a freelancer, ghostwriting Forbes and CNBC op-eds for executives in tech and finance. ' +
+    'Then I transitioned to journalism at Threatpost, where I began covering cybersecurity news and trends. ' +
+    'Throughout those years I co-created a cybersecurity podcast, Malicious Life, which in its day climbed into ' +
+    'the Top 20 technology podcasts charts on Apple Podcasts and Spotify.',
+  'I hold degrees from New York University and Bard College.',
+];
 
 /**
  * Headshot on the About page: a path in `public/` plus a description for screen readers.
@@ -67,9 +52,12 @@ export const HEADSHOT: { src: string; alt: string } | null = {
   alt: 'Nate Nelson, smiling, in a suit and tie in front of a stone and brick wall.',
 };
 
-/** Contact channels (Contact page). `null` = not set up yet. No email, by Nate's choice. */
+/**
+ * Contact page. `null` = not set up yet. No email, by Nate's choice. LinkedIn comes from PROFILES.
+ * `signal` is a Signal *username* link (signal.me/#eu/...), never a phone-number link (#p/).
+ */
 export const CONTACT: {
   signal: string | null;
 } = {
-  signal: 'natenelsonjournalism.01', // a Signal *username*, never a phone number
+  signal: 'https://signal.me/#eu/F0OEcy7_duOY82vjqkvXsN16RFDcoIRwiqZQeoPV4F0FFXLzCY1LOoXfdfZdbNLx',
 };

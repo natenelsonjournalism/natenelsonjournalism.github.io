@@ -8,10 +8,7 @@ const projects = await getProjects();
 ---
 
 <BaseLayout title="Projects" description={`Side projects by ${SITE.name}.`}>
-  <div class="page-intro">
-    <h1>Projects</h1>
-    <p class="lede">Things I make on the side.</p>
-  </div>
+  <h1 class="page-lead">Things I make on the side.</h1>
 
   {projects.length === 0 && <Placeholder>Your projects go here (src/data/projects.yaml).</Placeholder>}
 
