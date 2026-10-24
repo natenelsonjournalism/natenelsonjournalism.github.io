@@ -24,18 +24,36 @@ export const AUDIO_HOSTS = [
   'https://*.redcircle.com',
 ];
 
-export const CSP = [
-  "default-src 'none'",
-  "style-src 'self'",
-  "img-src 'self'",
-  "font-src 'self'",
-  "manifest-src 'self'",
-  ...(AUDIO_HOSTS.length ? [`media-src ${AUDIO_HOSTS.join(' ')}`] : []),
-  "script-src 'none'",
-  "base-uri 'none'",
-  "form-action 'none'",
-  'upgrade-insecure-requests',
-].join('; ');
+/** @param {string[]} scripts The script-src (and related) directives for one kind of page. */
+const policy = (scripts) =>
+  [
+    "default-src 'none'",
+    "style-src 'self'",
+    "img-src 'self'",
+    "font-src 'self'",
+    "manifest-src 'self'",
+    ...(AUDIO_HOSTS.length ? [`media-src ${AUDIO_HOSTS.join(' ')}`] : []),
+    ...scripts,
+    "base-uri 'none'",
+    "form-action 'none'",
+    'upgrade-insecure-requests',
+  ].join('; ');
+
+/** Every page except the homepage: no scripts at all. */
+export const CSP = policy(["script-src 'none'"]);
+
+/**
+ * The homepage only. It runs one script, our own /cli.js (the typed-command box; Nate
+ * approved this in Oct 2026). 'self' allows files from this site and nothing else, and
+ * still blocks inline scripts. Trusted Types (enforced by Chromium browsers) makes the
+ * browser refuse any attempt to turn text into HTML or code, so even a mistake in cli.js
+ * couldn't inject markup.
+ */
+export const CSP_CLI = policy(["script-src 'self'", "require-trusted-types-for 'script'", "trusted-types 'none'"]);
+
+/** The one script the site ships, and the only page allowed to load it. */
+export const CLI_SCRIPT = '/cli.js';
+export const CLI_PAGE = '/';
 
 /**
  * True if the CSP lets the browser load audio from this URL (https only).

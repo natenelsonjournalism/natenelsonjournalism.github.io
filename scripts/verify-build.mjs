@@ -3,15 +3,21 @@
 // Plain Node, no dependencies. Exits non-zero if any file in dist/ breaks a rule:
 //
 //   HTML pages
-//     - must carry the exact CSP <meta> tag inside <head>
-//     - must not contain <script> or <style> elements (sole exception: a
+//     - must carry the exact CSP <meta> tag inside <head> (CSP_CLI on the homepage,
+//       CSP everywhere else)
+//     - must not contain <script> or <style> elements. Exceptions: a
 //       <script type="application/ld+json"> block holding valid JSON, which
-//       browsers never execute)
+//       browsers never execute; and on the homepage only, <script src="/cli.js" defer>
+//       (the typed-command box)
 //     - must not use style="" or on*="" (event handler) attributes
 //     - must not load resources (src, srcset, poster, data, <link href>,
 //       CSS url()) from any host other than our own. Sole exception: podcast
 //       <audio> from a host in AUDIO_HOSTS (src/config/csp.mjs), which must have
 //       controls and preload="none" so nothing loads until the visitor presses play
+//   JavaScript
+//     - the only allowed file is dist/cli.js. It may only compare typed text against a
+//       fixed list and show/hide content that is already on the page: no HTML-from-text
+//       (innerHTML and friends), no eval, no network requests, no storage, no cookies
 //   CSS files
 //     - must not reference url() / @import on another host
 //   Sitemap
@@ -32,7 +38,7 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { join, relative, extname, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { CSP, isAllowedAudioUrl } from '../src/config/csp.mjs';
+import { CLI_PAGE, CLI_SCRIPT, CSP, CSP_CLI, isAllowedAudioUrl } from '../src/config/csp.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const dist = join(root, 'dist');
@@ -109,7 +115,8 @@ function parseAttrs(attrText) {
 }
 
 // Checks shared by HTML and SVG documents.
-function checkMarkup(file, markup, { isHtml }) {
+function checkMarkup(file, markup, { isHtml, isCliPage = false }) {
+  const expectedCsp = isCliPage ? CSP_CLI : CSP;
   const body = markup.replace(/<!--[\s\S]*?-->/g, '');
   let cspInHead = false;
   let inHead = false;
@@ -135,8 +142,16 @@ function checkMarkup(file, markup, { isHtml }) {
         } catch {
           fail(file, 'JSON-LD block is not valid JSON');
         }
+      } else if (
+        isCliPage &&
+        get('src') === CLI_SCRIPT &&
+        get('defer') !== undefined &&
+        attrs.length === 2 &&
+        body.toLowerCase().startsWith('</script>', m.index + m[0].length)
+      ) {
+        // The homepage's typed-command box: our own file, nothing inline.
       } else {
-        fail(file, '<script> element is not allowed (only <script type="application/ld+json"> data blocks)');
+        fail(file, `<script> element is not allowed (only JSON-LD data blocks, and <script src="${CLI_SCRIPT}" defer> on the homepage)`);
       }
     }
     if (tag === 'style') fail(file, '<style> element is not allowed (use an external stylesheet)');
@@ -186,8 +201,8 @@ function checkMarkup(file, markup, { isHtml }) {
     }
 
     if (isHtml && tag === 'meta' && (get('http-equiv') ?? '').toLowerCase() === 'content-security-policy') {
-      if (decodeEntities(get('content') ?? '') !== CSP) {
-        fail(file, `CSP <meta> content does not match src/config/csp.mjs`);
+      if (decodeEntities(get('content') ?? '') !== expectedCsp) {
+        fail(file, `CSP <meta> content does not match ${isCliPage ? 'CSP_CLI' : 'CSP'} in src/config/csp.mjs`);
       } else if (!inHead) {
         fail(file, 'CSP <meta> must be inside <head>');
       } else {
@@ -201,6 +216,27 @@ function checkMarkup(file, markup, { isHtml }) {
 
   if (isHtml && !cspInHead) fail(file, 'missing CSP <meta http-equiv="Content-Security-Policy"> in <head>');
   if (isHtml) checkPhoneNumbers(file, body);
+}
+
+// The one script. A plain-text scan, so it is deliberately strict: anything that can turn
+// text into HTML or code, reach the network, or store data about the visitor fails.
+const JS_BANNED = [
+  [/\binnerHTML\b|\bouterHTML\b|\binsertAdjacentHTML\b|\bcreateContextualFragment\b|\bsetHTMLUnsafe\b|\bparseHTMLUnsafe\b|\bDOMParser\b/, 'turns text into HTML'],
+  [/\bdocument\.write/, 'document.write'],
+  [/\beval\b|\bFunction\s*\(|\bnew\s+Function\b|\bsetTimeout\s*\(\s*['"`]|\bsetInterval\s*\(\s*['"`]/, 'runs text as code'],
+  [/\bimport\s*\(|\bimportScripts\b|^\s*import\s/m, 'loads other code'],
+  [/\bfetch\b|\bXMLHttpRequest\b|\bWebSocket\b|\bEventSource\b|\bsendBeacon\b|\bnew\s+Image\b|\bWorker\b/, 'network request'],
+  [/\blocalStorage\b|\bsessionStorage\b|\bindexedDB\b|\bdocument\.cookie\b|\bcaches\b/, 'stores data'],
+  [/\bsetAttribute\s*\(\s*['"`](?:on|src|href|srcdoc|style)/i, 'sets an attribute that can load or run something'],
+  [/\blocation\s*=|\blocation\.(?:href|assign|replace)\b|\bwindow\.open\b/, 'navigates away (only location.hash is allowed)'],
+];
+
+function checkCliScript(file, js) {
+  const code = js.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+  for (const [re, what] of JS_BANNED) {
+    const m = code.match(re);
+    if (m) fail(file, `"${m[0].trim()}" is not allowed in the site's script (${what})`);
+  }
 }
 
 // Phone-number shapes: +44 20 7946 0958, (555) 555-0100, 555-555-0100, 555.555.0100.
@@ -353,13 +389,15 @@ async function main() {
     const ext = extname(file).toLowerCase();
     if (ext === '.html') {
       pages++;
-      checkMarkup(file, await readFile(file, 'utf8'), { isHtml: true });
+      const isCliPage = relative(dist, file).split(sep).join('/') === `${CLI_PAGE.slice(1)}index.html`;
+      checkMarkup(file, await readFile(file, 'utf8'), { isHtml: true, isCliPage });
     } else if (ext === '.svg') {
       checkMarkup(file, await readFile(file, 'utf8'), { isHtml: false });
     } else if (ext === '.css') {
       checkCssUrls(file, await readFile(file, 'utf8'), 'stylesheet');
     } else if (ext === '.js' || ext === '.mjs') {
-      fail(file, 'JavaScript file in build output; the site must ship zero JS');
+      if (file === join(dist, ...CLI_SCRIPT.split('/'))) checkCliScript(file, await readFile(file, 'utf8'));
+      else fail(file, `JavaScript file in build output; the only allowed script is ${CLI_SCRIPT}`);
     }
   }
 

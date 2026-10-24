@@ -34,18 +34,29 @@ its phases in order and stop for review at the end of each one.
 
 ## Security rules (enforced by `scripts/verify-build.mjs`)
 
-The shipped site has **zero JavaScript** and makes **no third-party requests**. This is a
-deliberate design choice so the CSP can be `script-src 'none'`.
+The site makes **no third-party requests** and ships **one small script of our own**,
+`public/cli.js`, on the homepage only. Every other page keeps `script-src 'none'`.
 
 - Every page uses `src/layouts/BaseLayout.astro`, which emits the CSP `<meta>` tag.
-  The policy string lives only in `src/config/csp.mjs`; the layout and the verifier
-  both import it.
-- No `<script>` (sole exception: `<script type="application/ld+json">` holding valid JSON,
+  The policies live only in `src/config/csp.mjs` (`CSP` for every page, `CSP_CLI` for the
+  homepage); the layout and the verifier both import them.
+- **The command box is the one approved script** (Nate, Oct 2026). `public/cli.js` lets
+  visitors type the homepage's commands. It compares the typed text against a fixed list
+  and, on a match, changes `location.hash` to show a section that is already in the page;
+  it never displays, stores or sends what was typed. The homepage's CSP is
+  `script-src 'self'` plus Trusted Types (`require-trusted-types-for 'script'`), so the
+  browser refuses inline scripts and any text-to-HTML conversion. The verifier allows
+  exactly `<script src="/cli.js" defer>` on the homepage, no other `.js` file, and fails if
+  `cli.js` uses `innerHTML`-style APIs, `eval`, network requests, storage or cookies, or
+  navigates anywhere but `#`. Everything must still work without it: every command is
+  also a link. Keep it plain hand-written JS in `public/` (no bundling, no dependencies).
+- No other `<script>` (one more exception: `<script type="application/ld+json">` holding valid JSON,
   emitted only by `src/components/PersonJsonLd.astro`; browsers never execute it), no `<style>` elements, no `style=""` attributes, no `on*=` handlers,
-  no `<iframe>`/`<object>`/`<embed>`, no `.js` files in `dist/`.
+  no `<iframe>`/`<object>`/`<embed>`.
   - Astro hoists component `<style>` blocks into external CSS because
-    `build.inlineStylesheets: 'never'` is set. Don't use `is:inline` styles/scripts, and
-    don't use `define:vars` (it emits inline styles).
+    `build.inlineStylesheets: 'never'` is set. Don't use `is:inline` styles, or `is:inline`
+    scripts other than the `cli.js` tag in `BaseLayout.astro`, and don't use `define:vars`
+    (it emits inline styles).
   - Don't add client islands (`client:*` directives), view transitions, or prefetch.
 - `src`, `srcset`, `poster`, `<link href>`, CSS `url()` and `@import` must be same-origin.
   Fonts and images are self-hosted under `public/` or `src/assets/`.
@@ -61,8 +72,8 @@ deliberate design choice so the CSP can be `script-src 'none'`.
   listed in `AUDIO_HOSTS` in `src/config/csp.mjs`, which adds them to the CSP's `media-src`;
   the content schema rejects audio from any other host, and the verifier fails on `<audio>`
   without `controls` and `preload="none"`, or from an unlisted host. `<video>` stays banned.
-- Interactivity is replaced by static generation, and dark mode follows
-  `prefers-color-scheme` (no toggle).
+- Showing and hiding the homepage's sections is done with CSS `:target`, not script, and
+  dark mode follows `prefers-color-scheme` (no toggle).
 
 - No phone numbers anywhere: the verifier fails on `tel:` links, phone-number Signal links
   and phone-number-shaped text.
@@ -114,7 +125,8 @@ asking Nate.
 GitHub Pages doesn't let a site set its own HTTP headers, so some protections can only come
 from `<meta>` tags and some aren't possible at all:
 
-- Set by the site in `<meta>`: Content-Security-Policy (`script-src 'none'`), referrer policy.
+- Set by the site in `<meta>`: Content-Security-Policy (`script-src 'none'`; on the homepage
+  `script-src 'self'` with Trusted Types), referrer policy.
 - Not possible on GitHub Pages: `frame-ancestors` / `X-Frame-Options` (clickjacking; only
   work as headers), `X-Content-Type-Options`, `Permissions-Policy`, cross-origin isolation
   headers. Observatory findings about these are hosting limitations, not site bugs. With no
@@ -148,11 +160,12 @@ Re-scan after any hosting change.
 
 ## Content
 
-The site has three sections for Nate's three kinds of work (decided Oct 2026):
-**Journalism** (a few investigations, each with a short write-up page, plus a few features
-and links to the full archive at each outlet), **Podcasts** (shows he has written and/or
-hosted, with playable episodes) and **Projects** (side projects). Speaking and media
-appearances are a section of the About page.
+The whole site is one page laid out like a terminal (Nate, Oct 2026): his name, a list of
+commands, and each command's output below. Commands: `stories` (a few investigations,
+each with its own write-up page under `/journalism/`, plus features and the full-archive
+link), `podcasts` (shows he has written, with playable episodes), `projects`, `about`
+(with speaking and media appearances, if any) and `contact`. Each command's output is a
+section of `src/pages/index.astro` with that id (`/#stories`, `/#about`, ...).
 
 Astro checks every entry when the site builds; if something is wrong (a missing field, a
 bad date, a duplicate id, a disallowed audio host, a write-up whose Markdown fails to
@@ -163,8 +176,8 @@ goes live.
 - `src/data/features.yaml`: feature articles.
 - `src/data/podcasts.yaml`: shows and their standout episodes.
 - `src/data/projects.yaml`: side projects.
-- `src/data/appearances.yaml`: talks, panels, podcast guest spots, TV, radio (About page).
-- `src/config/site.ts`: name, homepage tagline, About page text (`ABOUT`), full-archive links (`ARCHIVES`),
+- `src/data/appearances.yaml`: talks, panels, podcast guest spots, TV, radio (`about`).
+- `src/config/site.ts`: name, homepage tagline, `about` text (`ABOUT`), full-archive links (`ARCHIVES`),
   profiles, headshot and contact channels (a Signal username link, and LinkedIn from `PROFILES`; Nate dropped the CV, PGP key,
   SecureDrop and the public email address in Oct 2026). A value left as `null` (or an empty
   list) shows on the site as a clearly marked yellow "Placeholder" box, so nothing fake is
@@ -172,8 +185,8 @@ goes live.
 - Schemas: `src/content.config.ts`. Helpers for pages (sorting, archive links):
   `src/lib/content.ts`.
 - Order: investigations, features and appearances sort by date (newest first). Podcasts
-  and projects appear in the order they're written in their file. The homepage shows up to
-  two stories and three projects marked `featured: true` (or the first ones if none are).
+  and projects appear in the order they're written in their file. `featured` is kept in the
+  schemas but currently changes nothing: every command shows all its entries.
 - Wrap any text containing a colon followed by a space (`: `) in double quotes. Quoting
   titles and summaries always is the safe habit.
 - When a story's link dies, set `link_status: dead`. If `archive_url` is set the site links
@@ -190,8 +203,8 @@ title: "Tracing a ransomware attack on a hospital network"
 outlet: Wired
 date: 2026-09-30
 url: https://example.com/the-article          # the published story
-summary: "One or two sentences for the Journalism page: what the story found and what changed."
-featured: true                                 # optional: show on the homepage
+summary: "One or two sentences for the stories list: what the story found and what changed."
+featured: true                                 # optional; currently unused
 # archive_url: https://web.archive.org/web/... # optional
 # link_status: dead                            # optional: when the original link breaks
 ---
@@ -258,18 +271,37 @@ Add an entry to `src/data/appearances.yaml`: `id` (unique), `title`, `event_or_s
 
 ## Design
 
-Clean, editorial, typography-led. Credible rather than "hacker aesthetic": no
-green-on-black terminals or matrix effects. Homepage stays short. Light/dark via
-`prefers-color-scheme`, both WCAG AA. Responsive to 320px. Visible focus styles.
-No motion.
+A terminal you can read (Nate, Oct 2026). The homepage is the whole site: `whoami` (name
+and tagline), `help` (the commands, each with a plain-English description), then the
+output of whichever command ran, and a prompt to type the next one. No tab bar, little
+up front. Non-technical visitors must never be stuck: every command is also a link, the
+help line says so, and the page works with scripts off. Investigation write-ups are
+separate pages with a header prompt (`nate@nelson:~/stories$`, linking home) and a
+"Back to all stories" link. Monospace throughout (JetBrains Mono); write-up bodies keep a
+serif for long reading. Credible, not a costume: no matrix effects. Light/dark via
+`prefers-color-scheme`, both WCAG AA. Responsive to 320px. Visible focus styles. The only
+motion is the blinking cursor (404 page and the no-script homepage), which stops after
+five blinks (WCAG 2.2.2) and never runs for visitors who ask for reduced motion.
+
+- Adding a command: add a `CliOutput` section to `index.astro`, an entry to its
+  `COMMANDS` list (with a description), and the same name to `COMMANDS` in
+  `public/cli.js`. `npm run a11y` checks every section automatically.
+- Prompt text is decoration: mark it `aria-hidden="true"` (`Prompt` and `CliOutput` do)
+  and keep a real heading or link text for screen readers.
+- Typed commands: the script also accepts a few aliases (`journalism`, `whoami`, `ls`),
+  `clear`, Tab completion and Up/Down history; anything else gets a fixed "Command not
+  found" message. Typed text is never echoed back.
+- Easter eggs: an ASCII-art note in an HTML comment at the top of every page (in
+  `BaseLayout.astro`), `public/humans.txt`, a line in `security.txt`, `sudo` in the command
+  box, and a "command not found" 404 page.
 
 - Styles: `src/styles/global.css` (colour tokens at the top; both themes checked for
   WCAG AA contrast, so re-check if you change a colour). Fonts: Source Serif 4 (reading)
-  and Inter (labels, navigation), self-hosted OFL files in `public/fonts/` with their
+  and JetBrains Mono (everything else), self-hosted OFL files in `public/fonts/` with their
   licenses; `@font-face` rules in `src/styles/fonts.css`.
-- Pages: `src/pages/` (Home, `journalism/` with one page per investigation, `podcasts`,
-  `projects`, `about`, `contact`, `404`). Shared pieces: `src/components/` (`StoryItem`,
-  `Episode`, `Placeholder`, `PersonJsonLd`).
+- Pages: `src/pages/` (`index.astro`, the terminal; `journalism/[slug].astro`, one page per
+  investigation; `404`). Shared pieces: `src/components/` (`CliOutput`, `StoryItem`,
+  `Episode`, `Placeholder`, `PersonJsonLd`, `Prompt`). The command box: `public/cli.js`.
 
 ## Never commit
 

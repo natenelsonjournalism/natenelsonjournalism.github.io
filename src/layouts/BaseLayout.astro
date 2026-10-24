@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import { CSP } from '../config/csp.mjs';
+import { CLI_SCRIPT, CSP, CSP_CLI } from '../config/csp.mjs';
 import PersonJsonLd from '../components/PersonJsonLd.astro';
 import { SITE } from '../config/site';
 
@@ -11,11 +11,16 @@ interface Props {
   noindex?: boolean;
   /** Open Graph type: "article" for case studies, "profile" for About. */
   ogType?: 'website' | 'article' | 'profile';
-  /** Add schema.org Person structured data (Home and About). */
+  /** Add schema.org Person structured data (the homepage). */
   person?: boolean;
+  /** The homepage terminal: loads public/cli.js under the CSP that allows it. */
+  cli?: boolean;
+  /** Where the visitor is, shown in the header prompt, e.g. "~/stories". */
+  cwd?: string;
 }
 
-const { title, description = SITE.description, noindex = false, ogType = 'website', person = false } = Astro.props;
+const { title, description = SITE.description, noindex = false, ogType = 'website', person = false, cli = false, cwd = '~' } =
+  Astro.props;
 
 // Canonical URLs always point at the real site, so Cloudflare preview copies
 // never compete with it in search results.
@@ -24,24 +29,27 @@ const shareImage = new URL('/og-default.png', Astro.site).href;
 
 const pageTitle = title ? `${title} · ${SITE.name}` : `${SITE.name} · ${SITE.role}`;
 
-const nav = [
-  { href: '/journalism/', label: 'Journalism' },
-  { href: '/podcasts/', label: 'Podcasts' },
-  { href: '/projects/', label: 'Projects' },
-  { href: '/about/', label: 'About' },
-  { href: '/contact/', label: 'Contact' },
-];
+// Shown to anyone who opens "View source". Not a script: browsers ignore HTML comments.
+const sourceNote = `<!--
+  _  _      _         _  _     _
+ | \\| |__ _| |_ ___  | \\| |___| |___ ___ _ _
+ | .\` / _\` |  _/ -_) | .\` / -_) (_-</ _ \\ ' \\
+ |_|\\_\\__,_|\\__\\___| |_|\\_\\___|_/__/\\___/_||_|
 
-const path = Astro.url.pathname;
-// "page" on the section's own page; "true" on pages inside it (e.g. an investigation).
-const current = (href: string) => (path === href ? 'page' : path.startsWith(href) ? 'true' : undefined);
+  Hello, fellow source reader.
+  One small script (/cli.js, the command box; read it, it's short).
+  No cookies, no trackers, no third-party requests.
+  Found a security problem? /.well-known/security.txt
+  Have a tip? Type "contact" on the homepage.
+-->`;
 ---
 
 <!doctype html>
+<Fragment set:html={sourceNote} />
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="Content-Security-Policy" content={CSP} />
+    <meta http-equiv="Content-Security-Policy" content={cli ? CSP_CLI : CSP} />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="color-scheme" content="light dark" />
@@ -71,27 +79,21 @@ const current = (href: string) => (path === href ? 'page' : path.startsWith(href
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
-    <header class="site-header">
-      <a class="site-name" href="/" aria-current={path === '/' ? 'page' : undefined}>{SITE.name}</a>
-      <nav class="site-nav" aria-label="Main">
-        <ul>
-          {
-            nav.map((item) => (
-              <li>
-                <a href={item.href} aria-current={current(item.href)}>
-                  {item.label}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </nav>
-    </header>
+    {
+      !cli && (
+        <header class="site-header">
+          <p class="site-prompt">
+            <a class="site-name" href="/"><span aria-hidden="true">nate@nelson</span><span class="visually-hidden">{SITE.name}, home</span></a><span class="site-cwd" aria-hidden="true">:{cwd}$</span>
+          </p>
+        </header>
+      )
+    }
     <main id="main" tabindex="-1">
       <slot />
     </main>
     <footer class="site-footer">
-      <p>&copy; {new Date().getFullYear()} {SITE.name} · This site uses no cookies, trackers or scripts.</p>
+      <p>&copy; {new Date().getFullYear()} {SITE.name} · This site uses no cookies or trackers.</p>
     </footer>
+    {cli && <script is:inline src={CLI_SCRIPT} defer></script>}
   </body>
 </html>

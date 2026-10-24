@@ -1,87 +1,306 @@
 ---
+// The whole site is this one page, laid out like a terminal: who Nate is, a list of
+// commands, and each command's output underneath (see CliOutput.astro). Investigation
+// write-ups keep their own pages under /journalism/.
 import BaseLayout from '../layouts/BaseLayout.astro';
+import CliOutput from '../components/CliOutput.astro';
+import Episode from '../components/Episode.astro';
+import Placeholder from '../components/Placeholder.astro';
 import StoryItem from '../components/StoryItem.astro';
-import { SITE } from '../config/site';
-import { getFeatures, getInvestigations, getPodcasts, getProjects, highlights, investigationPath } from '../lib/content';
+import { ABOUT, ARCHIVES, CONTACT, HEADSHOT, PROFILES, SITE } from '../config/site';
+import {
+  formatDate,
+  getAppearances,
+  getFeatures,
+  getInvestigations,
+  getPodcasts,
+  getProjects,
+  investigationPath,
+  isoDate,
+  type Appearance,
+} from '../lib/content';
 
-// Investigations link to their write-up on this site; features to the original article.
-const allStories = [
-  ...(await getInvestigations()).map((story) => ({ story, href: investigationPath(story) as string | undefined })),
-  ...(await getFeatures()).map((story) => ({ story, href: undefined })),
-].sort((a, b) => b.story.data.date.getTime() - a.story.data.date.getTime());
-const featured = allStories.filter((s) => s.story.data.featured);
-const stories = (featured.length ? featured : allStories).slice(0, 2);
-const shows = (await getPodcasts()).slice(0, 3);
-const projects = highlights(await getProjects(), 3);
+const COMMANDS = [
+  { id: 'stories', help: 'My recent journalism' },
+  { id: 'podcasts', help: 'Shows I’ve written, with episodes to play' },
+  { id: 'projects', help: 'Things I make on the side' },
+  { id: 'about', help: 'Who I am' },
+  { id: 'contact', help: 'How to reach me' },
+];
+
+const investigations = await getInvestigations();
+const features = await getFeatures();
+const shows = await getPodcasts();
+const projects = await getProjects();
+
+const LISTEN = [
+  { key: 'spotify', label: 'Spotify' },
+  { key: 'apple', label: 'Apple Podcasts' },
+  { key: 'website', label: 'Show website' },
+] as const;
+
+const linkedin = PROFILES.find((p) => p.label === 'LinkedIn');
+const { signal } = CONTACT;
+
+const appearances = await getAppearances();
+const TYPES: { type: Appearance['data']['type']; label: string }[] = [
+  { type: 'talk', label: 'Talks' },
+  { type: 'panel', label: 'Panels' },
+  { type: 'podcast', label: 'Podcast guest spots' },
+  { type: 'tv', label: 'Television' },
+  { type: 'radio', label: 'Radio' },
+];
+const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data.type === t.type) })).filter(
+  (g) => g.items.length > 0,
+);
 ---
 
-<BaseLayout person>
-  <header class="home-intro">
-    <h1>{SITE.name}</h1>
-    <p class="home-tagline">{SITE.tagline}</p>
-  </header>
+<BaseLayout person cli>
+  <div class="cli">
+    <p class="cli-line" aria-hidden="true"><span class="ps1">nate@nelson:~$</span> whoami</p>
+    <h1 class="cli-name">{SITE.name}</h1>
+    <p class="cli-tagline">{SITE.tagline}</p>
 
-  {
-    stories.length > 0 && (
-      <section aria-labelledby="journalism-heading">
-        <h2 class="section-heading" id="journalism-heading">
-          Journalism
-        </h2>
-        {stories.map(({ story, href }) => (
-          <StoryItem story={story} href={href} />
-        ))}
-        <p class="more-link">
-          <a href="/journalism/">All journalism →</a>
-        </p>
-      </section>
-    )
-  }
+    <section id="help" class="cli-help" tabindex="-1" aria-labelledby="help-heading">
+      <p class="cli-line" aria-hidden="true"><span class="ps1">nate@nelson:~$</span> help</p>
+      <h2 id="help-heading" class="cli-hint">
+        <span class="no-js-only">Click a command to run it:</span>
+        <span class="js-only">Type a command below and press Enter, or click one:</span>
+      </h2>
+      <ul class="cli-commands">
+        {
+          COMMANDS.map((c) => (
+            <li>
+              <a href={`#${c.id}`}>{c.id}</a>
+              <span class="cli-desc">{c.help}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
 
-  {
-    shows.length > 0 && (
-      <section aria-labelledby="podcasts-heading">
-        <h2 class="section-heading" id="podcasts-heading">
-          Podcasts
-        </h2>
-        {shows.map((show) => (
-          <article class="clip clip-compact">
-            <h3 class="clip-title">
-              <a href={`/podcasts/#show-${show.id}`}>{show.data.name}</a>
+    <CliOutput id="stories" command="stories">
+      <h2 id="stories-heading" class="cli-heading">Notable Recent Stories</h2>
+      {
+        investigations.length > 0 && (
+          <section aria-labelledby="investigations-heading">
+            <h3 class="cli-subheading" id="investigations-heading">
+              <span aria-hidden="true">#</span> investigations
             </h3>
-            <p class="meta">{[show.data.role, show.data.years].filter(Boolean).join(' · ')}</p>
-          </article>
-        ))}
-        <p class="more-link">
-          <a href="/podcasts/">Listen →</a>
-        </p>
-      </section>
-    )
-  }
-
-  {
-    projects.length > 0 && (
-      <section aria-labelledby="projects-heading">
-        <h2 class="section-heading" id="projects-heading">
-          Projects
-        </h2>
-        {projects.map((p) => (
-          <article class="clip clip-compact">
-            <h3 class="clip-title">
-              {p.data.url ? (
-                <a href={p.data.url} rel="noopener noreferrer">
-                  {p.data.name}
-                </a>
-              ) : (
-                p.data.name
-              )}
+            {investigations.map((inv) => (
+              <article class="clip">
+                <h4 class="clip-title">
+                  <a href={investigationPath(inv)}>{inv.data.title}</a>
+                </h4>
+                <p class="meta">
+                  {inv.data.outlet} · <time datetime={isoDate(inv.data.date)}>{formatDate(inv.data.date)}</time>
+                </p>
+                <p class="clip-summary">{inv.data.summary}</p>
+              </article>
+            ))}
+          </section>
+        )
+      }
+      {
+        features.length > 0 && (
+          <section aria-labelledby="features-heading">
+            <h3 class="cli-subheading" id="features-heading">
+              <span aria-hidden="true">#</span> features
             </h3>
-            <p class="meta">{p.data.summary}</p>
-          </article>
-        ))}
-        <p class="more-link">
-          <a href="/projects/">All projects →</a>
-        </p>
+            {features.map((story) => (
+              <StoryItem story={story} headingLevel={4} />
+            ))}
+          </section>
+        )
+      }
+      <section aria-labelledby="archive-heading">
+        <h3 class="cli-subheading" id="archive-heading"><span aria-hidden="true">#</span> full archive</h3>
+        {
+          ARCHIVES.length > 0 ? (
+            <ul class="plain-list">
+              {ARCHIVES.map((a) => (
+                <li>
+                  <a href={a.url} rel="noopener noreferrer">
+                    My {a.outlet} author’s page
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <Placeholder>Link to your author page at each outlet (set ARCHIVES in src/config/site.ts).</Placeholder>
+          )
+        }
       </section>
-    )
-  }
+    </CliOutput>
+
+    <CliOutput id="podcasts" command="podcasts">
+      <h2 id="podcasts-heading" class="cli-heading">Recent shows I’ve written:</h2>
+      {shows.length === 0 && <Placeholder>Your podcasts go here (src/data/podcasts.yaml).</Placeholder>}
+      {
+        shows.map((show) => {
+          const links = LISTEN.filter((l) => show.data.links[l.key]);
+          return (
+            <section class="show" id={`show-${show.id}`} aria-labelledby={`show-${show.id}-heading`}>
+              <div class="show-header">
+                {show.data.cover && (
+                  <img class="show-cover" src={show.data.cover} alt="" width="128" height="128" loading="lazy" />
+                )}
+                <div>
+                  <h3 id={`show-${show.id}-heading`} class="show-name">
+                    {show.data.name}
+                  </h3>
+                  <p class="meta">{[show.data.role, show.data.years].filter(Boolean).join(' · ')}</p>
+                  <p>{show.data.description}</p>
+                  {links.length > 0 && (
+                    <ul class="listen-links" aria-label={`Listen to ${show.data.name}`}>
+                      {links.map((l) => (
+                        <li>
+                          <a href={show.data.links[l.key]} rel="noopener noreferrer">
+                            {l.label}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+              {show.data.episodes.map((episode) => (
+                <Episode episode={episode} show={show.data.name} headingLevel={4} />
+              ))}
+            </section>
+          );
+        })
+      }
+    </CliOutput>
+
+    <CliOutput id="projects" command="projects">
+      <h2 id="projects-heading" class="cli-heading">Things I make on the side.</h2>
+      {projects.length === 0 && <Placeholder>Your projects go here (src/data/projects.yaml).</Placeholder>}
+      {
+        projects.map((p) => (
+          <article class="project">
+            {p.data.image && <img class="project-image" src={p.data.image} alt={p.data.image_alt} loading="lazy" />}
+            <div>
+              <h3 class="clip-title">
+                {p.data.url ? (
+                  <a href={p.data.url} rel="noopener noreferrer">
+                    {p.data.name}
+                  </a>
+                ) : (
+                  p.data.name
+                )}
+              </h3>
+              {p.data.year && <p class="meta">{p.data.year}</p>}
+              <p class="clip-summary">{p.data.summary}</p>
+            </div>
+          </article>
+        ))
+      }
+    </CliOutput>
+
+    <CliOutput id="about" command="about">
+      <h2 id="about-heading" class="visually-hidden">About</h2>
+      <div class="about-intro">
+        <div>
+          {ABOUT ? ABOUT.map((paragraph) => <p>{paragraph}</p>) : <Placeholder>About text goes here.</Placeholder>}
+        </div>
+        {
+          HEADSHOT ? (
+            <img class="headshot" src={HEADSHOT.src} alt={HEADSHOT.alt} width="448" height="448" loading="lazy" />
+          ) : (
+            <Placeholder>
+              <span class="headshot-placeholder">Headshot (EXIF and location data stripped)</span>
+            </Placeholder>
+          )
+        }
+      </div>
+      {
+        groups.length > 0 && (
+          <section aria-labelledby="speaking-heading">
+            <h3 class="cli-subheading" id="speaking-heading">
+              <span aria-hidden="true">#</span> speaking and media
+            </h3>
+            <p>
+              To invite me to speak, see <a href="#contact">contact</a>.
+            </p>
+            {groups.map((group) => (
+              <section aria-labelledby={`type-${group.type}`}>
+                <h4 class="subsection-heading" id={`type-${group.type}`}>
+                  {group.label}
+                </h4>
+                <ul class="plain-list">
+                  {group.items.map((a) => (
+                    <li class="clip clip-compact">
+                      <p class="clip-title">
+                        {a.data.url ? (
+                          <a href={a.data.url} rel="noopener noreferrer">
+                            {a.data.title}
+                          </a>
+                        ) : (
+                          a.data.title
+                        )}
+                      </p>
+                      <p class="meta">
+                        {a.data.event_or_show} · <time datetime={isoDate(a.data.date)}>{formatDate(a.data.date)}</time>
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))}
+          </section>
+        )
+      }
+    </CliOutput>
+
+    <CliOutput id="contact" command="contact">
+      <h2 id="contact-heading" class="visually-hidden">Contact</h2>
+      {
+        linkedin ? (
+          <p>
+            For conference or speaking invitations, find me on{' '}
+            <a href={linkedin.url} rel="noopener noreferrer">
+              LinkedIn
+            </a>
+            .
+          </p>
+        ) : (
+          <Placeholder>LinkedIn link (set PROFILES in src/config/site.ts).</Placeholder>
+        )
+      }
+      {
+        signal ? (
+          <p>
+            For tips (vulnerabilities, threat intelligence, etc.), reach out on{' '}
+            <a href={signal} rel="noopener noreferrer">
+              Signal
+            </a>
+            .
+          </p>
+        ) : (
+          <Placeholder>Signal username link (a username link, never a phone number).</Placeholder>
+        )
+      }
+    </CliOutput>
+
+    <form id="cli-form" class="cli-form" hidden>
+      <label for="cli-input" class="cli-line">
+        <span class="ps1" aria-hidden="true">nate@nelson:~$</span>
+        <span class="visually-hidden">Type a command</span>
+      </label>
+      <input
+        id="cli-input"
+        name="command"
+        type="text"
+        maxlength="40"
+        autocomplete="off"
+        autocapitalize="none"
+        autocorrect="off"
+        spellcheck="false"
+        enterkeyhint="go"
+      />
+    </form>
+    <p id="cli-status" class="cli-status" role="status"></p>
+    <p class="cli-line cli-idle" aria-hidden="true"><span class="ps1">nate@nelson:~$</span> <span class="cursor"></span></p>
+  </div>
 </BaseLayout>

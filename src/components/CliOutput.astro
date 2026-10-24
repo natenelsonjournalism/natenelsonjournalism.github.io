@@ -1,0 +1,17 @@
+---
+// One command's output on the homepage. Hidden until its command runs: clicking the
+// command (a #link) or typing it (public/cli.js) makes this section the page's :target,
+// and CSS shows it. No script is needed to read it.
+interface Props {
+  id: string;
+  /** The command, as shown on the prompt line above the output. */
+  command: string;
+}
+
+const { id, command } = Astro.props;
+---
+
+<section id={id} class="cli-out" tabindex="-1" aria-labelledby={`${id}-heading`}>
+  <p class="cli-line" aria-hidden="true"><span class="ps1">nate@nelson:~$</span> {command}</p>
+  <slot />
+</section>

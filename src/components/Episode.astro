@@ -7,14 +7,17 @@ import { formatDate, isoDate, type Podcast } from '../lib/content';
 interface Props {
   episode: Podcast['data']['episodes'][number];
   show: string;
+  /** Heading level for the episode title, to keep the page outline correct. */
+  headingLevel?: 3 | 4;
 }
 
-const { episode, show } = Astro.props;
+const { episode, show, headingLevel = 3 } = Astro.props;
+const Heading = `h${headingLevel}` as 'h3' | 'h4';
 const { title, date, summary, audio, url, transcript } = episode;
 ---
 
 <article class="episode">
-  <h3 class="clip-title">{url ? <a href={url} rel="noopener noreferrer">{title}</a> : title}</h3>
+  <Heading class="clip-title">{url ? <a href={url} rel="noopener noreferrer">{title}</a> : title}</Heading>
   {date && <p class="meta"><time datetime={isoDate(date)}>{formatDate(date)}</time></p>}
   {summary && <p class="clip-summary">{summary}</p>}
   {
