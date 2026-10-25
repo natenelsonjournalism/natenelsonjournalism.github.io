@@ -28,7 +28,8 @@
   const form = document.getElementById('cli-form');
   const input = document.getElementById('cli-input');
   const status = document.getElementById('cli-status');
-  if (!form || !input || !status) return;
+  const caret = document.querySelector('.cli-caret');
+  if (!form || !input || !status || !caret) return;
 
   document.documentElement.classList.add('js');
   form.hidden = false;
@@ -55,12 +56,12 @@
       return;
     }
     if (typed === 'sudo' || typed.startsWith('sudo ')) {
-      say('Permission denied. Nice try.', true);
+      say('sudo: permission denied. Nice try.', true);
       return;
     }
     const id = Object.prototype.hasOwnProperty.call(COMMANDS, typed) ? COMMANDS[typed] : null;
     if (!id) {
-      say('Command not found. Type "help" to see the commands.', true);
+      say('command not found. Type "help" to see the commands.', true);
       return;
     }
     if (location.hash === '#' + id) {
@@ -80,7 +81,29 @@
     input.focus({ preventScroll: true });
   });
 
+  // A terminal-style block cursor, drawn over the (hidden) browser caret. It sits one
+  // character-width per letter along, since the font is monospace.
+  const placeCaret = () => {
+    const at = input.selectionStart ?? input.value.length;
+    caret.style.setProperty('--at', String(at));
+    caret.style.setProperty('--scroll', input.scrollLeft + 'px');
+    // Restart the blink after each keystroke, as terminals do (it blinks five times, then holds).
+    caret.classList.remove('blink');
+    void caret.offsetWidth;
+    caret.classList.add('blink');
+  };
+  for (const name of ['input', 'keyup', 'click', 'focus', 'select']) input.addEventListener(name, placeCaret);
+  document.addEventListener('selectionchange', () => {
+    if (document.activeElement === input) placeCaret();
+  });
+  form.classList.add('has-caret');
+
   input.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      input.value = '';
+      placeCaret();
+      return;
+    }
     // Up/Down: previous commands, like a real shell.
     if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
       if (history.length === 0) return;
@@ -96,8 +119,24 @@
       if (matches.length === 1 && matches[0] !== start) {
         event.preventDefault();
         input.value = matches[0];
+        placeCaret();
+      } else if (matches.length > 1) {
+        // Like a shell: list what could come next.
+        event.preventDefault();
+        say(matches.join('   '));
       }
     }
+  });
+
+  // Start typing anywhere on the page and it goes into the command box (not while using
+  // a link, the audio players or a key combination).
+  document.addEventListener('keydown', (event) => {
+    if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey) return;
+    if (event.key.length !== 1 || event.key === ' ') return;
+    const active = document.activeElement;
+    if (active === input || (active && active.matches('input, textarea, select, audio, [contenteditable]'))) return;
+    input.focus({ preventScroll: true });
+    input.scrollIntoView({ block: 'nearest' });
   });
 
   // Ready to type on computers; on phones, wait for a tap so the keyboard doesn't pop up.

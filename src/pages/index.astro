@@ -20,6 +20,23 @@ import {
   type Appearance,
 } from '../lib/content';
 
+// Nate's name in ASCII art (figlet "standard" font, and the narrower "small" font for
+// phones). If the name in site.ts changes, regenerate both, e.g. with
+// https://pypi.org/project/pyfiglet/.
+const BANNER_SMALL = " _  _      _         _  _     _\n| \\| |__ _| |_ ___  | \\| |___| |___ ___ _ _\n| .` / _` |  _/ -_) | .` / -_) (_-</ _ \\ ' \\\n|_|\\_\\__,_|\\__\\___| |_|\\_\\___|_/__/\\___/_||_|";
+const BANNER = " _   _       _         _   _      _\n| \\ | | __ _| |_ ___  | \\ | | ___| |___  ___  _ __\n|  \\| |/ _` | __/ _ \\ |  \\| |/ _ \\ / __|/ _ \\| '_ \\\n| |\\  | (_| | ||  __/ | |\\  |  __/ \\__ \\ (_) | | | |\n|_| \\_|\\__,_|\\__\\___| |_| \\_|\\___|_|___/\\___/|_| |_|";
+
+// When the site was last built, shown like a terminal's login message.
+const updated = new Intl.DateTimeFormat('en-US', {
+  weekday: 'short',
+  month: 'short',
+  day: 'numeric',
+  year: 'numeric',
+  timeZone: 'UTC',
+})
+  .format(new Date())
+  .replace(/,/g, '');
+
 const COMMANDS = [
   { id: 'stories', help: 'My recent journalism' },
   { id: 'podcasts', help: 'Shows I’ve written, with episodes to play' },
@@ -57,8 +74,11 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
 
 <BaseLayout person cli>
   <div class="cli">
+    <p class="cli-motd">Last updated: {updated}</p>
     <p class="cli-line" aria-hidden="true"><span class="ps1">nate@nelson:~$</span> whoami</p>
-    <h1 class="cli-name">{SITE.name}</h1>
+    <h1 class="visually-hidden">{SITE.name}</h1>
+    <pre class="cli-banner cli-banner-wide" aria-hidden="true">{BANNER}</pre>
+    <pre class="cli-banner cli-banner-narrow" aria-hidden="true">{BANNER_SMALL}</pre>
     <p class="cli-tagline">{SITE.tagline}</p>
 
     <section id="help" class="cli-help" tabindex="-1" aria-labelledby="help-heading">
@@ -288,17 +308,20 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
         <span class="ps1" aria-hidden="true">nate@nelson:~$</span>
         <span class="visually-hidden">Type a command</span>
       </label>
-      <input
-        id="cli-input"
-        name="command"
-        type="text"
-        maxlength="40"
-        autocomplete="off"
-        autocapitalize="none"
-        autocorrect="off"
-        spellcheck="false"
-        enterkeyhint="go"
-      />
+      <span class="cli-field">
+        <input
+          id="cli-input"
+          name="command"
+          type="text"
+          maxlength="40"
+          autocomplete="off"
+          autocapitalize="none"
+          autocorrect="off"
+          spellcheck="false"
+          enterkeyhint="go"
+        />
+        <span class="cli-caret" aria-hidden="true"></span>
+      </span>
     </form>
     <p id="cli-status" class="cli-status" role="status"></p>
     <p class="cli-line cli-idle" aria-hidden="true"><span class="ps1">nate@nelson:~$</span> <span class="cursor"></span></p>

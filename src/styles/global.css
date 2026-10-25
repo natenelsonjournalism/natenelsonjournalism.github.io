@@ -1,15 +1,15 @@
 /*
-  Site-wide design. The homepage is laid out like a terminal, all in a monospace
-  (JetBrains Mono); investigation write-ups keep a serif for long reading (Source Serif 4). Colours are tokens below; both themes are checked for WCAG AA
-  contrast. The only motion is the homepage cursor, which blinks five times and stops
-  (WCAG 2.2.2), and not at all for visitors who ask for reduced motion.
+  Site-wide design: a terminal you can read. One monospace (JetBrains Mono) and, as in a
+  real terminal, one text size: headings stand out by weight and colour, not size.
+  Colours are tokens below; both themes are checked for WCAG AA contrast. Motion: the
+  cursor blinks five times and then holds (WCAG 2.2.2), and a command's output prints
+  in over a third of a second. None of it runs for visitors who ask for reduced motion.
 */
 @import './fonts.css';
 
 :root {
   color-scheme: light dark;
 
-  --font-serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
   --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, 'Liberation Mono', monospace;
 
   /* Light theme */
@@ -72,10 +72,9 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--fg);
-  font-family: var(--font-serif);
-  font-size: 1.125rem;
-  line-height: 1.6;
-  font-optical-sizing: auto;
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  line-height: 1.65;
   overflow-wrap: break-word;
 }
 
@@ -83,37 +82,16 @@ h1,
 h2,
 h3,
 h4 {
-  font-family: var(--font-serif);
-  line-height: 1.2;
-  font-weight: 650;
-  text-wrap: balance;
-  margin: 2.25rem 0 0.75rem;
+  font-size: 1rem;
+  line-height: 1.4;
+  font-weight: 700;
+  text-wrap: pretty;
+  margin: 2rem 0 0.75rem;
 }
 
 h1 {
-  font-size: clamp(1.6rem, 1.35rem + 1.2vw, 2rem);
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-size: 1.15rem;
   margin-top: 0;
-}
-
-h2 {
-  font-size: 1.6rem;
-}
-
-/* A page title written as a lead-in line ("Recent shows I've written:"), set smaller. */
-h1.page-lead {
-  font-size: 1.25rem;
-  font-weight: 600;
-  letter-spacing: 0;
-}
-
-h3 {
-  font-size: 1.25rem;
-}
-
-h4 {
-  font-size: 1.05rem;
 }
 
 p,
@@ -131,6 +109,11 @@ hr {
   border: 0;
   border-top: 1px solid var(--rule);
   margin: 2.5rem 0;
+}
+
+::selection {
+  background: var(--prompt);
+  color: var(--bg);
 }
 
 a {
@@ -157,7 +140,6 @@ code,
 kbd,
 .mono {
   font-family: var(--font-mono);
-  font-size: 0.9em;
 }
 
 /* Read by screen readers, hidden on screen. */
@@ -247,7 +229,6 @@ main {
   padding-block: 2rem 3rem;
   border-top: 1px solid var(--rule);
   font-family: var(--font-mono);
-  font-size: 0.9rem;
   color: var(--muted);
 }
 
@@ -263,10 +244,7 @@ main {
 
 .meta,
 .label {
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
   color: var(--muted);
-  letter-spacing: 0.01em;
 }
 
 /* Homepage: name and tagline, centred in a band near the top of the screen. */
@@ -274,7 +252,6 @@ main {
 
 .prompt {
   font-family: var(--font-mono);
-  font-size: 0.95rem;
   color: var(--muted);
   margin: 0 0 0.5rem;
   overflow-wrap: anywhere;
@@ -315,8 +292,7 @@ main {
 }
 
 .lede {
-  font-size: 1.3rem;
-  line-height: 1.5;
+  font-weight: 600;
 }
 
 .plain-list {
@@ -326,7 +302,6 @@ main {
 
 .more-link {
   font-family: var(--font-mono);
-  font-size: 0.95rem;
   font-weight: 600;
 }
 
@@ -364,9 +339,7 @@ main {
 
 .clip-title {
   text-wrap: pretty;
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin: 0 0 0.3rem;
+  margin: 0 0 0.2rem;
 }
 
 .clip-title a {
@@ -380,9 +353,7 @@ main {
 
 .clip-note {
   margin-left: 0.4rem;
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  font-weight: 500;
+  font-weight: 400;
   color: var(--muted);
 }
 
@@ -399,7 +370,6 @@ main {
 }
 
 .clip-compact .clip-title {
-  font-size: 1.05rem;
   margin: 0;
 }
 
@@ -456,7 +426,6 @@ main {
   padding: 0;
   list-style: none;
   font-family: var(--font-mono);
-  font-size: 0.9rem;
 }
 
 .episode {
@@ -542,17 +511,39 @@ main {
 
 .cli {
   max-width: 46rem;
-  padding-top: clamp(2rem, 6vh, 4rem);
-  font-family: var(--font-mono);
-  font-size: 1rem;
-  line-height: 1.65;
+  padding-top: clamp(1.5rem, 5vh, 3.5rem);
 }
 
-.cli h1,
-.cli h2,
-.cli h3,
-.cli h4 {
-  font-family: var(--font-mono);
+/* "Last updated", like a terminal's login message. */
+.cli-motd {
+  color: var(--muted);
+  margin: 0 0 1.5rem;
+}
+
+/* The name in ASCII art: 52 characters wide, or 45 on phones. It shrinks to fit
+   (a monospace character is 0.6em wide). */
+.cli-banner {
+  margin: 0.5rem 0 0.75rem;
+  font: inherit;
+  font-weight: 500;
+  font-size: min(1.05rem, calc((100vw - 2.5rem) / 31.5));
+  line-height: 1.3;
+  color: var(--fg);
+  overflow: hidden;
+}
+
+.cli-banner-narrow {
+  display: none;
+  font-size: min(1.05rem, calc((100vw - 2.5rem) / 27.3));
+}
+
+@media (max-width: 36rem) {
+  .cli-banner-wide {
+    display: none;
+  }
+  .cli-banner-narrow {
+    display: block;
+  }
 }
 
 .cli-line {
@@ -564,12 +555,6 @@ main {
 .cli .ps1 {
   color: var(--prompt);
   font-weight: 600;
-}
-
-.cli-name {
-  font-size: clamp(2rem, 1.4rem + 3vw, 3.25rem);
-  letter-spacing: -0.02em;
-  margin: 0.25rem 0 0.25rem;
 }
 
 .cli-tagline {
@@ -634,6 +619,17 @@ main {
 .cli-out:target,
 .cli-out:has(:target) {
   display: block;
+  animation: print 0.35s steps(12) both;
+}
+
+/* Output appears top to bottom in quick steps, as if the terminal were printing it. */
+@keyframes print {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
 }
 
 .cli-out:focus,
@@ -642,26 +638,19 @@ main {
 }
 
 .cli-heading {
-  font-size: 1.15rem;
-  font-weight: 700;
-  margin: 0.5rem 0 1.25rem;
+  color: var(--accent);
+  margin: 0.75rem 0 1.25rem;
 }
 
+/* "# investigations": set like a comment in a shell script. */
 .cli-subheading {
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-weight: 400;
   color: var(--muted);
-  margin: 2rem 0 0.75rem;
+  margin: 1.75rem 0 0.75rem;
 }
 
-.cli .clip-title,
-.cli .show-name {
-  font-size: 1.05rem;
-  font-weight: 700;
-}
-
-.cli .meta {
-  font-size: 0.85rem;
+.cli .clip {
+  padding-block: 0.75rem;
 }
 
 .cli-form {
@@ -679,8 +668,16 @@ main {
   margin: 0;
 }
 
-.cli-form input {
+.cli-field {
+  position: relative;
   flex: 1 1 12ch;
+  min-width: 0;
+  display: flex;
+}
+
+/* Without the script's cursor (or before it loads), a plain bordered box. */
+.cli-form input {
+  flex: 1;
   min-width: 0;
   padding: 0.3rem 0.5rem;
   border: 1px solid var(--muted);
@@ -696,6 +693,44 @@ main {
   outline-offset: 1px;
 }
 
+.cli-caret {
+  display: none;
+}
+
+/* With it: the text sits right on the prompt line, with a block cursor. The cursor is
+   the focus indicator: solid when the box has focus, an outline when it doesn't. */
+.has-caret input {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  caret-color: transparent;
+}
+
+.has-caret input:focus-visible {
+  outline: none;
+}
+
+.has-caret .cli-caret {
+  display: block;
+  position: absolute;
+  top: 0.15em;
+  left: calc(var(--at, 0) * 1ch - var(--scroll, 0px));
+  width: 1ch;
+  height: 1.3em;
+  border: 2px solid var(--fg);
+  pointer-events: none;
+}
+
+.has-caret input:focus + .cli-caret {
+  background: var(--fg);
+  opacity: 0.85;
+}
+
+.has-caret input:focus + .cli-caret.blink {
+  animation: blink 1s steps(1) 5;
+}
+
 .cli-status {
   min-height: 1.65em;
   margin: 0.4rem 0 0;
@@ -707,8 +742,6 @@ main {
 }
 
 .back-link {
-  font-family: var(--font-mono);
-  font-size: 0.95rem;
   margin-bottom: 1.5rem;
 }
 

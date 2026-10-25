@@ -273,17 +273,20 @@ Add an entry to `src/data/appearances.yaml`: `id` (unique), `title`, `event_or_s
 
 ## Design
 
-A terminal you can read (Nate, Oct 2026). The homepage is the whole site: `whoami` (name
-and tagline), `help` (the commands, each with a plain-English description), then the
+A terminal you can read (Nate, Oct 2026). The homepage is the whole site: a "Last
+updated" login line (the build date), `whoami` (the name in ASCII art, with a
+screen-reader-only `<h1>`, and the tagline), `help` (the commands, each with a
+plain-English description), then the
 output of whichever command ran, and a prompt to type the next one. No tab bar, little
 up front. Non-technical visitors must never be stuck: every command is also a link, the
 help line says so, and the page works with scripts off. Investigation write-ups are
 separate pages with a header prompt (`nate@nelson:~/stories$`, linking home) and a
-"Back to all stories" link. Monospace throughout (JetBrains Mono); write-up bodies keep a
-serif for long reading. Credible, not a costume: no matrix effects. Light/dark via
-`prefers-color-scheme`, both WCAG AA. Responsive to 320px. Visible focus styles. The only
-motion is the blinking cursor (404 page and the no-script homepage), which stops after
-five blinks (WCAG 2.2.2) and never runs for visitors who ask for reduced motion.
+"Back to all stories" link. One font (JetBrains Mono) at one size, as in a real terminal:
+headings stand out by weight and colour. Credible, not a costume: no matrix effects.
+Light/dark via `prefers-color-scheme`, both WCAG AA. Responsive to 320px. Visible focus
+styles. Motion: blinking cursors stop after five blinks (WCAG 2.2.2; the command box's
+restarts on each keystroke, as in a terminal), and a command's output "prints" in over
+a third of a second. None of it runs for visitors who ask for reduced motion.
 
 - Adding a command: add a `CliOutput` section to `index.astro`, an entry to its
   `COMMANDS` list (with a description), and the same name to `COMMANDS` in
@@ -291,16 +294,19 @@ five blinks (WCAG 2.2.2) and never runs for visitors who ask for reduced motion.
 - Prompt text is decoration: mark it `aria-hidden="true"` (`Prompt` and `CliOutput` do)
   and keep a real heading or link text for screen readers.
 - Typed commands: the script also accepts a few aliases (`journalism`, `whoami`, `ls`),
-  `clear`, Tab completion and Up/Down history; anything else gets a fixed "Command not
-  found" message. Typed text is never echoed back.
+  `clear`, Tab completion (listing the options when several fit), Up/Down history and
+  Escape; anything else gets a fixed "command not found" message. Typed text is never
+  echoed back. Typing anywhere on the page goes into the command box. With the script,
+  the box loses its border and gets a block cursor (`.cli-caret`, placed by `cli.js`);
+  the cursor is the focus indicator (solid when focused, outlined when not).
 - Easter eggs: an ASCII-art note in an HTML comment at the top of every page (in
   `BaseLayout.astro`), `public/humans.txt`, a line in `security.txt`, `sudo` in the command
   box, and a "command not found" 404 page.
 
 - Styles: `src/styles/global.css` (colour tokens at the top; both themes checked for
-  WCAG AA contrast, so re-check if you change a colour). Fonts: Source Serif 4 (reading)
-  and JetBrains Mono (everything else), self-hosted OFL files in `public/fonts/` with their
-  licenses; `@font-face` rules in `src/styles/fonts.css`.
+  WCAG AA contrast, so re-check if you change a colour). Font: JetBrains Mono,
+  self-hosted OFL files in `public/fonts/` with the license; `@font-face` rules in
+  `src/styles/fonts.css`.
 - Pages: `src/pages/` (`index.astro`, the terminal; `journalism/[slug].astro`, one page per
   investigation; `404`). Shared pieces: `src/components/` (`CliOutput`, `StoryItem`,
   `Episode`, `Placeholder`, `PersonJsonLd`, `Prompt`). The command box: `public/cli.js`.
