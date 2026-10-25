@@ -145,12 +145,14 @@ Re-scan after any hosting change.
 - `BaseLayout.astro` emits per-page title, description, canonical URL (always the
   github.io address, so preview copies never compete in search), Open Graph and X card tags,
   icons, manifest, RSS and sitemap links. Props: `title`, `description`, `noindex`,
-  `ogType`, `person` (adds schema.org `Person` JSON-LD; used on Home and About).
-- One static share image for every page: `public/og-default.png` (1200×630). Icons:
-  `public/favicon.svg` (monogram drawn from Source Serif 4), `favicon-32.png`,
-  `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`; manifest `public/site.webmanifest`.
-  These were rendered once with a headless browser and contain no metadata; redo them
-  after the design pass.
+  `ogType`, `person` (adds schema.org `Person` JSON-LD; used on the homepage), `cli` (the
+  homepage's script and CSP) and `cwd` (the "where you are" path in the header prompt).
+- One static share image for every page: `public/og-default.png` (1200×630, the terminal
+  `whoami` screen). Icons: `public/favicon.svg` (a bold "N" drawn as a path from JetBrains
+  Mono, with a green underscore cursor, on the dark background), `favicon-32.png`,
+  `apple-touch-icon.png` (square corners; iOS rounds them), `icon-192.png`, `icon-512.png`;
+  manifest `public/site.webmanifest`. All rendered with a headless browser (Oct 2026) and
+  free of metadata; redo them if the design or tagline changes.
 - `@astrojs/sitemap` (official integration, approved by the plan) writes
   `sitemap-index.xml` + `sitemap-0.xml`; `public/robots.txt` points to it. The verifier fails
   if any page (except 404) is missing from the sitemap.
