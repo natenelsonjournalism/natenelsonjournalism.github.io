@@ -163,7 +163,7 @@ Re-scan after any hosting change.
 ## Content
 
 The whole site is one page laid out like a terminal (Nate, Oct 2026): his name, a list of
-commands, and each command's output below. Commands: `stories` (a few investigations,
+commands to type, and each command's output below. Commands: `stories` (a few investigations,
 each with its own write-up page under `/journalism/`, plus features and the full-archive
 link), `podcasts` (shows he has written, with playable episodes), `projects`, `about`
 (with speaking and media appearances, if any) and `contact`. Each command's output is a
@@ -278,8 +278,11 @@ updated" login line (the build date), `whoami` (the name in ASCII art, with a
 screen-reader-only `<h1>`, and the tagline), `help` (the commands, each with a
 plain-English description), then the
 output of whichever command ran, and a prompt to type the next one. No tab bar, little
-up front. Non-technical visitors must never be stuck: every command is also a link, the
-help line says so, and the page works with scripts off. Investigation write-ups are
+up front. Commands are typed, not clicked (Nate, Oct 2026): with the script they show as
+plain text, and they become links only when scripts are off, so the page still works
+then. Touch screens show two-letter commands (`st`, `po`, `pr`, `ab`, `co`; both forms
+work everywhere), and a near-miss like `storeis` gets "Did you mean...". Past commands
+show a short `$` prompt; the full `nate@nelson:~$` appears only on the live line. Investigation write-ups are
 separate pages with a header prompt (`nate@nelson:~/stories$`, linking home) and a
 "Back to all stories" link. One font (JetBrains Mono) at one size, as in a real terminal:
 headings stand out by weight and colour. Credible, not a costume: no matrix effects.
@@ -289,8 +292,8 @@ restarts on each keystroke, as in a terminal), and a command's output "prints" i
 a third of a second. None of it runs for visitors who ask for reduced motion.
 
 - Adding a command: add a `CliOutput` section to `index.astro`, an entry to its
-  `COMMANDS` list (with a description), and the same name to `COMMANDS` in
-  `public/cli.js`. `npm run a11y` checks every section automatically.
+  `COMMANDS` list (with a description and a unique two-letter `short` form), and both
+  names to `COMMANDS` in `public/cli.js`. `npm run a11y` checks every section automatically.
 - Prompt text is decoration: mark it `aria-hidden="true"` (`Prompt` and `CliOutput` do)
   and keep a real heading or link text for screen readers.
 - Typed commands: the script also accepts a few aliases (`journalism`, `whoami`, `ls`),
@@ -301,7 +304,7 @@ a third of a second. None of it runs for visitors who ask for reduced motion.
   the cursor is the focus indicator (solid when focused, outlined when not).
 - Easter eggs: an ASCII-art note in an HTML comment at the top of every page (in
   `BaseLayout.astro`), `public/humans.txt`, a line in `security.txt`, `sudo` in the command
-  box, and a "command not found" 404 page.
+  box, and a "command not found" 404 page (with one link home).
 
 - Styles: `src/styles/global.css` (colour tokens at the top; both themes checked for
   WCAG AA contrast, so re-check if you change a colour). Font: JetBrains Mono,

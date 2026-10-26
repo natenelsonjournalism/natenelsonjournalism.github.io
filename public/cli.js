@@ -1,8 +1,8 @@
 // The homepage's typed-command box. Everything it shows is already on the page: the
 // script only compares what the visitor typed against the fixed list below and, on a
 // match, jumps to that section (#stories, #about, ...), exactly as clicking the command
-// does. What the visitor types is never shown, stored, sent anywhere or run.
-// Without this script the page still works: every command is a link.
+// does with scripts off. What the visitor types is never shown, stored, sent anywhere or
+// run. Without this script the page still works: every command is then a link.
 // Rules this file must keep are checked by scripts/verify-build.mjs (see CLAUDE.md).
 
 'use strict';
@@ -16,6 +16,12 @@
     about: 'about',
     contact: 'contact',
     help: 'help',
+    // Two-letter forms, shown on touch screens where typos are easy.
+    st: 'stories',
+    po: 'podcasts',
+    pr: 'projects',
+    ab: 'about',
+    co: 'contact',
     // A few aliases people may try.
     journalism: 'stories',
     whoami: 'about',
@@ -40,6 +46,19 @@
     status.classList.toggle('cli-error', Boolean(isError));
   };
 
+  // Letters that differ between two words (edit distance), to catch typos like "storeis".
+  const distance = (a, b) => {
+    let row = Array.from({ length: b.length + 1 }, (_, i) => i);
+    for (let i = 1; i <= a.length; i++) {
+      const next = [i];
+      for (let j = 1; j <= b.length; j++) {
+        next[j] = Math.min(row[j] + 1, next[j - 1] + 1, row[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      }
+      row = next;
+    }
+    return row[b.length];
+  };
+
   const history = [];
   let back = 0;
 
@@ -61,7 +80,14 @@
     }
     const id = Object.prototype.hasOwnProperty.call(COMMANDS, typed) ? COMMANDS[typed] : null;
     if (!id) {
-      say('command not found. Type "help" to see the commands.', true);
+      // Suggest the closest command (one of ours, never the visitor's text).
+      const near = typed.length >= 3 ? MAIN.find((c) => distance(typed, c) <= 2) : undefined;
+      say(
+        near
+          ? 'command not found. Did you mean "' + near + '"?'
+          : 'command not found. Type "help" to see the commands.',
+        true,
+      );
       return;
     }
     if (location.hash === '#' + id) {

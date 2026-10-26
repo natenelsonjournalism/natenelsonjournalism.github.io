@@ -37,12 +37,14 @@ const updated = new Intl.DateTimeFormat('en-US', {
   .format(new Date())
   .replace(/,/g, '');
 
+// `short` is the two-letter form shown on touch screens, where typos are easy. Both forms
+// work everywhere; keep them in step with COMMANDS in public/cli.js.
 const COMMANDS = [
-  { id: 'stories', help: 'My recent journalism' },
-  { id: 'podcasts', help: 'Shows I’ve written, with episodes to play' },
-  { id: 'projects', help: 'Things I make on the side' },
-  { id: 'about', help: 'Who I am' },
-  { id: 'contact', help: 'How to reach me' },
+  { id: 'stories', short: 'st', help: 'My recent journalism' },
+  { id: 'podcasts', short: 'po', help: 'Shows I’ve written, with episodes to play' },
+  { id: 'projects', short: 'pr', help: 'Things I make on the side' },
+  { id: 'about', short: 'ab', help: 'Who I am' },
+  { id: 'contact', short: 'co', help: 'How to reach me' },
 ];
 
 const investigations = await getInvestigations();
@@ -75,24 +77,37 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
 <BaseLayout person cli>
   <div class="cli">
     <p class="cli-motd">Last updated: {updated}</p>
-    <p class="cli-line" aria-hidden="true"><span class="ps1">nate@nelson:~$</span> whoami</p>
+    <p class="cli-line" aria-hidden="true"><span class="ps1">$</span> whoami</p>
     <h1 class="visually-hidden">{SITE.name}</h1>
     <pre class="cli-banner cli-banner-wide" aria-hidden="true">{BANNER}</pre>
     <pre class="cli-banner cli-banner-narrow" aria-hidden="true">{BANNER_SMALL}</pre>
     <p class="cli-tagline">{SITE.tagline}</p>
 
     <section id="help" class="cli-help" tabindex="-1" aria-labelledby="help-heading">
-      <p class="cli-line" aria-hidden="true"><span class="ps1">nate@nelson:~$</span> help</p>
+      <p class="cli-line" aria-hidden="true"><span class="ps1">$</span> help</p>
       <h2 id="help-heading" class="cli-hint">
         <span class="no-js-only">Click a command to run it:</span>
-        <span class="js-only">Type a command below and press Enter, or click one:</span>
+        <span class="js-only">
+          <span class="cmd-long">Type a command at the prompt below and press Enter:</span>
+          <span class="cmd-short">Type a command at the prompt below and tap Go:</span>
+        </span>
       </h2>
+      {/* With the script, commands are typed, not clicked; the links are the fallback without it. */}
       <ul class="cli-commands">
         {
           COMMANDS.map((c) => (
             <li>
-              <a href={`#${c.id}`}>{c.id}</a>
-              <span class="cli-desc">{c.help}</span>
+              <a class="no-js-only" href={`#${c.id}`}>
+                {c.id}
+              </a>
+              <span class="js-only cli-cmd">
+                <span class="cmd-long">{c.id}</span>
+                <span class="cmd-short">{c.short}</span>
+              </span>
+              <span class="cli-desc">
+                <span class="cmd-short">{c.id}: </span>
+                {c.help}
+              </span>
             </li>
           ))
         }
@@ -241,7 +256,7 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
               <span aria-hidden="true">#</span> speaking and media
             </h3>
             <p>
-              To invite me to speak, see <a href="#contact">contact</a>.
+              To invite me to speak, run <a class="no-js-only" href="#contact">contact</a><span class="js-only cli-cmd">contact</span>.
             </p>
             {groups.map((group) => (
               <section aria-labelledby={`type-${group.type}`}>

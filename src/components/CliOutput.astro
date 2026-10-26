@@ -1,7 +1,8 @@
 ---
-// One command's output on the homepage. Hidden until its command runs: clicking the
-// command (a #link) or typing it (public/cli.js) makes this section the page's :target,
-// and CSS shows it. No script is needed to read it.
+// One command's output on the homepage. Hidden until its command runs: typing it
+// (public/cli.js), or clicking its #link when scripts are off, makes this section the
+// page's :target, and CSS shows it. The past command's prompt is a short "$"; the full
+// nate@nelson:~$ prompt appears only on the live line where you type.
 interface Props {
   id: string;
   /** The command, as shown on the prompt line above the output. */
@@ -12,6 +13,6 @@ const { id, command } = Astro.props;
 ---
 
 <section id={id} class="cli-out" tabindex="-1" aria-labelledby={`${id}-heading`}>
-  <p class="cli-line" aria-hidden="true"><span class="ps1">nate@nelson:~$</span> {command}</p>
+  <p class="cli-line" aria-hidden="true"><span class="ps1">$</span> {command}</p>
   <slot />
 </section>

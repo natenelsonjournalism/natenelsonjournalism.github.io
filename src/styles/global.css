@@ -597,6 +597,30 @@ main {
   text-decoration-thickness: 2px;
 }
 
+/* A command to type (not a link): bold, in the prompt's colour. */
+.cli-cmd {
+  font-weight: 700;
+  color: var(--prompt);
+}
+
+/* Touch screens get the two-letter commands (st, po, ...), since typos are easy there.
+   Both forms work on every device. */
+.cmd-short {
+  display: none;
+}
+
+@media (pointer: coarse) {
+  .js .cmd-long {
+    display: none;
+  }
+  .js .cmd-short {
+    display: inline;
+  }
+  .js .cli-commands li {
+    grid-template-columns: 2ch 1fr;
+  }
+}
+
 .cli-desc {
   color: var(--muted);
 }
