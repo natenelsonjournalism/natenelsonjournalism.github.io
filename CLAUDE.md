@@ -287,12 +287,16 @@ separate pages with a header prompt (`nate@nelson:~/stories$`, linking home) and
 "Back to all stories" link. One font (JetBrains Mono) at one size, as in a real terminal:
 headings stand out by weight and colour. Like a terminal window, pages fill the browser's
 width (left-aligned, no centred column), and text grows a little on big screens (16px up
-to 20px); on the homepage lines stop at 100 characters so they stay readable, and write-ups
-keep a narrower reading column. The word "command" in the help line is green, like the
+to 18px); on the homepage lines stop at 100 characters so they stay readable, and write-ups
+keep a narrower reading column. The homepage is compact (Nate: most outputs should fit
+on one screen; `stories` and `podcasts` may run longer), the ASCII name is set a little
+smaller than the text, and a typed command scrolls the page only as far as needed to show
+its output and the prompt, as a terminal would. The word "command" in the help line is green, like the
 commands themselves. Credible, not a costume: no matrix effects.
 Light/dark via `prefers-color-scheme`, both WCAG AA. Responsive to 320px. Visible focus
-styles. Motion: blinking cursors stop after five blinks (WCAG 2.2.2; the command box's
-restarts on each keystroke, as in a terminal), and a command's output "prints" in over
+styles. Motion: the command box's cursor blinks for as long as the box has focus (Nate's
+call: it is a text cursor, like the browser's own); other decorative cursors stop after
+five blinks (WCAG 2.2.2), and a command's output "prints" in over
 a third of a second. None of it runs for visitors who ask for reduced motion.
 
 - Adding a command: add a `CliOutput` section to `index.astro`, an entry to its
@@ -307,11 +311,11 @@ a third of a second. None of it runs for visitors who ask for reduced motion.
   the box loses its border and gets a block cursor (`.cli-caret`, placed by `cli.js`);
   the cursor is the focus indicator (solid when focused, outlined when not).
 - Easter eggs: an ASCII-art note in an HTML comment at the top of every page (in
-  `BaseLayout.astro`), `public/humans.txt`, a line in `security.txt`, `sudo` in the command
-  box, a few more fixed replies (`EGGS` in `public/cli.js`: `ping`, `nmap`, `passwd`,
-  `cat flag.txt`, `hack the planet`, `exit`, ...), "Nice try, sucka!!" for anything that
-  looks like code injection (`ATTACK`; it could never work, since typed text is only
-  compared, never run or shown), and a "command not found" 404 page (with one link home).
+  `BaseLayout.astro`), `public/humans.txt`, a line in `security.txt`, and a "command not
+  found" 404 page (with one link home). In the command box, the only one (Nate, Oct 2026)
+  is "Nice try, sucka!!" for `sudo` or anything that looks like code injection (`ATTACK`
+  in `public/cli.js`; it could never work, since typed text is only compared, never run or
+  shown).
 
 - Styles: `src/styles/global.css` (colour tokens at the top; both themes checked for
   WCAG AA contrast, so re-check if you change a colour). Font: JetBrains Mono,

@@ -28,38 +28,11 @@
     ls: 'help',
     '?': 'help',
   };
-  // Easter eggs: fixed replies to a few things curious visitors try.
-  const EGGS = {
-    'sudo make me a sandwich': 'Okay.',
-    'make me a sandwich': 'What? Make it yourself.',
-    'hack the planet': 'HACK THE PLANET!',
-    hack: 'HACK THE PLANET!',
-    ping: 'pong',
-    nmap: 'Nmap scan report for nate@nelson: 5 open ports (stories, podcasts, projects, about, contact).',
-    'nmap localhost': 'Nmap scan report for nate@nelson: 5 open ports (stories, podcasts, projects, about, contact).',
-    passwd: 'passwd: nice try. (It isn’t hunter2.)',
-    password: 'passwd: nice try. (It isn’t hunter2.)',
-    'cat flag.txt': 'flag{you_read_the_source_or_you_play_ctfs}',
-    flag: 'flag{you_read_the_source_or_you_play_ctfs}',
-    'ls -a': 'Hidden files? Try viewing the page source.',
-    'ls -la': 'Hidden files? Try viewing the page source.',
-    vim: 'Editors are for drafts, and drafts stay off this site.',
-    vi: 'Editors are for drafts, and drafts stay off this site.',
-    nano: 'Editors are for drafts, and drafts stay off this site.',
-    emacs: 'Editors are for drafts, and drafts stay off this site.',
-    exit: 'logout: not so fast. Have you tried "podcasts"?',
-    logout: 'logout: not so fast. Have you tried "podcasts"?',
-    quit: 'logout: not so fast. Have you tried "podcasts"?',
-    coffee: '418 I’m a teapot.',
-    xyzzy: 'Nothing happens.',
-    hello: 'Hello! Type "help" to see the commands.',
-    hi: 'Hello! Type "help" to see the commands.',
-  };
-  // Anything that looks like an attempt to inject code (HTML, script, SQL, shell). It
-  // couldn't work anyway (the text is only ever compared, never run or shown), so it
-  // just gets a fixed reply.
+  // Easter egg: anything that looks like an attempt to inject code (HTML, script, SQL,
+  // shell), or sudo. It couldn't work anyway (the text is only ever compared, never run
+  // or shown), so it just gets a fixed reply.
   const ATTACK =
-    /[<>{}`;|&$\\]|\.\.\/|%[0-9a-f]{2}|script|alert\s*\(|javascript:|\bunion\s+select\b|\bdrop\s+table\b|\bselect\s.*\bfrom\b|'\s*or\s|\bor\s+1\s*=\s*1\b|\brm\s+-|\/etc\/passwd|\bchmod\b|\bcurl\b|\bwget\b/;
+    /[<>{}`;|&$\\]|\.\.\/|%[0-9a-f]{2}|script|alert\s*\(|javascript:|\bunion\s+select\b|\bdrop\s+table\b|\bselect\s.*\bfrom\b|'\s*or\s|\bor\s+1\s*=\s*1\b|\brm\s+-|\/etc\/passwd|\bchmod\b|\bcurl\b|\bwget\b|^sudo\b/;
 
   // Suggested by Tab completion, in this order.
   const MAIN = ['stories', 'podcasts', 'projects', 'about', 'contact', 'help', 'clear'];
@@ -105,18 +78,10 @@
       say('Nice try, sucka!!', true);
       return;
     }
-    if (Object.prototype.hasOwnProperty.call(EGGS, typed)) {
-      say(EGGS[typed]);
-      return;
-    }
     if (typed === 'clear') {
       location.hash = '';
       window.scrollTo(0, 0);
       say('Cleared.');
-      return;
-    }
-    if (typed === 'sudo' || typed.startsWith('sudo ')) {
-      say('sudo: permission denied. Nice try.', true);
       return;
     }
     const id = Object.prototype.hasOwnProperty.call(COMMANDS, typed) ? COMMANDS[typed] : null;
@@ -131,14 +96,20 @@
       );
       return;
     }
-    if (location.hash === '#' + id) {
-      // Already showing it: just bring it back into view.
-      const target = document.getElementById(id);
-      if (target) target.scrollIntoView();
-    } else {
-      location.hash = id;
-    }
+    if (location.hash !== '#' + id) location.hash = id;
+    reveal(id);
     say(id === 'help' ? 'Showing the list of commands.' : 'Showing ' + id + '.');
+  };
+
+  // Scroll like a terminal: just far enough to show the new output and the prompt under
+  // it, keeping what's above in view when it all fits. (Going to a #link would instead
+  // put the output at the top of the screen.)
+  const reveal = (id) => {
+    const target = document.getElementById(id);
+    if (!target) return;
+    const top = target.getBoundingClientRect().top + window.scrollY;
+    const bottom = form.getBoundingClientRect().bottom + window.scrollY + 48;
+    window.scrollTo(0, Math.max(0, Math.min(top, bottom - window.innerHeight)));
   };
 
   form.addEventListener('submit', (event) => {

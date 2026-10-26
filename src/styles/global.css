@@ -2,7 +2,8 @@
   Site-wide design: a terminal you can read. One monospace (JetBrains Mono) and, as in a
   real terminal, one text size: headings stand out by weight and colour, not size.
   Colours are tokens below; both themes are checked for WCAG AA contrast. Motion: the
-  cursor blinks five times and then holds (WCAG 2.2.2), and a command's output prints
+  command box's cursor blinks, like a real text cursor; other cursors blink five times and
+  then hold (WCAG 2.2.2). A command's output prints
   in over a third of a second. None of it runs for visitors who ask for reduced motion.
 */
 @import './fonts.css';
@@ -64,8 +65,8 @@
 }
 
 html {
-  /* Text grows a little on big screens, so the terminal fills them (16px up to 20px). */
-  font-size: clamp(100%, 0.8rem + 0.35vw, 125%);
+  /* Text grows a little on big screens, so the terminal fills them (16px up to 18px). */
+  font-size: clamp(100%, 0.85rem + 0.2vw, 112.5%);
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
@@ -514,23 +515,30 @@ main {
 .cli {
   /* Lines can run wider here than on the write-up pages, but not so wide they're hard to read. */
   --measure: 100ch;
-  padding-top: clamp(1.5rem, 5vh, 3.5rem);
+  padding-top: clamp(1rem, 3vh, 2rem);
+  line-height: 1.5;
+}
+
+/* Compact, like a terminal: as much as possible fits on one screen. */
+.cli p {
+  margin: 0 0 0.5rem;
 }
 
 /* "Last updated", like a terminal's login message. */
 .cli-motd {
   color: var(--muted);
-  margin: 0 0 1.5rem;
+  margin: 0 0 0.4rem;
 }
 
 /* The name in ASCII art: 52 characters wide, or 45 on phones. It shrinks to fit
    (a monospace character is 0.6em wide). */
 .cli-banner {
-  margin: 0.5rem 0 0.75rem;
+  margin: 0.25rem 0 0.4rem;
   font: inherit;
   font-weight: 500;
-  /* As big as fits the window: the banner is 85 characters wide, each 0.6em. */
-  font-size: min(1.4rem, calc((100vw - 2 * var(--gutter) - 1rem) / 52));
+  /* A little smaller than the text, and smaller still if the window is narrow: the
+     banner is 85 characters wide, each 0.6em. */
+  font-size: min(0.8rem, calc((100vw - 2 * var(--gutter) - 1rem) / 52));
   line-height: 1.3;
   color: var(--fg);
   overflow: hidden;
@@ -538,10 +546,10 @@ main {
 
 .cli-banner-narrow {
   display: none;
-  font-size: min(1.4rem, calc((100vw - 2 * var(--gutter) - 1rem) / 31));
+  font-size: min(0.8rem, calc((100vw - 2 * var(--gutter) - 1rem) / 31));
 }
 
-@media (max-width: 48rem) {
+@media (max-width: 23.9rem) {
   .cli-banner-wide {
     display: none;
   }
@@ -563,7 +571,7 @@ main {
 
 .cli-tagline {
   color: var(--muted);
-  margin: 0 0 2rem;
+  margin: 0 0 1.25rem;
 }
 
 .cli-hint {
@@ -585,7 +593,7 @@ main {
 
 .cli-commands {
   list-style: none;
-  margin: 0 0 2rem;
+  margin: 0 0 1.25rem;
   padding: 0;
 }
 
@@ -593,7 +601,7 @@ main {
   display: grid;
   grid-template-columns: 10ch 1fr;
   gap: 0 1rem;
-  padding-block: 0.15rem;
+  padding-block: 0;
 }
 
 .cli-commands a {
@@ -641,7 +649,7 @@ main {
 /* Each command's output stays hidden until its command runs (it becomes the :target). */
 .cli-out {
   display: none;
-  margin: 0 0 2rem;
+  margin: 0 0 1.25rem;
 }
 
 .cli-out:target,
@@ -667,14 +675,14 @@ main {
 
 .cli-heading {
   color: var(--accent);
-  margin: 0.75rem 0 1.25rem;
+  margin: 0.25rem 0 0.6rem;
 }
 
 /* "# investigations": set like a comment in a shell script. */
 .cli-subheading {
   font-weight: 400;
   color: var(--muted);
-  margin: 1.75rem 0 0.75rem;
+  margin: 1rem 0 0.25rem;
 }
 
 .cli-out > p {
@@ -685,8 +693,51 @@ main {
   max-width: calc(var(--measure) + 16.5rem);
 }
 
-.cli .clip {
-  padding-block: 0.75rem;
+.cli .clip,
+.cli .episode {
+  padding-block: 0.4rem;
+}
+
+.cli .clip-title,
+.cli .clip .meta,
+.cli .episode .meta,
+.cli .show-header .meta,
+.cli .clip-summary {
+  margin: 0;
+}
+
+.cli .show {
+  padding-block: 0.25rem 0.5rem;
+}
+
+.cli .show + .show {
+  padding-top: 0.75rem;
+}
+
+.cli .show-name {
+  margin: 0;
+}
+
+.cli .episode audio {
+  margin-top: 0.3rem;
+}
+
+.cli .about-intro {
+  gap: 0.75rem 2rem;
+}
+
+.cli .headshot {
+  max-width: 11rem;
+}
+
+@media (min-width: 48rem) {
+  .cli .about-intro {
+    grid-template-columns: 1fr 11rem;
+  }
+}
+
+.cli .subsection-heading {
+  margin: 0.75rem 0 0.25rem;
 }
 
 .cli-form {
@@ -764,7 +815,8 @@ main {
 }
 
 .has-caret input:focus + .cli-caret.blink {
-  animation: blink 1s steps(1) 5;
+  /* Blinks for as long as the box has focus, like the browser's own text cursor. */
+  animation: blink 1s steps(1) infinite;
 }
 
 .cli-status {
