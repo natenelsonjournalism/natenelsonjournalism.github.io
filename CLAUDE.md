@@ -167,7 +167,7 @@ commands to type, and each command's output below. Commands (Nate, Oct 2026): `n
 investigations, each with its own write-up page under `/journalism/`, plus features and the
 full-archive link), `pod` (shows he has written, with playable episodes), `proj`,
 `whoami` (about him, with speaking and media appearances, if any), `ping` (contact) and
-`help` (the list of commands). Each command's output is a section of
+`help` (shows the list again; not itself listed, Nate's call). Each command's output is a section of
 `src/pages/index.astro`, with its own id: `/#stories`, `/#podcasts`, `/#projects`,
 `/#about`, `/#contact` (kept as they were, so links shared elsewhere still work).
 
