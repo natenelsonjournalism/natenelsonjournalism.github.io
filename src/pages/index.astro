@@ -20,11 +20,11 @@ import {
   type Appearance,
 } from '../lib/content';
 
-// Nate's name in ASCII art (figlet "standard" font, and the narrower "small" font for
+// Nate's name in ASCII art (figlet "larry3d" font: on one line, and on two lines for
 // phones). If the name in site.ts changes, regenerate both, e.g. with
 // https://pypi.org/project/pyfiglet/.
-const BANNER_SMALL = " _  _      _         _  _     _\n| \\| |__ _| |_ ___  | \\| |___| |___ ___ _ _\n| .` / _` |  _/ -_) | .` / -_) (_-</ _ \\ ' \\\n|_|\\_\\__,_|\\__\\___| |_|\\_\\___|_/__/\\___/_||_|";
-const BANNER = " _   _       _         _   _      _\n| \\ | | __ _| |_ ___  | \\ | | ___| |___  ___  _ __\n|  \\| |/ _` | __/ _ \\ |  \\| |/ _ \\ / __|/ _ \\| '_ \\\n| |\\  | (_| | ||  __/ | |\\  |  __/ \\__ \\ (_) | | | |\n|_| \\_|\\__,_|\\__\\___| |_| \\_|\\___|_|___/\\___/|_| |_|";
+const BANNER_SMALL = " __  __            __\n/\\ \\/\\ \\          /\\ \\__\n\\ \\ `\\\\ \\     __  \\ \\ ,_\\    __\n \\ \\ , ` \\  /'__`\\ \\ \\ \\/  /'__`\\\n  \\ \\ \\`\\ \\/\\ \\L\\.\\_\\ \\ \\_/\\  __/\n   \\ \\_\\ \\_\\ \\__/.\\_\\\\ \\__\\ \\____\\\n    \\/_/\\/_/\\/__/\\/_/ \\/__/\\/____/\n __  __          ___\n/\\ \\/\\ \\        /\\_ \\\n\\ \\ `\\\\ \\     __\\//\\ \\     ____    ___     ___\n \\ \\ , ` \\  /'__`\\\\ \\ \\   /',__\\  / __`\\ /' _ `\\\n  \\ \\ \\`\\ \\/\\  __/ \\_\\ \\_/\\__, `\\/\\ \\L\\ \\/\\ \\/\\ \\\n   \\ \\_\\ \\_\\ \\____\\/\\____\\/\\____/\\ \\____/\\ \\_\\ \\_\\\n    \\/_/\\/_/\\/____/\\/____/\\/___/  \\/___/  \\/_/\\/_/";
+const BANNER = " __  __            __               __  __          ___\n/\\ \\/\\ \\          /\\ \\__           /\\ \\/\\ \\        /\\_ \\\n\\ \\ `\\\\ \\     __  \\ \\ ,_\\    __    \\ \\ `\\\\ \\     __\\//\\ \\     ____    ___     ___\n \\ \\ , ` \\  /'__`\\ \\ \\ \\/  /'__`\\   \\ \\ , ` \\  /'__`\\\\ \\ \\   /',__\\  / __`\\ /' _ `\\\n  \\ \\ \\`\\ \\/\\ \\L\\.\\_\\ \\ \\_/\\  __/    \\ \\ \\`\\ \\/\\  __/ \\_\\ \\_/\\__, `\\/\\ \\L\\ \\/\\ \\/\\ \\\n   \\ \\_\\ \\_\\ \\__/.\\_\\\\ \\__\\ \\____\\    \\ \\_\\ \\_\\ \\____\\/\\____\\/\\____/\\ \\____/\\ \\_\\ \\_\\\n    \\/_/\\/_/\\/__/\\/_/ \\/__/\\/____/     \\/_/\\/_/\\/____/\\/____/\\/___/  \\/___/  \\/_/\\/_/";
 
 // When the site was last built, shown like a terminal's login message.
 const updated = new Intl.DateTimeFormat('en-US', {
@@ -86,10 +86,10 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
     <section id="help" class="cli-help" tabindex="-1" aria-labelledby="help-heading">
       <p class="cli-line" aria-hidden="true"><span class="ps1">$</span> help</p>
       <h2 id="help-heading" class="cli-hint">
-        <span class="no-js-only">Click a command to run it:</span>
+        <span class="no-js-only">Click a <span class="cli-cmd">command</span> to run it:</span>
         <span class="js-only">
-          <span class="cmd-long">Type a command at the prompt below and press Enter:</span>
-          <span class="cmd-short">Type a command at the prompt below and tap Go:</span>
+          <span class="cmd-long">Type a <span class="cli-cmd">command</span> at the prompt below and press Enter:</span>
+          <span class="cmd-short">Type a <span class="cli-cmd">command</span> at the prompt below and tap Go:</span>
         </span>
       </h2>
       {/* With the script, commands are typed, not clicked; the links are the fallback without it. */}

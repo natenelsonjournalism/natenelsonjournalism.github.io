@@ -274,7 +274,7 @@ Add an entry to `src/data/appearances.yaml`: `id` (unique), `title`, `event_or_s
 ## Design
 
 A terminal you can read (Nate, Oct 2026). The homepage is the whole site: a "Last
-updated" login line (the build date), `whoami` (the name in ASCII art, with a
+updated" login line (the build date), `whoami` (the name in ASCII art, figlet's `larry3d` font, with a
 screen-reader-only `<h1>`, and the tagline), `help` (the commands, each with a
 plain-English description), then the
 output of whichever command ran, and a prompt to type the next one. No tab bar, little
@@ -285,7 +285,11 @@ work everywhere), and a near-miss like `storeis` gets "Did you mean...". Past co
 show a short `$` prompt; the full `nate@nelson:~$` appears only on the live line. Investigation write-ups are
 separate pages with a header prompt (`nate@nelson:~/stories$`, linking home) and a
 "Back to all stories" link. One font (JetBrains Mono) at one size, as in a real terminal:
-headings stand out by weight and colour. Credible, not a costume: no matrix effects.
+headings stand out by weight and colour. Like a terminal window, pages fill the browser's
+width (left-aligned, no centred column), and text grows a little on big screens (16px up
+to 20px); on the homepage lines stop at 100 characters so they stay readable, and write-ups
+keep a narrower reading column. The word "command" in the help line is green, like the
+commands themselves. Credible, not a costume: no matrix effects.
 Light/dark via `prefers-color-scheme`, both WCAG AA. Responsive to 320px. Visible focus
 styles. Motion: blinking cursors stop after five blinks (WCAG 2.2.2; the command box's
 restarts on each keystroke, as in a terminal), and a command's output "prints" in over
@@ -304,7 +308,10 @@ a third of a second. None of it runs for visitors who ask for reduced motion.
   the cursor is the focus indicator (solid when focused, outlined when not).
 - Easter eggs: an ASCII-art note in an HTML comment at the top of every page (in
   `BaseLayout.astro`), `public/humans.txt`, a line in `security.txt`, `sudo` in the command
-  box, and a "command not found" 404 page (with one link home).
+  box, a few more fixed replies (`EGGS` in `public/cli.js`: `ping`, `nmap`, `passwd`,
+  `cat flag.txt`, `hack the planet`, `exit`, ...), "Nice try, sucka!!" for anything that
+  looks like code injection (`ATTACK`; it could never work, since typed text is only
+  compared, never run or shown), and a "command not found" 404 page (with one link home).
 
 - Styles: `src/styles/global.css` (colour tokens at the top; both themes checked for
   WCAG AA contrast, so re-check if you change a colour). Font: JetBrains Mono,
