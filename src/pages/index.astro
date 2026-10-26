@@ -37,14 +37,15 @@ const updated = new Intl.DateTimeFormat('en-US', {
   .format(new Date())
   .replace(/,/g, '');
 
-// `short` is the two-letter form shown on touch screens, where typos are easy. Both forms
-// work everywhere; keep them in step with COMMANDS in public/cli.js.
+// The commands, and the id of the section each one shows (/#stories, ...). Keep them in
+// step with COMMANDS in public/cli.js.
 const COMMANDS = [
-  { id: 'stories', short: 'st', help: 'My recent journalism' },
-  { id: 'podcasts', short: 'po', help: 'Shows I’ve written, with episodes to play' },
-  { id: 'projects', short: 'pr', help: 'Things I make on the side' },
-  { id: 'about', short: 'ab', help: 'Who I am' },
-  { id: 'contact', short: 'co', help: 'How to reach me' },
+  { cmd: 'news', id: 'stories', help: 'My recent journalism' },
+  { cmd: 'pod', id: 'podcasts', help: 'Shows I’ve written' },
+  { cmd: 'proj', id: 'projects', help: 'Things I make on the side' },
+  { cmd: 'whoami', id: 'about', help: 'About me' },
+  { cmd: 'ping', id: 'contact', help: 'How to reach me' },
+  { cmd: 'help', id: 'help', help: 'List these commands' },
 ];
 
 const investigations = await getInvestigations();
@@ -77,7 +78,6 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
 <BaseLayout person cli>
   <div class="cli">
     <p class="cli-motd">Last updated: {updated}</p>
-    <p class="cli-line" aria-hidden="true"><span class="ps1">$</span> whoami</p>
     <h1 class="visually-hidden">{SITE.name}</h1>
     <pre class="cli-banner cli-banner-wide" aria-hidden="true">{BANNER}</pre>
     <pre class="cli-banner cli-banner-narrow" aria-hidden="true">{BANNER_SMALL}</pre>
@@ -87,10 +87,7 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
       <p class="cli-line" aria-hidden="true"><span class="ps1">$</span> help</p>
       <h2 id="help-heading" class="cli-hint">
         <span class="no-js-only">Click a <span class="cli-cmd">command</span> to run it:</span>
-        <span class="js-only">
-          <span class="cmd-long">Type a <span class="cli-cmd">command</span> at the prompt below and press Enter:</span>
-          <span class="cmd-short">Type a <span class="cli-cmd">command</span> at the prompt below and tap Go:</span>
-        </span>
+        <span class="js-only">Type a <span class="cli-cmd">command</span> at the prompt below and press Enter:</span>
       </h2>
       {/* With the script, commands are typed, not clicked; the links are the fallback without it. */}
       <ul class="cli-commands">
@@ -98,23 +95,17 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
           COMMANDS.map((c) => (
             <li>
               <a class="no-js-only" href={`#${c.id}`}>
-                {c.id}
+                {c.cmd}
               </a>
-              <span class="js-only cli-cmd">
-                <span class="cmd-long">{c.id}</span>
-                <span class="cmd-short">{c.short}</span>
-              </span>
-              <span class="cli-desc">
-                <span class="cmd-short">{c.id}: </span>
-                {c.help}
-              </span>
+              <span class="js-only cli-cmd">{c.cmd}</span>
+              <span class="cli-desc">{c.help}</span>
             </li>
           ))
         }
       </ul>
     </section>
 
-    <CliOutput id="stories" command="stories">
+    <CliOutput id="stories" command="news">
       <h2 id="stories-heading" class="cli-heading">Notable Recent Stories</h2>
       {
         investigations.length > 0 && (
@@ -168,7 +159,7 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
       </section>
     </CliOutput>
 
-    <CliOutput id="podcasts" command="podcasts">
+    <CliOutput id="podcasts" command="pod">
       <h2 id="podcasts-heading" class="cli-heading">Recent shows I’ve written:</h2>
       {shows.length === 0 && <Placeholder>Your podcasts go here (src/data/podcasts.yaml).</Placeholder>}
       {
@@ -208,7 +199,7 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
       }
     </CliOutput>
 
-    <CliOutput id="projects" command="projects">
+    <CliOutput id="projects" command="proj">
       <h2 id="projects-heading" class="cli-heading">Things I make on the side.</h2>
       {projects.length === 0 && <Placeholder>Your projects go here (src/data/projects.yaml).</Placeholder>}
       {
@@ -233,7 +224,7 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
       }
     </CliOutput>
 
-    <CliOutput id="about" command="about">
+    <CliOutput id="about" command="whoami">
       <h2 id="about-heading" class="visually-hidden">About</h2>
       <div class="about-intro">
         <div>
@@ -256,7 +247,7 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
               <span aria-hidden="true">#</span> speaking and media
             </h3>
             <p>
-              To invite me to speak, run <a class="no-js-only" href="#contact">contact</a><span class="js-only cli-cmd">contact</span>.
+              To invite me to speak, run <a class="no-js-only" href="#contact">ping</a><span class="js-only cli-cmd">ping</span>.
             </p>
             {groups.map((group) => (
               <section aria-labelledby={`type-${group.type}`}>
@@ -288,7 +279,7 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
       }
     </CliOutput>
 
-    <CliOutput id="contact" command="contact">
+    <CliOutput id="contact" command="ping">
       <h2 id="contact-heading" class="visually-hidden">Contact</h2>
       {
         linkedin ? (

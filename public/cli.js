@@ -8,25 +8,16 @@
 'use strict';
 
 (() => {
-  // Typed command → section id. Only these exact strings do anything.
+  // Typed command → section id. Only these exact strings do anything (in any mix of
+  // capitals: WHOAMI and Whoami work too).
   const COMMANDS = {
-    stories: 'stories',
-    podcasts: 'podcasts',
-    projects: 'projects',
-    about: 'about',
-    contact: 'contact',
-    help: 'help',
-    // Two-letter forms, shown on touch screens where typos are easy.
-    st: 'stories',
-    po: 'podcasts',
-    pr: 'projects',
-    ab: 'about',
-    co: 'contact',
-    // A few aliases people may try.
-    journalism: 'stories',
+    news: 'stories',
+    pod: 'podcasts',
+    proj: 'projects',
     whoami: 'about',
-    ls: 'help',
-    '?': 'help',
+    ping: 'contact',
+    help: 'help',
+    ls: 'help', // what people try in a real terminal
   };
   // Easter egg: anything that looks like an attempt to inject code (HTML, script, SQL,
   // shell), or sudo. It couldn't work anyway (the text is only ever compared, never run
@@ -35,7 +26,7 @@
     /[<>{}`;|&$\\]|\.\.\/|%[0-9a-f]{2}|script|alert\s*\(|javascript:|\bunion\s+select\b|\bdrop\s+table\b|\bselect\s.*\bfrom\b|'\s*or\s|\bor\s+1\s*=\s*1\b|\brm\s+-|\/etc\/passwd|\bchmod\b|\bcurl\b|\bwget\b|^sudo\b/;
 
   // Suggested by Tab completion, in this order.
-  const MAIN = ['stories', 'podcasts', 'projects', 'about', 'contact', 'help', 'clear'];
+  const MAIN = ['news', 'pod', 'proj', 'whoami', 'ping', 'help', 'clear'];
 
   const form = document.getElementById('cli-form');
   const input = document.getElementById('cli-input');
@@ -52,14 +43,20 @@
     status.classList.toggle('cli-error', Boolean(isError));
   };
 
-  // Letters that differ between two words (edit distance), to catch typos like "storeis".
+  // How many typos apart two words are (a missing, extra or wrong letter, or two letters
+  // swapped), to catch things like "whaomi" or "nwes".
   const distance = (a, b) => {
+    let prev = [];
     let row = Array.from({ length: b.length + 1 }, (_, i) => i);
     for (let i = 1; i <= a.length; i++) {
       const next = [i];
       for (let j = 1; j <= b.length; j++) {
         next[j] = Math.min(row[j] + 1, next[j - 1] + 1, row[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+        if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) {
+          next[j] = Math.min(next[j], prev[j - 2] + 1);
+        }
       }
+      prev = row;
       row = next;
     }
     return row[b.length];
@@ -87,7 +84,8 @@
     const id = Object.prototype.hasOwnProperty.call(COMMANDS, typed) ? COMMANDS[typed] : null;
     if (!id) {
       // Suggest the closest command (one of ours, never the visitor's text).
-      const near = typed.length >= 3 ? MAIN.find((c) => distance(typed, c) <= 2) : undefined;
+      // Short commands allow one wrong letter, longer ones two.
+      const near = typed.length >= 3 ? MAIN.find((c) => distance(typed, c) <= (c.length <= 4 ? 1 : 2)) : undefined;
       say(
         near
           ? 'command not found. Did you mean "' + near + '"?'

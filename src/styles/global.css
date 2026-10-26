@@ -599,7 +599,7 @@ main {
 
 .cli-commands li {
   display: grid;
-  grid-template-columns: 10ch 1fr;
+  grid-template-columns: 6ch 1fr;
   gap: 0 1rem;
   padding-block: 0;
 }
@@ -615,35 +615,8 @@ main {
   color: var(--prompt);
 }
 
-/* Touch screens get the two-letter commands (st, po, ...), since typos are easy there.
-   Both forms work on every device. */
-.cmd-short {
-  display: none;
-}
-
-@media (pointer: coarse) {
-  .js .cmd-long {
-    display: none;
-  }
-  .js .cmd-short {
-    display: inline;
-  }
-  .js .cli-commands li {
-    grid-template-columns: 2ch 1fr;
-  }
-}
-
 .cli-desc {
   color: var(--muted);
-}
-
-@media (max-width: 26rem) {
-  .cli-commands li {
-    grid-template-columns: 1fr;
-  }
-  .cli-commands li + li {
-    margin-top: 0.4rem;
-  }
 }
 
 /* Each command's output stays hidden until its command runs (it becomes the :target). */

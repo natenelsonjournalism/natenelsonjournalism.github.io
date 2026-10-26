@@ -163,11 +163,13 @@ Re-scan after any hosting change.
 ## Content
 
 The whole site is one page laid out like a terminal (Nate, Oct 2026): his name, a list of
-commands to type, and each command's output below. Commands: `stories` (a few investigations,
-each with its own write-up page under `/journalism/`, plus features and the full-archive
-link), `podcasts` (shows he has written, with playable episodes), `projects`, `about`
-(with speaking and media appearances, if any) and `contact`. Each command's output is a
-section of `src/pages/index.astro` with that id (`/#stories`, `/#about`, ...).
+commands to type, and each command's output below. Commands (Nate, Oct 2026): `news` (a few
+investigations, each with its own write-up page under `/journalism/`, plus features and the
+full-archive link), `pod` (shows he has written, with playable episodes), `proj`,
+`whoami` (about him, with speaking and media appearances, if any), `ping` (contact) and
+`help` (the list of commands). Each command's output is a section of
+`src/pages/index.astro`, with its own id: `/#stories`, `/#podcasts`, `/#projects`,
+`/#about`, `/#contact` (kept as they were, so links shared elsewhere still work).
 
 Astro checks every entry when the site builds; if something is wrong (a missing field, a
 bad date, a duplicate id, a disallowed audio host, a write-up whose Markdown fails to
@@ -178,7 +180,7 @@ goes live.
 - `src/data/features.yaml`: feature articles.
 - `src/data/podcasts.yaml`: shows and their standout episodes.
 - `src/data/projects.yaml`: side projects.
-- `src/data/appearances.yaml`: talks, panels, podcast guest spots, TV, radio (`about`).
+- `src/data/appearances.yaml`: talks, panels, podcast guest spots, TV, radio (`whoami`).
 - `src/config/site.ts`: name, homepage tagline, `about` text (`ABOUT`), full-archive links (`ARCHIVES`),
   profiles, headshot and contact channels (a Signal username link, and LinkedIn from `PROFILES`; Nate dropped the CV, PGP key,
   SecureDrop and the public email address in Oct 2026). A value left as `null` (or an empty
@@ -274,14 +276,14 @@ Add an entry to `src/data/appearances.yaml`: `id` (unique), `title`, `event_or_s
 ## Design
 
 A terminal you can read (Nate, Oct 2026). The homepage is the whole site: a "Last
-updated" login line (the build date), `whoami` (the name in ASCII art, figlet's `larry3d` font, with a
-screen-reader-only `<h1>`, and the tagline), `help` (the commands, each with a
+updated" login line (the build date), the name in ASCII art (figlet's `larry3d` font, with a
+screen-reader-only `<h1>`) and the tagline, `help` (the commands, each with a
 plain-English description), then the
 output of whichever command ran, and a prompt to type the next one. No tab bar, little
 up front. Commands are typed, not clicked (Nate, Oct 2026): with the script they show as
 plain text, and they become links only when scripts are off, so the page still works
-then. Touch screens show two-letter commands (`st`, `po`, `pr`, `ab`, `co`; both forms
-work everywhere), and a near-miss like `storeis` gets "Did you mean...". Past commands
+then. Commands are short and the same on every device. Capitals don't matter
+(`WHOAMI` and `Whoami` work), and a near-miss like `whaomi` gets "Did you mean...". Past commands
 show a short `$` prompt; the full `nate@nelson:~$` appears only on the live line. Investigation write-ups are
 separate pages with a header prompt (`nate@nelson:~/stories$`, linking home) and a
 "Back to all stories" link. One font (JetBrains Mono) at one size, as in a real terminal:
@@ -289,7 +291,7 @@ headings stand out by weight and colour. Like a terminal window, pages fill the 
 width (left-aligned, no centred column), and text grows a little on big screens (16px up
 to 18px); on the homepage lines stop at 100 characters so they stay readable, and write-ups
 keep a narrower reading column. The homepage is compact (Nate: most outputs should fit
-on one screen; `stories` and `podcasts` may run longer), the ASCII name is set a little
+on one screen; `news` and `pod` may run longer), the ASCII name is set a little
 smaller than the text, and a typed command scrolls the page only as far as needed to show
 its output and the prompt, as a terminal would. The word "command" in the help line is green, like the
 commands themselves. Credible, not a costume: no matrix effects.
@@ -300,12 +302,11 @@ five blinks (WCAG 2.2.2), and a command's output "prints" in over
 a third of a second. None of it runs for visitors who ask for reduced motion.
 
 - Adding a command: add a `CliOutput` section to `index.astro`, an entry to its
-  `COMMANDS` list (with a description and a unique two-letter `short` form), and both
-  names to `COMMANDS` in `public/cli.js`. `npm run a11y` checks every section automatically.
+  `COMMANDS` list (the command, its section's id and a description), and the same
+  command to `COMMANDS` (and `MAIN`, for Tab completion) in `public/cli.js`. `npm run a11y` checks every section automatically.
 - Prompt text is decoration: mark it `aria-hidden="true"` (`Prompt` and `CliOutput` do)
   and keep a real heading or link text for screen readers.
-- Typed commands: the script also accepts a few aliases (`journalism`, `whoami`, `ls`),
-  `clear`, Tab completion (listing the options when several fit), Up/Down history and
+- Typed commands: the script also accepts `ls` (same as `help`), `clear`, Tab completion (listing the options when several fit), Up/Down history and
   Escape; anything else gets a fixed "command not found" message. Typed text is never
   echoed back. Typing anywhere on the page goes into the command box. With the script,
   the box loses its border and gets a block cursor (`.cli-caret`, placed by `cli.js`);
