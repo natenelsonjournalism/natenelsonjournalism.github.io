@@ -26,24 +26,13 @@ import {
 const BANNER_SMALL = " __  __            __\n/\\ \\/\\ \\          /\\ \\__\n\\ \\ `\\\\ \\     __  \\ \\ ,_\\    __\n \\ \\ , ` \\  /'__`\\ \\ \\ \\/  /'__`\\\n  \\ \\ \\`\\ \\/\\ \\L\\.\\_\\ \\ \\_/\\  __/\n   \\ \\_\\ \\_\\ \\__/.\\_\\\\ \\__\\ \\____\\\n    \\/_/\\/_/\\/__/\\/_/ \\/__/\\/____/\n __  __          ___\n/\\ \\/\\ \\        /\\_ \\\n\\ \\ `\\\\ \\     __\\//\\ \\     ____    ___     ___\n \\ \\ , ` \\  /'__`\\\\ \\ \\   /',__\\  / __`\\ /' _ `\\\n  \\ \\ \\`\\ \\/\\  __/ \\_\\ \\_/\\__, `\\/\\ \\L\\ \\/\\ \\/\\ \\\n   \\ \\_\\ \\_\\ \\____\\/\\____\\/\\____/\\ \\____/\\ \\_\\ \\_\\\n    \\/_/\\/_/\\/____/\\/____/\\/___/  \\/___/  \\/_/\\/_/";
 const BANNER = " __  __            __               __  __          ___\n/\\ \\/\\ \\          /\\ \\__           /\\ \\/\\ \\        /\\_ \\\n\\ \\ `\\\\ \\     __  \\ \\ ,_\\    __    \\ \\ `\\\\ \\     __\\//\\ \\     ____    ___     ___\n \\ \\ , ` \\  /'__`\\ \\ \\ \\/  /'__`\\   \\ \\ , ` \\  /'__`\\\\ \\ \\   /',__\\  / __`\\ /' _ `\\\n  \\ \\ \\`\\ \\/\\ \\L\\.\\_\\ \\ \\_/\\  __/    \\ \\ \\`\\ \\/\\  __/ \\_\\ \\_/\\__, `\\/\\ \\L\\ \\/\\ \\/\\ \\\n   \\ \\_\\ \\_\\ \\__/.\\_\\\\ \\__\\ \\____\\    \\ \\_\\ \\_\\ \\____\\/\\____\\/\\____/\\ \\____/\\ \\_\\ \\_\\\n    \\/_/\\/_/\\/__/\\/_/ \\/__/\\/____/     \\/_/\\/_/\\/____/\\/____/\\/___/  \\/___/  \\/_/\\/_/";
 
-// When the site was last built, shown like a terminal's login message.
-const updated = new Intl.DateTimeFormat('en-US', {
-  weekday: 'short',
-  month: 'short',
-  day: 'numeric',
-  year: 'numeric',
-  timeZone: 'UTC',
-})
-  .format(new Date())
-  .replace(/,/g, '');
-
 // The commands, and the id of the section each one shows (/#stories, ...). Keep them in
 // step with COMMANDS in public/cli.js.
 const COMMANDS = [
+  { cmd: 'whoami', id: 'about', help: 'About me' },
   { cmd: 'news', id: 'stories', help: 'My recent journalism' },
   { cmd: 'pod', id: 'podcasts', help: 'Shows I’ve written' },
   { cmd: 'proj', id: 'projects', help: 'Things I make on the side' },
-  { cmd: 'whoami', id: 'about', help: 'About me' },
   { cmd: 'ping', id: 'contact', help: 'How to reach me' },
 ];
 
@@ -76,7 +65,6 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
 
 <BaseLayout person cli>
   <div class="cli">
-    <p class="cli-motd">Last updated: {updated}</p>
     <h1 class="visually-hidden">{SITE.name}</h1>
     <pre class="cli-banner cli-banner-wide" aria-hidden="true">{BANNER}</pre>
     <pre class="cli-banner cli-banner-narrow" aria-hidden="true">{BANNER_SMALL}</pre>

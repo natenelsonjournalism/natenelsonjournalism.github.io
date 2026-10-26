@@ -163,10 +163,10 @@ Re-scan after any hosting change.
 ## Content
 
 The whole site is one page laid out like a terminal (Nate, Oct 2026): his name, a list of
-commands to type, and each command's output below. Commands (Nate, Oct 2026): `news` (a few
-investigations, each with its own write-up page under `/journalism/`, plus features and the
-full-archive link), `pod` (shows he has written, with playable episodes), `proj`,
-`whoami` (about him, with speaking and media appearances, if any), `ping` (contact) and
+commands to type, and each command's output below. Commands (Nate, Oct 2026), in this order: `whoami`
+(about him, with speaking and media appearances, if any), `news` (a few investigations,
+each with its own write-up page under `/journalism/`, plus features and the full-archive
+link), `pod` (shows he has written, with playable episodes), `proj`, `ping` (contact) and
 `help` (shows the list again; not itself listed, Nate's call). Each command's output is a section of
 `src/pages/index.astro`, with its own id: `/#stories`, `/#podcasts`, `/#projects`,
 `/#about`, `/#contact` (kept as they were, so links shared elsewhere still work).
@@ -275,8 +275,7 @@ Add an entry to `src/data/appearances.yaml`: `id` (unique), `title`, `event_or_s
 
 ## Design
 
-A terminal you can read (Nate, Oct 2026). The homepage is the whole site: a "Last
-updated" login line (the build date), the name in ASCII art (figlet's `larry3d` font, with a
+A terminal you can read (Nate, Oct 2026). The homepage is the whole site: the name in ASCII art (figlet's `larry3d` font, with a
 screen-reader-only `<h1>`) and the tagline, `help` (the commands, each with a
 plain-English description), then the
 output of whichever command ran, and a prompt to type the next one. No tab bar, little

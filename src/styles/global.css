@@ -524,12 +524,6 @@ main {
   margin: 0 0 0.5rem;
 }
 
-/* "Last updated", like a terminal's login message. */
-.cli-motd {
-  color: var(--muted);
-  margin: 0 0 0.4rem;
-}
-
 /* The name in ASCII art: 52 characters wide, or 45 on phones. It shrinks to fit
    (a monospace character is 0.6em wide). */
 .cli-banner {
@@ -599,7 +593,7 @@ main {
 
 .cli-commands li {
   display: grid;
-  grid-template-columns: 6ch 1fr;
+  grid-template-columns: 7ch 1fr;
   gap: 0 1rem;
   padding-block: 0;
 }
