@@ -20,12 +20,31 @@ import {
   type Appearance,
 } from '../lib/content';
 
+// Nate's name in ASCII art (figlet "larry3d" font: on one line, and on two lines for
+// phones). If the name in site.ts changes, regenerate both, e.g. with
+// https://pypi.org/project/pyfiglet/.
+const BANNER_SMALL = " __  __            __\n/\\ \\/\\ \\          /\\ \\__\n\\ \\ `\\\\ \\     __  \\ \\ ,_\\    __\n \\ \\ , ` \\  /'__`\\ \\ \\ \\/  /'__`\\\n  \\ \\ \\`\\ \\/\\ \\L\\.\\_\\ \\ \\_/\\  __/\n   \\ \\_\\ \\_\\ \\__/.\\_\\\\ \\__\\ \\____\\\n    \\/_/\\/_/\\/__/\\/_/ \\/__/\\/____/\n __  __          ___\n/\\ \\/\\ \\        /\\_ \\\n\\ \\ `\\\\ \\     __\\//\\ \\     ____    ___     ___\n \\ \\ , ` \\  /'__`\\\\ \\ \\   /',__\\  / __`\\ /' _ `\\\n  \\ \\ \\`\\ \\/\\  __/ \\_\\ \\_/\\__, `\\/\\ \\L\\ \\/\\ \\/\\ \\\n   \\ \\_\\ \\_\\ \\____\\/\\____\\/\\____/\\ \\____/\\ \\_\\ \\_\\\n    \\/_/\\/_/\\/____/\\/____/\\/___/  \\/___/  \\/_/\\/_/";
+const BANNER = " __  __            __               __  __          ___\n/\\ \\/\\ \\          /\\ \\__           /\\ \\/\\ \\        /\\_ \\\n\\ \\ `\\\\ \\     __  \\ \\ ,_\\    __    \\ \\ `\\\\ \\     __\\//\\ \\     ____    ___     ___\n \\ \\ , ` \\  /'__`\\ \\ \\ \\/  /'__`\\   \\ \\ , ` \\  /'__`\\\\ \\ \\   /',__\\  / __`\\ /' _ `\\\n  \\ \\ \\`\\ \\/\\ \\L\\.\\_\\ \\ \\_/\\  __/    \\ \\ \\`\\ \\/\\  __/ \\_\\ \\_/\\__, `\\/\\ \\L\\ \\/\\ \\/\\ \\\n   \\ \\_\\ \\_\\ \\__/.\\_\\\\ \\__\\ \\____\\    \\ \\_\\ \\_\\ \\____\\/\\____\\/\\____/\\ \\____/\\ \\_\\ \\_\\\n    \\/_/\\/_/\\/__/\\/_/ \\/__/\\/____/     \\/_/\\/_/\\/____/\\/____/\\/___/  \\/___/  \\/_/\\/_/";
+
+// When the site was last built, shown like a terminal's login message.
+const updated = new Intl.DateTimeFormat('en-US', {
+  weekday: 'short',
+  month: 'short',
+  day: 'numeric',
+  year: 'numeric',
+  timeZone: 'UTC',
+})
+  .format(new Date())
+  .replace(/,/g, '');
+
+// The commands, and the id of the section each one shows (/#stories, ...). Keep them in
+// step with COMMANDS in public/cli.js.
 const COMMANDS = [
-  { id: 'stories', help: 'My recent journalism' },
-  { id: 'podcasts', help: 'Shows I’ve written, with episodes to play' },
-  { id: 'projects', help: 'Things I make on the side' },
-  { id: 'about', help: 'Who I am' },
-  { id: 'contact', help: 'How to reach me' },
+  { cmd: 'news', id: 'stories', help: 'My recent journalism' },
+  { cmd: 'pod', id: 'podcasts', help: 'Shows I’ve written' },
+  { cmd: 'proj', id: 'projects', help: 'Things I make on the side' },
+  { cmd: 'whoami', id: 'about', help: 'About me' },
+  { cmd: 'ping', id: 'contact', help: 'How to reach me' },
 ];
 
 const investigations = await getInvestigations();
@@ -57,21 +76,27 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
 
 <BaseLayout person cli>
   <div class="cli">
-    <p class="cli-line" aria-hidden="true"><span class="ps1">nate@nelson:~$</span> whoami</p>
-    <h1 class="cli-name">{SITE.name}</h1>
+    <p class="cli-motd">Last updated: {updated}</p>
+    <h1 class="visually-hidden">{SITE.name}</h1>
+    <pre class="cli-banner cli-banner-wide" aria-hidden="true">{BANNER}</pre>
+    <pre class="cli-banner cli-banner-narrow" aria-hidden="true">{BANNER_SMALL}</pre>
     <p class="cli-tagline">{SITE.tagline}</p>
 
     <section id="help" class="cli-help" tabindex="-1" aria-labelledby="help-heading">
-      <p class="cli-line" aria-hidden="true"><span class="ps1">nate@nelson:~$</span> help</p>
+      <p class="cli-line" aria-hidden="true"><span class="ps1">$</span> help</p>
       <h2 id="help-heading" class="cli-hint">
-        <span class="no-js-only">Click a command to run it:</span>
-        <span class="js-only">Type a command below and press Enter, or click one:</span>
+        <span class="no-js-only">Click a <span class="cli-cmd">command</span> to run it:</span>
+        <span class="js-only">Type a <span class="cli-cmd">command</span> at the prompt below and press Enter:</span>
       </h2>
+      {/* With the script, commands are typed, not clicked; the links are the fallback without it. */}
       <ul class="cli-commands">
         {
           COMMANDS.map((c) => (
             <li>
-              <a href={`#${c.id}`}>{c.id}</a>
+              <a class="no-js-only" href={`#${c.id}`}>
+                {c.cmd}
+              </a>
+              <span class="js-only cli-cmd">{c.cmd}</span>
               <span class="cli-desc">{c.help}</span>
             </li>
           ))
@@ -79,7 +104,7 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
       </ul>
     </section>
 
-    <CliOutput id="stories" command="stories">
+    <CliOutput id="stories" command="news">
       <h2 id="stories-heading" class="cli-heading">Notable Recent Stories</h2>
       {
         investigations.length > 0 && (
@@ -133,7 +158,7 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
       </section>
     </CliOutput>
 
-    <CliOutput id="podcasts" command="podcasts">
+    <CliOutput id="podcasts" command="pod">
       <h2 id="podcasts-heading" class="cli-heading">Recent shows I’ve written:</h2>
       {shows.length === 0 && <Placeholder>Your podcasts go here (src/data/podcasts.yaml).</Placeholder>}
       {
@@ -173,7 +198,7 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
       }
     </CliOutput>
 
-    <CliOutput id="projects" command="projects">
+    <CliOutput id="projects" command="proj">
       <h2 id="projects-heading" class="cli-heading">Things I make on the side.</h2>
       {projects.length === 0 && <Placeholder>Your projects go here (src/data/projects.yaml).</Placeholder>}
       {
@@ -198,7 +223,7 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
       }
     </CliOutput>
 
-    <CliOutput id="about" command="about">
+    <CliOutput id="about" command="whoami">
       <h2 id="about-heading" class="visually-hidden">About</h2>
       <div class="about-intro">
         <div>
@@ -221,7 +246,7 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
               <span aria-hidden="true">#</span> speaking and media
             </h3>
             <p>
-              To invite me to speak, see <a href="#contact">contact</a>.
+              To invite me to speak, run <a class="no-js-only" href="#contact">ping</a><span class="js-only cli-cmd">ping</span>.
             </p>
             {groups.map((group) => (
               <section aria-labelledby={`type-${group.type}`}>
@@ -253,7 +278,7 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
       }
     </CliOutput>
 
-    <CliOutput id="contact" command="contact">
+    <CliOutput id="contact" command="ping">
       <h2 id="contact-heading" class="visually-hidden">Contact</h2>
       {
         linkedin ? (
@@ -288,17 +313,20 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
         <span class="ps1" aria-hidden="true">nate@nelson:~$</span>
         <span class="visually-hidden">Type a command</span>
       </label>
-      <input
-        id="cli-input"
-        name="command"
-        type="text"
-        maxlength="40"
-        autocomplete="off"
-        autocapitalize="none"
-        autocorrect="off"
-        spellcheck="false"
-        enterkeyhint="go"
-      />
+      <span class="cli-field">
+        <input
+          id="cli-input"
+          name="command"
+          type="text"
+          maxlength="40"
+          autocomplete="off"
+          autocapitalize="none"
+          autocorrect="off"
+          spellcheck="false"
+          enterkeyhint="go"
+        />
+        <span class="cli-caret" aria-hidden="true"></span>
+      </span>
     </form>
     <p id="cli-status" class="cli-status" role="status"></p>
     <p class="cli-line cli-idle" aria-hidden="true"><span class="ps1">nate@nelson:~$</span> <span class="cursor"></span></p>

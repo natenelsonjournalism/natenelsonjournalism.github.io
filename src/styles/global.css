@@ -1,15 +1,16 @@
 /*
-  Site-wide design. The homepage is laid out like a terminal, all in a monospace
-  (JetBrains Mono); investigation write-ups keep a serif for long reading (Source Serif 4). Colours are tokens below; both themes are checked for WCAG AA
-  contrast. The only motion is the homepage cursor, which blinks five times and stops
-  (WCAG 2.2.2), and not at all for visitors who ask for reduced motion.
+  Site-wide design: a terminal you can read. One monospace (JetBrains Mono) and, as in a
+  real terminal, one text size: headings stand out by weight and colour, not size.
+  Colours are tokens below; both themes are checked for WCAG AA contrast. Motion: the
+  command box's cursor blinks, like a real text cursor; other cursors blink five times and
+  then hold (WCAG 2.2.2). A command's output prints
+  in over a third of a second. None of it runs for visitors who ask for reduced motion.
 */
 @import './fonts.css';
 
 :root {
   color-scheme: light dark;
 
-  --font-serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
   --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, 'Liberation Mono', monospace;
 
   /* Light theme */
@@ -35,8 +36,8 @@
   --term-focus: #8cb8ff;
 
   --measure: 40rem;
-  --wide: 60rem;
-  --gutter: clamp(1rem, 4vw, 2rem);
+  --wide: none; /* like a terminal window, pages use the full width of the browser */
+  --gutter: clamp(1rem, 4vw, 3rem);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -64,6 +65,8 @@
 }
 
 html {
+  /* Text grows a little on big screens, so the terminal fills them (16px up to 18px). */
+  font-size: clamp(100%, 0.85rem + 0.2vw, 112.5%);
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
@@ -72,10 +75,9 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--fg);
-  font-family: var(--font-serif);
-  font-size: 1.125rem;
-  line-height: 1.6;
-  font-optical-sizing: auto;
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  line-height: 1.65;
   overflow-wrap: break-word;
 }
 
@@ -83,37 +85,16 @@ h1,
 h2,
 h3,
 h4 {
-  font-family: var(--font-serif);
-  line-height: 1.2;
-  font-weight: 650;
-  text-wrap: balance;
-  margin: 2.25rem 0 0.75rem;
+  font-size: 1rem;
+  line-height: 1.4;
+  font-weight: 700;
+  text-wrap: pretty;
+  margin: 2rem 0 0.75rem;
 }
 
 h1 {
-  font-size: clamp(1.6rem, 1.35rem + 1.2vw, 2rem);
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-size: 1.15rem;
   margin-top: 0;
-}
-
-h2 {
-  font-size: 1.6rem;
-}
-
-/* A page title written as a lead-in line ("Recent shows I've written:"), set smaller. */
-h1.page-lead {
-  font-size: 1.25rem;
-  font-weight: 600;
-  letter-spacing: 0;
-}
-
-h3 {
-  font-size: 1.25rem;
-}
-
-h4 {
-  font-size: 1.05rem;
 }
 
 p,
@@ -131,6 +112,11 @@ hr {
   border: 0;
   border-top: 1px solid var(--rule);
   margin: 2.5rem 0;
+}
+
+::selection {
+  background: var(--prompt);
+  color: var(--bg);
 }
 
 a {
@@ -157,7 +143,6 @@ code,
 kbd,
 .mono {
   font-family: var(--font-mono);
-  font-size: 0.9em;
 }
 
 /* Read by screen readers, hidden on screen. */
@@ -247,7 +232,6 @@ main {
   padding-block: 2rem 3rem;
   border-top: 1px solid var(--rule);
   font-family: var(--font-mono);
-  font-size: 0.9rem;
   color: var(--muted);
 }
 
@@ -263,10 +247,7 @@ main {
 
 .meta,
 .label {
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
   color: var(--muted);
-  letter-spacing: 0.01em;
 }
 
 /* Homepage: name and tagline, centred in a band near the top of the screen. */
@@ -274,7 +255,6 @@ main {
 
 .prompt {
   font-family: var(--font-mono);
-  font-size: 0.95rem;
   color: var(--muted);
   margin: 0 0 0.5rem;
   overflow-wrap: anywhere;
@@ -315,8 +295,7 @@ main {
 }
 
 .lede {
-  font-size: 1.3rem;
-  line-height: 1.5;
+  font-weight: 600;
 }
 
 .plain-list {
@@ -326,7 +305,6 @@ main {
 
 .more-link {
   font-family: var(--font-mono);
-  font-size: 0.95rem;
   font-weight: 600;
 }
 
@@ -364,9 +342,7 @@ main {
 
 .clip-title {
   text-wrap: pretty;
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin: 0 0 0.3rem;
+  margin: 0 0 0.2rem;
 }
 
 .clip-title a {
@@ -380,9 +356,7 @@ main {
 
 .clip-note {
   margin-left: 0.4rem;
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  font-weight: 500;
+  font-weight: 400;
   color: var(--muted);
 }
 
@@ -399,7 +373,6 @@ main {
 }
 
 .clip-compact .clip-title {
-  font-size: 1.05rem;
   margin: 0;
 }
 
@@ -456,7 +429,6 @@ main {
   padding: 0;
   list-style: none;
   font-family: var(--font-mono);
-  font-size: 0.9rem;
 }
 
 .episode {
@@ -541,18 +513,49 @@ main {
 /* ---------- Homepage terminal ---------- */
 
 .cli {
-  max-width: 46rem;
-  padding-top: clamp(2rem, 6vh, 4rem);
-  font-family: var(--font-mono);
-  font-size: 1rem;
-  line-height: 1.65;
+  /* Lines can run wider here than on the write-up pages, but not so wide they're hard to read. */
+  --measure: 100ch;
+  padding-top: clamp(1rem, 3vh, 2rem);
+  line-height: 1.5;
 }
 
-.cli h1,
-.cli h2,
-.cli h3,
-.cli h4 {
-  font-family: var(--font-mono);
+/* Compact, like a terminal: as much as possible fits on one screen. */
+.cli p {
+  margin: 0 0 0.5rem;
+}
+
+/* "Last updated", like a terminal's login message. */
+.cli-motd {
+  color: var(--muted);
+  margin: 0 0 0.4rem;
+}
+
+/* The name in ASCII art: 52 characters wide, or 45 on phones. It shrinks to fit
+   (a monospace character is 0.6em wide). */
+.cli-banner {
+  margin: 0.25rem 0 0.4rem;
+  font: inherit;
+  font-weight: 500;
+  /* A little smaller than the text, and smaller still if the window is narrow: the
+     banner is 85 characters wide, each 0.6em. */
+  font-size: min(0.8rem, calc((100vw - 2 * var(--gutter) - 1rem) / 52));
+  line-height: 1.3;
+  color: var(--fg);
+  overflow: hidden;
+}
+
+.cli-banner-narrow {
+  display: none;
+  font-size: min(0.8rem, calc((100vw - 2 * var(--gutter) - 1rem) / 31));
+}
+
+@media (max-width: 23.9rem) {
+  .cli-banner-wide {
+    display: none;
+  }
+  .cli-banner-narrow {
+    display: block;
+  }
 }
 
 .cli-line {
@@ -566,15 +569,9 @@ main {
   font-weight: 600;
 }
 
-.cli-name {
-  font-size: clamp(2rem, 1.4rem + 3vw, 3.25rem);
-  letter-spacing: -0.02em;
-  margin: 0.25rem 0 0.25rem;
-}
-
 .cli-tagline {
   color: var(--muted);
-  margin: 0 0 2rem;
+  margin: 0 0 1.25rem;
 }
 
 .cli-hint {
@@ -596,15 +593,15 @@ main {
 
 .cli-commands {
   list-style: none;
-  margin: 0 0 2rem;
+  margin: 0 0 1.25rem;
   padding: 0;
 }
 
 .cli-commands li {
   display: grid;
-  grid-template-columns: 10ch 1fr;
+  grid-template-columns: 6ch 1fr;
   gap: 0 1rem;
-  padding-block: 0.15rem;
+  padding-block: 0;
 }
 
 .cli-commands a {
@@ -612,28 +609,36 @@ main {
   text-decoration-thickness: 2px;
 }
 
-.cli-desc {
-  color: var(--muted);
+/* A command to type (not a link): bold, in the prompt's colour. */
+.cli-cmd {
+  font-weight: 700;
+  color: var(--prompt);
 }
 
-@media (max-width: 26rem) {
-  .cli-commands li {
-    grid-template-columns: 1fr;
-  }
-  .cli-commands li + li {
-    margin-top: 0.4rem;
-  }
+.cli-desc {
+  color: var(--muted);
 }
 
 /* Each command's output stays hidden until its command runs (it becomes the :target). */
 .cli-out {
   display: none;
-  margin: 0 0 2rem;
+  margin: 0 0 1.25rem;
 }
 
 .cli-out:target,
 .cli-out:has(:target) {
   display: block;
+  animation: print 0.35s steps(12) both;
+}
+
+/* Output appears top to bottom in quick steps, as if the terminal were printing it. */
+@keyframes print {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
 }
 
 .cli-out:focus,
@@ -642,26 +647,70 @@ main {
 }
 
 .cli-heading {
-  font-size: 1.15rem;
-  font-weight: 700;
-  margin: 0.5rem 0 1.25rem;
+  color: var(--accent);
+  margin: 0.25rem 0 0.6rem;
 }
 
+/* "# investigations": set like a comment in a shell script. */
 .cli-subheading {
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-weight: 400;
   color: var(--muted);
-  margin: 2rem 0 0.75rem;
+  margin: 1rem 0 0.25rem;
+}
+
+.cli-out > p {
+  max-width: var(--measure);
+}
+
+.cli .about-intro {
+  max-width: calc(var(--measure) + 16.5rem);
+}
+
+.cli .clip,
+.cli .episode {
+  padding-block: 0.4rem;
 }
 
 .cli .clip-title,
-.cli .show-name {
-  font-size: 1.05rem;
-  font-weight: 700;
+.cli .clip .meta,
+.cli .episode .meta,
+.cli .show-header .meta,
+.cli .clip-summary {
+  margin: 0;
 }
 
-.cli .meta {
-  font-size: 0.85rem;
+.cli .show {
+  padding-block: 0.25rem 0.5rem;
+}
+
+.cli .show + .show {
+  padding-top: 0.75rem;
+}
+
+.cli .show-name {
+  margin: 0;
+}
+
+.cli .episode audio {
+  margin-top: 0.3rem;
+}
+
+.cli .about-intro {
+  gap: 0.75rem 2rem;
+}
+
+.cli .headshot {
+  max-width: 11rem;
+}
+
+@media (min-width: 48rem) {
+  .cli .about-intro {
+    grid-template-columns: 1fr 11rem;
+  }
+}
+
+.cli .subsection-heading {
+  margin: 0.75rem 0 0.25rem;
 }
 
 .cli-form {
@@ -679,8 +728,16 @@ main {
   margin: 0;
 }
 
-.cli-form input {
+.cli-field {
+  position: relative;
   flex: 1 1 12ch;
+  min-width: 0;
+  display: flex;
+}
+
+/* Without the script's cursor (or before it loads), a plain bordered box. */
+.cli-form input {
+  flex: 1;
   min-width: 0;
   padding: 0.3rem 0.5rem;
   border: 1px solid var(--muted);
@@ -696,6 +753,45 @@ main {
   outline-offset: 1px;
 }
 
+.cli-caret {
+  display: none;
+}
+
+/* With it: the text sits right on the prompt line, with a block cursor. The cursor is
+   the focus indicator: solid when the box has focus, an outline when it doesn't. */
+.has-caret input {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  caret-color: transparent;
+}
+
+.has-caret input:focus-visible {
+  outline: none;
+}
+
+.has-caret .cli-caret {
+  display: block;
+  position: absolute;
+  top: 0.15em;
+  left: calc(var(--at, 0) * 1ch - var(--scroll, 0px));
+  width: 1ch;
+  height: 1.3em;
+  border: 2px solid var(--fg);
+  pointer-events: none;
+}
+
+.has-caret input:focus + .cli-caret {
+  background: var(--fg);
+  opacity: 0.85;
+}
+
+.has-caret input:focus + .cli-caret.blink {
+  /* Blinks for as long as the box has focus, like the browser's own text cursor. */
+  animation: blink 1s steps(1) infinite;
+}
+
 .cli-status {
   min-height: 1.65em;
   margin: 0.4rem 0 0;
@@ -707,8 +803,6 @@ main {
 }
 
 .back-link {
-  font-family: var(--font-mono);
-  font-size: 0.95rem;
   margin-bottom: 1.5rem;
 }
 

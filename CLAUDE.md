@@ -145,12 +145,14 @@ Re-scan after any hosting change.
 - `BaseLayout.astro` emits per-page title, description, canonical URL (always the
   github.io address, so preview copies never compete in search), Open Graph and X card tags,
   icons, manifest, RSS and sitemap links. Props: `title`, `description`, `noindex`,
-  `ogType`, `person` (adds schema.org `Person` JSON-LD; used on Home and About).
-- One static share image for every page: `public/og-default.png` (1200×630). Icons:
-  `public/favicon.svg` (monogram drawn from Source Serif 4), `favicon-32.png`,
-  `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`; manifest `public/site.webmanifest`.
-  These were rendered once with a headless browser and contain no metadata; redo them
-  after the design pass.
+  `ogType`, `person` (adds schema.org `Person` JSON-LD; used on the homepage), `cli` (the
+  homepage's script and CSP) and `cwd` (the "where you are" path in the header prompt).
+- One static share image for every page: `public/og-default.png` (1200×630, the terminal
+  `whoami` screen). Icons: `public/favicon.svg` (a bold "N" drawn as a path from JetBrains
+  Mono, with a green underscore cursor, on the dark background), `favicon-32.png`,
+  `apple-touch-icon.png` (square corners; iOS rounds them), `icon-192.png`, `icon-512.png`;
+  manifest `public/site.webmanifest`. All rendered with a headless browser (Oct 2026) and
+  free of metadata; redo them if the design or tagline changes.
 - `@astrojs/sitemap` (official integration, approved by the plan) writes
   `sitemap-index.xml` + `sitemap-0.xml`; `public/robots.txt` points to it. The verifier fails
   if any page (except 404) is missing from the sitemap.
@@ -161,11 +163,13 @@ Re-scan after any hosting change.
 ## Content
 
 The whole site is one page laid out like a terminal (Nate, Oct 2026): his name, a list of
-commands, and each command's output below. Commands: `stories` (a few investigations,
-each with its own write-up page under `/journalism/`, plus features and the full-archive
-link), `podcasts` (shows he has written, with playable episodes), `projects`, `about`
-(with speaking and media appearances, if any) and `contact`. Each command's output is a
-section of `src/pages/index.astro` with that id (`/#stories`, `/#about`, ...).
+commands to type, and each command's output below. Commands (Nate, Oct 2026): `news` (a few
+investigations, each with its own write-up page under `/journalism/`, plus features and the
+full-archive link), `pod` (shows he has written, with playable episodes), `proj`,
+`whoami` (about him, with speaking and media appearances, if any), `ping` (contact) and
+`help` (shows the list again; not itself listed, Nate's call). Each command's output is a section of
+`src/pages/index.astro`, with its own id: `/#stories`, `/#podcasts`, `/#projects`,
+`/#about`, `/#contact` (kept as they were, so links shared elsewhere still work).
 
 Astro checks every entry when the site builds; if something is wrong (a missing field, a
 bad date, a duplicate id, a disallowed audio host, a write-up whose Markdown fails to
@@ -176,7 +180,7 @@ goes live.
 - `src/data/features.yaml`: feature articles.
 - `src/data/podcasts.yaml`: shows and their standout episodes.
 - `src/data/projects.yaml`: side projects.
-- `src/data/appearances.yaml`: talks, panels, podcast guest spots, TV, radio (`about`).
+- `src/data/appearances.yaml`: talks, panels, podcast guest spots, TV, radio (`whoami`).
 - `src/config/site.ts`: name, homepage tagline, `about` text (`ABOUT`), full-archive links (`ARCHIVES`),
   profiles, headshot and contact channels (a Signal username link, and LinkedIn from `PROFILES`; Nate dropped the CV, PGP key,
   SecureDrop and the public email address in Oct 2026). A value left as `null` (or an empty
@@ -271,34 +275,53 @@ Add an entry to `src/data/appearances.yaml`: `id` (unique), `title`, `event_or_s
 
 ## Design
 
-A terminal you can read (Nate, Oct 2026). The homepage is the whole site: `whoami` (name
-and tagline), `help` (the commands, each with a plain-English description), then the
+A terminal you can read (Nate, Oct 2026). The homepage is the whole site: a "Last
+updated" login line (the build date), the name in ASCII art (figlet's `larry3d` font, with a
+screen-reader-only `<h1>`) and the tagline, `help` (the commands, each with a
+plain-English description), then the
 output of whichever command ran, and a prompt to type the next one. No tab bar, little
-up front. Non-technical visitors must never be stuck: every command is also a link, the
-help line says so, and the page works with scripts off. Investigation write-ups are
+up front. Commands are typed, not clicked (Nate, Oct 2026): with the script they show as
+plain text, and they become links only when scripts are off, so the page still works
+then. Commands are short and the same on every device. Capitals don't matter
+(`WHOAMI` and `Whoami` work), and a near-miss like `whaomi` gets "Did you mean...". Past commands
+show a short `$` prompt; the full `nate@nelson:~$` appears only on the live line. Investigation write-ups are
 separate pages with a header prompt (`nate@nelson:~/stories$`, linking home) and a
-"Back to all stories" link. Monospace throughout (JetBrains Mono); write-up bodies keep a
-serif for long reading. Credible, not a costume: no matrix effects. Light/dark via
-`prefers-color-scheme`, both WCAG AA. Responsive to 320px. Visible focus styles. The only
-motion is the blinking cursor (404 page and the no-script homepage), which stops after
-five blinks (WCAG 2.2.2) and never runs for visitors who ask for reduced motion.
+"Back to all stories" link. One font (JetBrains Mono) at one size, as in a real terminal:
+headings stand out by weight and colour. Like a terminal window, pages fill the browser's
+width (left-aligned, no centred column), and text grows a little on big screens (16px up
+to 18px); on the homepage lines stop at 100 characters so they stay readable, and write-ups
+keep a narrower reading column. The homepage is compact (Nate: most outputs should fit
+on one screen; `news` and `pod` may run longer), the ASCII name is set a little
+smaller than the text, and a typed command scrolls the page only as far as needed to show
+its output and the prompt, as a terminal would. The word "command" in the help line is green, like the
+commands themselves. Credible, not a costume: no matrix effects.
+Light/dark via `prefers-color-scheme`, both WCAG AA. Responsive to 320px. Visible focus
+styles. Motion: the command box's cursor blinks for as long as the box has focus (Nate's
+call: it is a text cursor, like the browser's own); other decorative cursors stop after
+five blinks (WCAG 2.2.2), and a command's output "prints" in over
+a third of a second. None of it runs for visitors who ask for reduced motion.
 
 - Adding a command: add a `CliOutput` section to `index.astro`, an entry to its
-  `COMMANDS` list (with a description), and the same name to `COMMANDS` in
-  `public/cli.js`. `npm run a11y` checks every section automatically.
+  `COMMANDS` list (the command, its section's id and a description), and the same
+  command to `COMMANDS` (and `MAIN`, for Tab completion) in `public/cli.js`. `npm run a11y` checks every section automatically.
 - Prompt text is decoration: mark it `aria-hidden="true"` (`Prompt` and `CliOutput` do)
   and keep a real heading or link text for screen readers.
-- Typed commands: the script also accepts a few aliases (`journalism`, `whoami`, `ls`),
-  `clear`, Tab completion and Up/Down history; anything else gets a fixed "Command not
-  found" message. Typed text is never echoed back.
+- Typed commands: the script also accepts `ls` (same as `help`), `clear`, Tab completion (listing the options when several fit), Up/Down history and
+  Escape; anything else gets a fixed "command not found" message. Typed text is never
+  echoed back. Typing anywhere on the page goes into the command box. With the script,
+  the box loses its border and gets a block cursor (`.cli-caret`, placed by `cli.js`);
+  the cursor is the focus indicator (solid when focused, outlined when not).
 - Easter eggs: an ASCII-art note in an HTML comment at the top of every page (in
-  `BaseLayout.astro`), `public/humans.txt`, a line in `security.txt`, `sudo` in the command
-  box, and a "command not found" 404 page.
+  `BaseLayout.astro`), `public/humans.txt`, a line in `security.txt`, and a "command not
+  found" 404 page (with one link home). In the command box, the only one (Nate, Oct 2026)
+  is "Nice try, sucka!!" for `sudo` or anything that looks like code injection (`ATTACK`
+  in `public/cli.js`; it could never work, since typed text is only compared, never run or
+  shown).
 
 - Styles: `src/styles/global.css` (colour tokens at the top; both themes checked for
-  WCAG AA contrast, so re-check if you change a colour). Fonts: Source Serif 4 (reading)
-  and JetBrains Mono (everything else), self-hosted OFL files in `public/fonts/` with their
-  licenses; `@font-face` rules in `src/styles/fonts.css`.
+  WCAG AA contrast, so re-check if you change a colour). Font: JetBrains Mono,
+  self-hosted OFL files in `public/fonts/` with the license; `@font-face` rules in
+  `src/styles/fonts.css`.
 - Pages: `src/pages/` (`index.astro`, the terminal; `journalism/[slug].astro`, one page per
   investigation; `404`). Shared pieces: `src/components/` (`CliOutput`, `StoryItem`,
   `Episode`, `Placeholder`, `PersonJsonLd`, `Prompt`). The command box: `public/cli.js`.

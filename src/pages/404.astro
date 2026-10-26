@@ -2,19 +2,15 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Prompt from '../components/Prompt.astro';
 
-const places = [
-  { href: '/', command: 'cd ~', label: 'Home' },
-  { href: '/#stories', command: 'stories', label: 'My journalism' },
-  { href: '/#podcasts', command: 'podcasts', label: 'My podcasts' },
-  { href: '/#contact', command: 'contact', label: 'Contact me' },
-];
+// Just the way home: commands are typed there, not clicked.
+const places = [{ href: '/', command: 'cd ~', label: 'Back to the homepage' }];
 ---
 
 <BaseLayout title="Page not found" noindex cwd="~/???">
   <div class="page-intro">
     <p class="prompt" aria-hidden="true">bash: cd: no such file or directory</p>
     <h1 class="page-lead">Page not found. It may have moved, or the link may have a typo.</h1>
-    <p class="prompt" aria-hidden="true">Try one of these:</p>
+    <p class="prompt" aria-hidden="true">Try this:</p>
     <ul class="plain-list cmd-list">
       {
         places.map((p) => (
