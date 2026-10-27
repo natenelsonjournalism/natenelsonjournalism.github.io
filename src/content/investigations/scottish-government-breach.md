@@ -7,15 +7,3 @@ archive_url: https://web.archive.org/web/20261020183718/https://www.darkreading.
 summary: "I identified the undisclosed third-party vendor behind a major Scottish government data breach."
 featured: true
 ---
-
-On August 13, Scotland's Crown Office and Procurator Fiscal Service (COPFS), the
-country's prosecution service, announced that an outside supplier had been breached.
-About 300 of its staff had their names, job roles and work email addresses exposed. The
-supplier wasn't named.
-
-The affected staff had all taken part in an online "data maturity" assessment, run for
-the Scottish Government by a third party. Tracing the assessment, I identified the UK
-research company that most likely administered it: Data Orchard.
-
-The same assessment was part of training across several government departments, so the
-breach may reach well beyond the prosecutor's office.

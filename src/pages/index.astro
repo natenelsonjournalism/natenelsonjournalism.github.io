@@ -15,7 +15,6 @@ import {
   getInvestigations,
   getPodcasts,
   getProjects,
-  investigationPath,
   isoDate,
   type Appearance,
 } from '../lib/content';
@@ -101,15 +100,7 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
               <span aria-hidden="true">#</span> investigations
             </h3>
             {investigations.map((inv) => (
-              <article class="clip">
-                <h4 class="clip-title">
-                  <a href={investigationPath(inv)}>{inv.data.title}</a>
-                </h4>
-                <p class="meta">
-                  {inv.data.outlet} · <time datetime={isoDate(inv.data.date)}>{formatDate(inv.data.date)}</time>
-                </p>
-                <p class="clip-summary">{inv.data.summary}</p>
-              </article>
+              <StoryItem story={inv} headingLevel={4} />
             ))}
           </section>
         )

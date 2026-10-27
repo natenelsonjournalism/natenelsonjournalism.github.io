@@ -62,8 +62,8 @@ The site makes **no third-party requests** and ships **one small script of our o
   Fonts and images are self-hosted under `public/` or `src/assets/`.
   Outbound `<a href>` links to articles are fine.
 - Every link to another site must carry `rel="noopener noreferrer"`. Components add it by
-  hand; Markdown links in investigations get it from `src/lib/external-links-plugin.mjs`, so
-  write links there in Markdown syntax (`[text](https://...)`), not raw `<a>` HTML.
+  hand; any Markdown links get it from `src/lib/external-links-plugin.mjs`, so write
+  links in Markdown syntax (`[text](https://...)`), not raw `<a>` HTML.
 - No analytics, embeds, CDN links, or social widgets.
 - **Podcast audio is the one approved exception** (Nate, Oct 2026): episodes play in the
   browser's own `<audio controls preload="none">` player, straight from the show's hosting
@@ -164,19 +164,18 @@ Re-scan after any hosting change.
 
 The whole site is one page laid out like a terminal (Nate, Oct 2026): his name, a list of
 commands to type, and each command's output below. Commands (Nate, Oct 2026), in this order: `whoami`
-(about him, with speaking and media appearances, if any), `news` (a few investigations,
-each with its own write-up page under `/journalism/`, plus features and the full-archive
-link), `pod` (shows he has written, with playable episodes), `proj`, `ping` (contact) and
+(about him, with speaking and media appearances, if any), `news` (a few investigations, then
+features, then the full-archive link; each story is a title linking to the article, with
+a one-line summary), `pod` (shows he has written, with playable episodes), `proj`, `ping` (contact) and
 `help` (shows the list again; not itself listed, Nate's call). Each command's output is a section of
 `src/pages/index.astro`, with its own id: `/#stories`, `/#podcasts`, `/#projects`,
 `/#about`, `/#contact` (kept as they were, so links shared elsewhere still work).
 
 Astro checks every entry when the site builds; if something is wrong (a missing field, a
-bad date, a duplicate id, a disallowed audio host, a write-up whose Markdown fails to
-render), the build stops and names the file, the entry and the problem. Nothing broken
+bad date, a duplicate id, a disallowed audio host), the build stops and names the file, the entry and the problem. Nothing broken
 goes live.
 
-- `src/content/investigations/*.md`: one investigation per file, with its write-up.
+- `src/content/investigations/*.md`: one investigation per file (front matter only).
 - `src/data/features.yaml`: feature articles.
 - `src/data/podcasts.yaml`: shows and their standout episodes.
 - `src/data/projects.yaml`: side projects.
@@ -198,8 +197,9 @@ goes live.
 
 ### How to add an investigation
 
-Create `src/content/investigations/<short-name>.md`. The file name (without `.md`)
-becomes the page address, e.g. `/journalism/hospital-ransomware/`.
+Create `src/content/investigations/<short-name>.md`. Investigations show like features (a
+title linking to the article, plus the summary), listed first under `news`. There are no
+separate write-up pages (Nate, Oct 2026; the old write-ups are in the git history).
 
 ```markdown
 ---
@@ -207,14 +207,11 @@ title: "Tracing a ransomware attack on a hospital network"
 outlet: Wired
 date: 2026-09-30
 url: https://example.com/the-article          # the published story
-summary: "One or two sentences for the stories list: what the story found and what changed."
+summary: "One line: what the story found and what changed."
 featured: true                                 # optional; currently unused
 # archive_url: https://web.archive.org/web/... # optional
 # link_status: dead                            # optional: when the original link breaks
 ---
-
-A short write-up, in Markdown: how the story started, how it was reported, what changed.
-Write links as [text](https://...).
 ```
 
 ### How to add a feature
@@ -283,13 +280,12 @@ up front. Commands are typed, not clicked (Nate, Oct 2026): with the script they
 plain text, and they become links only when scripts are off, so the page still works
 then. Commands are short and the same on every device. Capitals don't matter
 (`WHOAMI` and `Whoami` work), and a near-miss like `whaomi` gets "Did you mean...". Past commands
-show a short `$` prompt; the full `nate@nelson:~$` appears only on the live line. Investigation write-ups are
-separate pages with a header prompt (`nate@nelson:~/stories$`, linking home) and a
-"Back to all stories" link. One font (JetBrains Mono) at one size, as in a real terminal:
-headings stand out by weight and colour. Like a terminal window, pages fill the browser's
+show a short `$` prompt; the full `nate@nelson:~$` appears only on the live line. One font (JetBrains Mono) at one size, as in a real terminal:
+headings stand out by weight and colour. Colours have one job each (Nate, Oct 2026):
+green for the prompt and commands, yellow for section headings, blue (`--link`) for every
+link, muted grey for dates and descriptions. Like a terminal window, pages fill the browser's
 width (left-aligned, no centred column), and text grows a little on big screens (16px up
-to 18px); on the homepage lines stop at 100 characters so they stay readable, and write-ups
-keep a narrower reading column. The homepage is compact (Nate: most outputs should fit
+to 18px); on the homepage lines stop at 100 characters so they stay readable. The homepage is compact (Nate: most outputs should fit
 on one screen; `news` and `pod` may run longer), the ASCII name is set a little
 smaller than the text, and a typed command scrolls the page only as far as needed to show
 its output and the prompt, as a terminal would. The word "command" in the help line is green, like the
@@ -321,8 +317,8 @@ a third of a second. None of it runs for visitors who ask for reduced motion.
   WCAG AA contrast, so re-check if you change a colour). Font: JetBrains Mono,
   self-hosted OFL files in `public/fonts/` with the license; `@font-face` rules in
   `src/styles/fonts.css`.
-- Pages: `src/pages/` (`index.astro`, the terminal; `journalism/[slug].astro`, one page per
-  investigation; `404`). Shared pieces: `src/components/` (`CliOutput`, `StoryItem`,
+- Pages: `src/pages/` (`index.astro`, the terminal; `404`, the only other page, with a
+  header prompt linking home). Shared pieces: `src/components/` (`CliOutput`, `StoryItem`,
   `Episode`, `Placeholder`, `PersonJsonLd`, `Prompt`). The command box: `public/cli.js`.
 
 ## Never commit
