@@ -39,9 +39,6 @@ export async function getAppearances(): Promise<Appearance[]> {
   return (await getCollection('appearances')).sort(newestFirst);
 }
 
-/** Page address of an investigation's write-up. */
-export const investigationPath = (inv: Investigation) => `/journalism/${inv.id}/`;
-
 /**
  * Where a story's original article link should point. A dead link with an archive copy
  * points to the archive and is labeled "(archived)"; a dead link without one is unlinked.

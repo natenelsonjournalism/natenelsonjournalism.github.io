@@ -20,7 +20,7 @@
   --muted: #57544d;
   --rule: #d6d2c8;
   --accent: #8c4a00;
-  --link: #8c4a00;
+  --link: #1f5fbf; /* every link is blue; yellow is for headings */
   --prompt: #2f6b2f;
   --focus: #1f5fbf;
   --placeholder-fg: #6b4e00;
@@ -48,7 +48,7 @@
     --muted: #a39e94;
     --rule: #2c2f34;
     --accent: #f0b44c;
-    --link: #f0b44c;
+    --link: #8cb8ff;
     --prompt: #8fcf7a;
     --focus: #8cb8ff;
     --placeholder-fg: #f5d27a;
@@ -222,7 +222,6 @@ main {
 }
 
 /* Reading column: most page content sits in this measure. */
-.prose,
 .page-intro {
   max-width: var(--measure);
 }
@@ -237,10 +236,6 @@ main {
 
 .site-footer p {
   margin: 0 0 0.4rem;
-}
-
-.site-footer a {
-  color: var(--muted);
 }
 
 /* ---------- Shared pieces ---------- */
@@ -294,18 +289,9 @@ main {
   color: var(--muted);
 }
 
-.lede {
-  font-weight: 600;
-}
-
 .plain-list {
   list-style: none;
   padding: 0;
-}
-
-.more-link {
-  font-family: var(--font-mono);
-  font-weight: 600;
 }
 
 /* Clearly marked placeholder content, for Nate to replace. */
@@ -343,15 +329,6 @@ main {
 .clip-title {
   text-wrap: pretty;
   margin: 0 0 0.2rem;
-}
-
-.clip-title a {
-  color: var(--fg);
-  text-decoration-color: var(--rule);
-}
-
-.clip-title a:hover {
-  text-decoration-color: var(--accent);
 }
 
 .clip-note {
@@ -524,16 +501,10 @@ main {
   margin: 0 0 0.5rem;
 }
 
-/* "Last updated", like a terminal's login message. */
-.cli-motd {
-  color: var(--muted);
-  margin: 0 0 0.4rem;
-}
-
 /* The name in ASCII art: 52 characters wide, or 45 on phones. It shrinks to fit
    (a monospace character is 0.6em wide). */
 .cli-banner {
-  margin: 0.25rem 0 0.4rem;
+  margin: 0.25rem 0 0.75rem;
   font: inherit;
   font-weight: 500;
   /* A little smaller than the text, and smaller still if the window is narrow: the
@@ -569,7 +540,9 @@ main {
   font-weight: 600;
 }
 
-.cli-tagline {
+/* (.cli in the selector so it beats the compact `.cli p` margin.) A larger gap after
+   the tagline separates the name from the commands. */
+.cli .cli-tagline {
   color: var(--muted);
   margin: 0 0 1.25rem;
 }
@@ -599,7 +572,7 @@ main {
 
 .cli-commands li {
   display: grid;
-  grid-template-columns: 6ch 1fr;
+  grid-template-columns: 7ch 1fr;
   gap: 0 1rem;
   padding-block: 0;
 }
@@ -800,10 +773,6 @@ main {
 
 .cli-status.cli-error {
   color: var(--accent);
-}
-
-.back-link {
-  margin-bottom: 1.5rem;
 }
 
 /* ---------- Motion ---------- */

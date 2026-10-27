@@ -3,7 +3,7 @@
 // XML-escaped.
 import type { APIRoute } from 'astro';
 import { SITE } from '../config/site';
-import { getFeatures, getInvestigations, getPodcasts, investigationPath, storyLink } from '../lib/content';
+import { getFeatures, getInvestigations, getPodcasts, storyLink } from '../lib/content';
 
 const escape = (text: string) =>
   text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
@@ -21,7 +21,7 @@ export const GET: APIRoute = async () => {
   const items: Item[] = [];
   for (const inv of await getInvestigations()) {
     const { title, outlet, date, summary } = inv.data;
-    const link = `${SITE.url}${investigationPath(inv)}`;
+    const link = storyLink(inv).href ?? inv.data.url;
     items.push({ title, link, guid: `investigation-${inv.id}`, date, description: `${summary} (${outlet})`, category: 'Investigation' });
   }
   for (const story of await getFeatures()) {

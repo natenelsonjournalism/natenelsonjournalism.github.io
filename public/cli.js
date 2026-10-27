@@ -11,10 +11,10 @@
   // Typed command → section id. Only these exact strings do anything (in any mix of
   // capitals: WHOAMI and Whoami work too).
   const COMMANDS = {
+    whoami: 'about',
     news: 'stories',
     pod: 'podcasts',
     proj: 'projects',
-    whoami: 'about',
     ping: 'contact',
     help: 'help',
     ls: 'help', // what people try in a real terminal
@@ -26,7 +26,7 @@
     /[<>{}`;|&$\\]|\.\.\/|%[0-9a-f]{2}|script|alert\s*\(|javascript:|\bunion\s+select\b|\bdrop\s+table\b|\bselect\s.*\bfrom\b|'\s*or\s|\bor\s+1\s*=\s*1\b|\brm\s+-|\/etc\/passwd|\bchmod\b|\bcurl\b|\bwget\b|^sudo\b/;
 
   // Suggested by Tab completion, in this order.
-  const MAIN = ['news', 'pod', 'proj', 'whoami', 'ping', 'help', 'clear'];
+  const MAIN = ['whoami', 'news', 'pod', 'proj', 'ping', 'help', 'clear'];
 
   const form = document.getElementById('cli-form');
   const input = document.getElementById('cli-input');
