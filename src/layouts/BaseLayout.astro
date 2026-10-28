@@ -69,9 +69,10 @@ const sourceNote = `<!--
     <meta property="og:image:alt" content={`${SITE.name}, ${SITE.role.toLowerCase()}`} />
     <meta name="twitter:card" content="summary_large_image" />
 
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    {/* "?v=2": browsers cache icons hard; bump it whenever the icons change. */}
+    <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png?v=2" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2" />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="alternate" type="application/rss+xml" title={`${SITE.name}: new work`} href="/rss.xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />

@@ -152,7 +152,10 @@ Re-scan after any hosting change.
   Mono, with a green underscore cursor, on the dark background), `favicon-32.png`,
   `apple-touch-icon.png` (square corners; iOS rounds them), `icon-192.png`, `icon-512.png`;
   manifest `public/site.webmanifest`. All rendered with a headless browser (Oct 2026) and
-  free of metadata; redo them if the design or tagline changes.
+  free of metadata; redo them if the design or tagline changes, and then bump the `?v=`
+  number on the icon links in `BaseLayout.astro` (browsers cache icons hard).
+- `README.md` is one line, "My personal website." (Nate's call, Oct 2026); the details
+  live here.
 - `@astrojs/sitemap` (official integration, approved by the plan) writes
   `sitemap-index.xml` + `sitemap-0.xml`; `public/robots.txt` points to it. The verifier fails
   if any page (except 404) is missing from the sitemap.
