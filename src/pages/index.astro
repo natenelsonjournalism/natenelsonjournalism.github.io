@@ -92,7 +92,7 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
     </section>
 
     <CliOutput id="stories" command="news">
-      <h2 id="stories-heading" class="cli-heading">Notable Recent Stories</h2>
+      <h2 id="stories-heading" class="visually-hidden">Stories</h2>
       {
         investigations.length > 0 && (
           <section aria-labelledby="investigations-heading">
@@ -138,7 +138,7 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
     </CliOutput>
 
     <CliOutput id="podcasts" command="pod">
-      <h2 id="podcasts-heading" class="cli-heading">Recent shows I’ve written:</h2>
+      <h2 id="podcasts-heading" class="visually-hidden">Podcasts</h2>
       {shows.length === 0 && <Placeholder>Your podcasts go here (src/data/podcasts.yaml).</Placeholder>}
       {
         shows.map((show) => {
@@ -178,7 +178,7 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
     </CliOutput>
 
     <CliOutput id="projects" command="proj">
-      <h2 id="projects-heading" class="cli-heading">Things I make on the side.</h2>
+      <h2 id="projects-heading" class="visually-hidden">Projects</h2>
       {projects.length === 0 && <Placeholder>Your projects go here (src/data/projects.yaml).</Placeholder>}
       {
         projects.map((p) => (
@@ -305,6 +305,7 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
           enterkeyhint="go"
         />
         <span class="cli-caret" aria-hidden="true"></span>
+        <span class="cli-ghost" aria-hidden="true"></span>
       </span>
     </form>
     <p id="cli-status" class="cli-status" role="status"></p>

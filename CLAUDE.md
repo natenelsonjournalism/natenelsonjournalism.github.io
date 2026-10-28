@@ -285,12 +285,15 @@ then. Commands are short and the same on every device. Capitals don't matter
 (`WHOAMI` and `Whoami` work), and a near-miss like `whaomi` gets "Did you mean...". Past commands
 show a short `$` prompt; the full `nate@nelson:~$` appears only on the live line. One font (JetBrains Mono) at one size, as in a real terminal:
 headings stand out by weight and colour. Colours have one job each (Nate, Oct 2026):
-green for the prompt and commands, yellow for section headings, blue (`--link`) for every
-link, muted grey for dates and descriptions. Like a terminal window, pages fill the browser's
+green for the prompt and commands, yellow for error messages, blue (`--link`) for every
+link, muted grey for dates, descriptions and `# comment` subheadings. Outputs have no visible
+title (Nate, Oct 2026): the `$ command` line says what they are, and each keeps a
+screen-reader-only `<h2>`. Like a terminal window, pages fill the browser's
 width (left-aligned, no centred column), and text grows a little on big screens (16px up
 to 18px); on the homepage lines stop at 100 characters so they stay readable. The homepage is compact (Nate: most outputs should fit
-on one screen; `news` and `pod` may run longer), the ASCII name is set a little
-smaller than the text, and a typed command scrolls the page only as far as needed to show
+on one screen; `news` and `pod` may run longer), every output sits the same distance
+above the prompt, the ASCII name is set a little smaller than the text (on two lines
+below 40rem, so phones can read it), and a typed command scrolls the page only as far as needed to show
 its output and the prompt, as a terminal would. The word "command" in the help line is green, like the
 commands themselves. Credible, not a costume: no matrix effects.
 Light/dark via `prefers-color-scheme`, both WCAG AA. Responsive to 320px. Visible focus
@@ -306,7 +309,11 @@ a third of a second. None of it runs for visitors who ask for reduced motion.
   and keep a real heading or link text for screen readers.
 - Typed commands: the script also accepts `ls` (same as `help`), `clear`, Tab completion (listing the options when several fit), Up/Down history and
   Escape; anything else gets a fixed "command not found" message. Typed text is never
-  echoed back. Typing anywhere on the page goes into the command box. With the script,
+  echoed back. A command that works shows nothing under the prompt (its "Showing ..."
+  message is for screen readers only); errors and Tab's list show. As in the fish shell,
+  the rest of the one command that fits what's typed appears in grey after the cursor
+  (`.cli-ghost`; Tab or the right arrow accepts it), and if nothing is typed for 10
+  seconds a grey `try: whoami` hint appears there once. Typing anywhere on the page goes into the command box. With the script,
   the box loses its border and gets a block cursor (`.cli-caret`, placed by `cli.js`);
   the cursor is the focus indicator (solid when focused, outlined when not).
 - Easter eggs: an ASCII-art note in an HTML comment at the top of every page (in
