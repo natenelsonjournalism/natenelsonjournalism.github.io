@@ -32,15 +32,18 @@
   const input = document.getElementById('cli-input');
   const status = document.getElementById('cli-status');
   const caret = document.querySelector('.cli-caret');
-  if (!form || !input || !status || !caret) return;
+  const ghost = document.querySelector('.cli-ghost');
+  if (!form || !input || !status || !caret || !ghost) return;
 
   document.documentElement.classList.add('js');
   form.hidden = false;
 
-  // Fixed messages only; never the visitor's text.
-  const say = (message, isError) => {
+  // Fixed messages only; never the visitor's text. A "quiet" message is for screen
+  // readers only: like a real terminal, a command that works says nothing on screen.
+  const say = (message, tone) => {
     status.textContent = message;
-    status.classList.toggle('cli-error', Boolean(isError));
+    status.classList.toggle('cli-error', tone === 'error');
+    status.classList.toggle('cli-quiet', tone === 'quiet');
   };
 
   // How many typos apart two words are (a missing, extra or wrong letter, or two letters
@@ -70,15 +73,16 @@
     if (typed === '') return;
     history.push(typed);
     back = 0;
+    stopHint();
 
     if (ATTACK.test(typed)) {
-      say('Nice try, sucka!!', true);
+      say('Nice try, sucka!!', 'error');
       return;
     }
     if (typed === 'clear') {
       location.hash = '';
       window.scrollTo(0, 0);
-      say('Cleared.');
+      say('Cleared.', 'quiet');
       return;
     }
     const id = Object.prototype.hasOwnProperty.call(COMMANDS, typed) ? COMMANDS[typed] : null;
@@ -90,13 +94,13 @@
         near
           ? 'command not found. Did you mean "' + near + '"?'
           : 'command not found. Type "help" to see the commands.',
-        true,
+        'error',
       );
       return;
     }
     if (location.hash !== '#' + id) location.hash = id;
     reveal(id);
-    say(id === 'help' ? 'Showing the list of commands.' : 'Showing ' + id + '.');
+    say(id === 'help' ? 'Showing the list of commands.' : 'Showing ' + id + '.', 'quiet');
   };
 
   // Scroll like a terminal: just far enough to show the new output and the prompt under
@@ -117,12 +121,57 @@
     input.focus({ preventScroll: true });
   });
 
+  // The one command that starts with what's typed, if exactly one does (for Tab, the
+  // right arrow and the grey suggestion).
+  const completion = () => {
+    const start = input.value.trim().toLowerCase();
+    if (start === '') return null;
+    const matches = MAIN.filter((c) => c.startsWith(start));
+    return matches.length === 1 && matches[0] !== start ? matches[0] : null;
+  };
+
+  // "try: whoami" in grey after the cursor, if nothing has been typed for 10 seconds.
+  // Shown at most once, and gone for good once the visitor types or runs a command.
+  let hint = false;
+  const hintTimer = setTimeout(() => {
+    hint = input.value === '';
+    placeCaret();
+  }, 10000);
+  const stopHint = () => {
+    clearTimeout(hintTimer);
+    hint = false;
+  };
+
+  // Grey text after the cursor, as in the fish shell: the rest of the command that fits
+  // (always one of ours, never the visitor's text), or the hint. Placed like the cursor.
+  const suggest = () => {
+    const end = input.value.length;
+    const match = (input.selectionStart ?? end) === end ? completion() : null;
+    if (match) {
+      // The cursor sits on the suggestion's first letter and shows it in reverse, as a
+      // terminal's block cursor does; the grey text carries on after it.
+      const rest = match.slice(input.value.trim().length);
+      caret.dataset.char = rest[0];
+      ghost.textContent = rest.slice(1);
+      ghost.style.setProperty('--ghost-at', String(end + 1));
+      return;
+    }
+    delete caret.dataset.char;
+    if (hint && end === 0) {
+      ghost.textContent = 'try: whoami';
+      ghost.style.setProperty('--ghost-at', '2');
+    } else {
+      ghost.textContent = '';
+    }
+  };
+
   // A terminal-style block cursor, drawn over the (hidden) browser caret. It sits one
   // character-width per letter along, since the font is monospace.
   const placeCaret = () => {
     const at = input.selectionStart ?? input.value.length;
     caret.style.setProperty('--at', String(at));
-    caret.style.setProperty('--scroll', input.scrollLeft + 'px');
+    form.style.setProperty('--scroll', input.scrollLeft + 'px');
+    suggest();
     // Restart the blink after each keystroke, as terminals do (it blinks five times, then holds).
     caret.classList.remove('blink');
     void caret.offsetWidth;
@@ -134,7 +183,19 @@
   });
   form.classList.add('has-caret');
 
+  input.addEventListener('input', stopHint);
+
   input.addEventListener('keydown', (event) => {
+    // Right arrow at the end of the line accepts the grey suggestion, as in fish.
+    if (event.key === 'ArrowRight' && input.selectionStart === input.value.length) {
+      const match = completion();
+      if (match) {
+        event.preventDefault();
+        input.value = match;
+        placeCaret();
+        return;
+      }
+    }
     if (event.key === 'Escape') {
       input.value = '';
       placeCaret();
@@ -152,9 +213,10 @@
     if (event.key === 'Tab' && !event.shiftKey && input.value !== '') {
       const start = input.value.trim().toLowerCase();
       const matches = MAIN.filter((c) => c.startsWith(start));
-      if (matches.length === 1 && matches[0] !== start) {
+      const match = completion();
+      if (match) {
         event.preventDefault();
-        input.value = matches[0];
+        input.value = match;
         placeCaret();
       } else if (matches.length > 1) {
         // Like a shell: list what could come next.

@@ -501,8 +501,8 @@ main {
   margin: 0 0 0.5rem;
 }
 
-/* The name in ASCII art: 52 characters wide, or 45 on phones. It shrinks to fit
-   (a monospace character is 0.6em wide). */
+/* The name in ASCII art: 85 characters wide on one line, or 52 on two lines for phones
+   and narrow windows. It shrinks to fit (a monospace character is 0.6em wide). */
 .cli-banner {
   margin: 0.25rem 0 0.75rem;
   font: inherit;
@@ -520,7 +520,8 @@ main {
   font-size: min(0.8rem, calc((100vw - 2 * var(--gutter) - 1rem) / 31));
 }
 
-@media (max-width: 23.9rem) {
+/* Below 40rem the one-line name would shrink too far to read, so the two-line one shows. */
+@media (max-width: 40rem) {
   .cli-banner-wide {
     display: none;
   }
@@ -619,16 +620,25 @@ main {
   outline: none;
 }
 
-.cli-heading {
-  color: var(--accent);
-  margin: 0.25rem 0 0.6rem;
-}
-
 /* "# investigations": set like a comment in a shell script. */
 .cli-subheading {
   font-weight: 400;
   color: var(--muted);
   margin: 1rem 0 0.25rem;
+}
+
+/* Every output starts right under its "$ command" line and ends the same distance above
+   the next prompt, whatever its last item is. */
+.cli-out > :nth-child(2),
+.cli-out > :nth-child(2) > .cli-subheading:first-child {
+  margin-top: 0;
+}
+
+.cli-out > :last-child,
+.cli-out > :last-child > :last-child,
+.cli-out > :last-child > :last-child > :last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 .cli-out > p {
@@ -640,7 +650,8 @@ main {
 }
 
 .cli .clip,
-.cli .episode {
+.cli .episode,
+.cli .project {
   padding-block: 0.4rem;
 }
 
@@ -760,9 +771,41 @@ main {
   opacity: 0.85;
 }
 
+/* The suggestion's letter under the cursor: in reverse while the box has focus, grey
+   like the rest of the suggestion when it doesn't (set by cli.js). */
+.has-caret .cli-caret[data-char]::after {
+  content: attr(data-char);
+  position: absolute;
+  top: calc(-0.15em - 2px);
+  left: -2px;
+  color: var(--muted);
+}
+
+.has-caret input:focus + .cli-caret[data-char]::after {
+  color: var(--bg);
+}
+
 .has-caret input:focus + .cli-caret.blink {
-  /* Blinks for as long as the box has focus, like the browser's own text cursor. */
-  animation: blink 1s steps(1) infinite;
+  /* Blinks for as long as the box has focus, like the browser's own text cursor. Only
+     the block blinks: a suggested letter under it stays, turning grey while it's off. */
+  animation: caret-blink 1s steps(1) infinite;
+}
+
+.has-caret input:focus + .cli-caret.blink[data-char]::after {
+  animation: caret-letter 1s steps(1) infinite;
+}
+
+@keyframes caret-blink {
+  50% {
+    background: transparent;
+    border-color: transparent;
+  }
+}
+
+@keyframes caret-letter {
+  50% {
+    color: var(--muted);
+  }
 }
 
 .cli-status {
@@ -773,6 +816,29 @@ main {
 
 .cli-status.cli-error {
   color: var(--accent);
+}
+
+/* Like a real terminal, a command that works says nothing on screen: "Showing ..." is
+   for screen readers only. Errors and Tab's list of options do show. */
+.cli-status.cli-quiet {
+  clip-path: inset(50%);
+}
+
+/* Grey suggestions after the cursor, as in the fish shell: the rest of the one command
+   that fits what's typed (Tab or the right arrow accepts it), or a "try: whoami" hint
+   when nothing has been typed for a while. Placed by cli.js, like the cursor. */
+.cli-ghost {
+  display: none;
+}
+
+.has-caret .cli-ghost {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: calc(var(--ghost-at, 0) * 1ch - var(--scroll, 0px));
+  color: var(--muted);
+  white-space: pre;
+  pointer-events: none;
 }
 
 /* ---------- Motion ---------- */
