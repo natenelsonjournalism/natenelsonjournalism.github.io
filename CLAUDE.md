@@ -1,13 +1,15 @@
 # CLAUDE.md
 
-Portfolio site for Nate Nelson, cybersecurity journalist. Live at
-https://natenelsonjournalism.github.io. `PLAN.md` is the build brief: work through
-its phases in order and stop for review at the end of each one.
+Maintainer notes for Nate Nelson's portfolio site (cybersecurity journalist). Live at
+https://natenelsonjournalism.github.io.
 
 ## Workflow
 
 - Work on a branch, open a pull request, and stop. Nate squash-merges on github.com.
   Never push to `main`.
+- Commit messages and PR descriptions are short and plain: what changed and why, in a
+  few lines. No AI attribution anywhere (no `Co-authored-by`/session trailers, no
+  "Generated with" footers), Nate's call (Oct 2026).
 - `npm run build` runs `astro build` and then `scripts/verify-build.mjs`. Both must pass
   before pushing. CI runs the same command on every PR; pushes to `main` also deploy.
 - `npm run check` type-checks with `astro check` (dev-only: `@astrojs/check` + TypeScript 6,
