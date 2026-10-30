@@ -18,7 +18,23 @@
     tips: 'contact',
     help: 'help',
     ls: 'help', // what people try in a real terminal
+    // Unlisted, as in a real terminal: they work, but help doesn't mention them.
+    finger: 'about',
+    'finger nate': 'about',
+    mail: 'contact',
   };
+  // Unlisted commands that answer with a fixed line about the site. Nothing here is secret:
+  // the code is public, and these say only what anyone can see in the page source.
+  const INFO = {
+    pwd: '/home/nate',
+    hostname: 'natenelsonjournalism.github.io',
+    uname: 'Static site · GitHub Pages · no cookies, no trackers, one script',
+    'uname -a': 'Static site · GitHub Pages · no cookies, no trackers, one script',
+    ps: 'cli.js: the command box (the only script running here)',
+    'ps aux': 'cli.js: the command box (the only script running here)',
+    netstat: 'No third-party connections. A podcast player connects to its show’s host only when you press play.',
+  };
+  const CLEAR = ['clear', 'cd', 'cd ~'];
   // Easter egg: anything that looks like an attempt to inject code (HTML, script, SQL,
   // shell), or sudo. It couldn't work anyway (the text is only ever compared, never run
   // or shown), so it just gets a fixed reply.
@@ -80,7 +96,11 @@
       say('Nice try, sucka!!', 'attack');
       return false;
     }
-    if (typed === 'clear') {
+    if (Object.prototype.hasOwnProperty.call(INFO, typed)) {
+      say(INFO[typed]);
+      return true;
+    }
+    if (CLEAR.includes(typed)) {
       location.hash = '';
       window.scrollTo(0, 0);
       say('Cleared.', 'quiet');

@@ -313,7 +313,11 @@ a third of a second. None of it runs for visitors who ask for reduced motion.
   command to `COMMANDS` (and `MAIN`, for Tab completion) in `public/cli.js`. `npm run a11y` checks every section automatically.
 - Prompt text is decoration: mark it `aria-hidden="true"` (`Prompt` and `CliOutput` do)
   and keep a real heading or link text for screen readers.
-- Typed commands: the script also accepts `ls` (same as `help`), `clear`, Tab completion (listing the options when several fit), Up/Down history and
+- Typed commands: the script also accepts `ls` (same as `help`), `clear`, and some
+  unlisted ones (Nate, Oct 2026): `finger nate` (`whoami`), `mail` (`tips`), `cd` (`clear`),
+  and `pwd`, `hostname`, `uname -a`, `ps` and `netstat`, which answer with a fixed line
+  (`INFO` in `public/cli.js`; only what the public code and page source already show, never
+  version numbers). Also Tab completion (listing the options when several fit), Up/Down history and
   Escape; anything else gets a fixed "command not found" message. Typed text is never
   echoed back. A command that works shows nothing under the prompt (its "Showing ..."
   message is for screen readers only); errors and Tab's list show. As in the fish shell,
