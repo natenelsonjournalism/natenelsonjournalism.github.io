@@ -16,7 +16,6 @@
     pod: 'podcasts',
     proj: 'projects',
     tips: 'contact',
-    ping: 'contact', // its old name
     help: 'help',
     ls: 'help', // what people try in a real terminal
   };
