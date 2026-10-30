@@ -44,12 +44,14 @@ export const ABOUT: string[] | null = [
 ];
 
 /**
- * Headshot on the About page: a path in `public/` plus a description for screen readers.
- * Strip metadata (EXIF/GPS) before adding any image: see "Never commit" in CLAUDE.md.
+ * Headshot: a path in `public/` plus a description for screen readers. `whoami` shows it
+ * as ASCII art and the icons are drawn from it (scripts/portrait.py); the photo itself is
+ * only given to search engines. Strip metadata (EXIF/GPS) before adding any image: see
+ * "Never commit" in CLAUDE.md.
  */
 export const HEADSHOT: { src: string; alt: string } | null = {
   src: '/images/nate-nelson.jpg',
-  alt: 'Nate Nelson, smiling, in a suit and tie in front of a stone and brick wall.',
+  alt: 'Nate Nelson, smiling, in a suit and tie.',
 };
 
 /**

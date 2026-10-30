@@ -7,6 +7,9 @@ import CliOutput from '../components/CliOutput.astro';
 import Episode from '../components/Episode.astro';
 import Placeholder from '../components/Placeholder.astro';
 import StoryItem from '../components/StoryItem.astro';
+// The headshot in ASCII, one version per colour scheme (drawn by scripts/portrait.py).
+import PORTRAIT_DARK from '../data/portrait-dark.txt?raw';
+import PORTRAIT_LIGHT from '../data/portrait-light.txt?raw';
 import { ABOUT, ARCHIVES, CONTACT, HEADSHOT, PROFILES, SITE } from '../config/site';
 import {
   formatDate,
@@ -210,7 +213,10 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
         </div>
         {
           HEADSHOT ? (
-            <img class="headshot" src={HEADSHOT.src} alt={HEADSHOT.alt} width="448" height="448" loading="lazy" />
+            <div class="portrait" role="img" aria-label={`ASCII-art portrait of ${HEADSHOT.alt}`}>
+              <pre class="portrait-light" aria-hidden="true">{PORTRAIT_LIGHT}</pre>
+              <pre class="portrait-dark" aria-hidden="true">{PORTRAIT_DARK}</pre>
+            </div>
           ) : (
             <Placeholder>
               <span class="headshot-placeholder">Headshot (EXIF and location data stripped)</span>
