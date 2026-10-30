@@ -291,7 +291,7 @@ then. Commands are short and the same on every device. Capitals don't matter
 (`WHOAMI` and `Whoami` work), and a near-miss like `whaomi` gets "Did you mean...". Past commands
 show a short `$` prompt; the full `nate@nelson:~$` appears only on the live line. One font (JetBrains Mono) at one size, as in a real terminal:
 headings stand out by weight and colour. Colours have one job each (Nate, Oct 2026):
-green for the prompt and commands, yellow for error messages, blue (`--link`) for every
+green for the prompt and commands, yellow for error messages, red only for "Nice try, sucka!!", blue (`--link`) for every
 link, muted grey for dates, descriptions and `# comment` subheadings. Outputs have no visible
 title (Nate, Oct 2026): the `$ command` line says what they are, and each keeps a
 screen-reader-only `<h2>`. Like a terminal window, pages fill the browser's

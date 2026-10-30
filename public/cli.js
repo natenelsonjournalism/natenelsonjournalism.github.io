@@ -43,6 +43,7 @@
   const say = (message, tone) => {
     status.textContent = message;
     status.classList.toggle('cli-error', tone === 'error');
+    status.classList.toggle('cli-attack', tone === 'attack');
     status.classList.toggle('cli-quiet', tone === 'quiet');
   };
 
@@ -76,7 +77,7 @@
     stopHint();
 
     if (ATTACK.test(typed)) {
-      say('Nice try, sucka!!', 'error');
+      say('Nice try, sucka!!', 'attack');
       return false;
     }
     if (typed === 'clear') {

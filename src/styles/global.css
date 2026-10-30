@@ -25,6 +25,7 @@
   --focus: #1f5fbf;
   --placeholder-fg: #6b4e00;
   --placeholder-bg: #fff4d1;
+  --danger: #b3261e; /* only for the "Nice try, sucka!!" reply */
 
   /* The homepage terminal window is dark in both themes, like a real terminal. */
   --term-bg: #16181c;
@@ -53,6 +54,7 @@
     --focus: #8cb8ff;
     --placeholder-fg: #f5d27a;
     --placeholder-bg: #2e2715;
+    --danger: #ff7b72;
   }
 }
 
@@ -829,6 +831,11 @@ main {
 
 .cli-status.cli-error {
   color: var(--accent);
+}
+
+.cli-status.cli-attack {
+  color: var(--danger);
+  font-weight: 700;
 }
 
 /* Like a real terminal, a command that works says nothing on screen: "Showing ..." is
