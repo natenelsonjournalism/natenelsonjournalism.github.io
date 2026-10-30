@@ -854,6 +854,44 @@ main {
   pointer-events: none;
 }
 
+/* ---------- Print ---------- */
+
+/* Printed or saved as a PDF, the homepage shows every command's output at once, in light
+   colours, with each link's address written out. The command box and list are left out. */
+@media print {
+  :root {
+    color-scheme: light;
+    --bg: #fff;
+    --fg: #000;
+    --muted: #444;
+    --link: #000;
+    --prompt: #2f6b2f;
+    --accent: #8c4a00;
+  }
+  .cli-out {
+    display: block;
+    animation: none;
+  }
+  .cli-help,
+  .cli-form,
+  .cli-status,
+  audio {
+    display: none;
+  }
+  .portrait-light {
+    display: block;
+  }
+  .portrait-dark {
+    display: none;
+  }
+  a[href^='http']::after {
+    content: ' <' attr(href) '>';
+    color: var(--muted);
+    font-weight: 400;
+    overflow-wrap: anywhere;
+  }
+}
+
 /* ---------- Motion ---------- */
 
 @media (prefers-reduced-motion: reduce) {

@@ -15,7 +15,8 @@
     news: 'stories',
     pod: 'podcasts',
     proj: 'projects',
-    ping: 'contact',
+    tips: 'contact',
+    ping: 'contact', // its old name
     help: 'help',
     ls: 'help', // what people try in a real terminal
   };
@@ -26,7 +27,7 @@
     /[<>{}`;|&$\\]|\.\.\/|%[0-9a-f]{2}|script|alert\s*\(|javascript:|\bunion\s+select\b|\bdrop\s+table\b|\bselect\s.*\bfrom\b|'\s*or\s|\bor\s+1\s*=\s*1\b|\brm\s+-|\/etc\/passwd|\bchmod\b|\bcurl\b|\bwget\b|^sudo\b/;
 
   // Suggested by Tab completion, in this order.
-  const MAIN = ['whoami', 'news', 'pod', 'proj', 'ping', 'help', 'clear'];
+  const MAIN = ['whoami', 'news', 'pod', 'proj', 'tips', 'help', 'clear'];
 
   const form = document.getElementById('cli-form');
   const input = document.getElementById('cli-input');
@@ -70,20 +71,20 @@
 
   const run = (raw) => {
     const typed = raw.trim().toLowerCase().replace(/\s+/g, ' ');
-    if (typed === '') return;
+    if (typed === '') return false;
     history.push(typed);
     back = 0;
     stopHint();
 
     if (ATTACK.test(typed)) {
       say('Nice try, sucka!!', 'error');
-      return;
+      return false;
     }
     if (typed === 'clear') {
       location.hash = '';
       window.scrollTo(0, 0);
       say('Cleared.', 'quiet');
-      return;
+      return true;
     }
     const id = Object.prototype.hasOwnProperty.call(COMMANDS, typed) ? COMMANDS[typed] : null;
     if (!id) {
@@ -96,12 +97,15 @@
           : 'command not found. Type "help" to see the commands.',
         'error',
       );
-      return;
+      return false;
     }
     if (location.hash !== '#' + id) location.hash = id;
     reveal(id);
     say(id === 'help' ? 'Showing the list of commands.' : 'Showing ' + id + '.', 'quiet');
+    return true;
   };
+
+  const touch = !window.matchMedia('(pointer: fine)').matches;
 
   // Scroll like a terminal: just far enough to show the new output and the prompt under
   // it, keeping what's above in view when it all fits. (Going to a #link would instead
@@ -116,9 +120,12 @@
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
-    run(input.value);
+    const ran = run(input.value);
     input.value = '';
-    input.focus({ preventScroll: true });
+    // On phones, a command that works puts the keyboard away so its output can be read;
+    // after an error it stays up for another try.
+    if (ran && touch) input.blur();
+    else input.focus({ preventScroll: true });
   });
 
   // The one command that starts with what's typed, if exactly one does (for Tab, the
@@ -238,7 +245,7 @@
   });
 
   // Ready to type on computers; on phones, wait for a tap so the keyboard doesn't pop up.
-  if (window.matchMedia('(pointer: fine)').matches && !location.hash) {
+  if (!touch && !location.hash) {
     input.focus({ preventScroll: true });
   }
 })();
