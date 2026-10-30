@@ -470,14 +470,6 @@ main {
   }
 }
 
-.headshot {
-  display: block;
-  width: 100%;
-  max-width: 14rem;
-  height: auto;
-  border-radius: 0.25rem;
-}
-
 .headshot-placeholder {
   display: grid;
   place-items: center;
@@ -646,7 +638,7 @@ main {
 }
 
 .cli .about-intro {
-  max-width: calc(var(--measure) + 16.5rem);
+  max-width: calc(var(--measure) + 18rem);
 }
 
 .cli .clip,
@@ -683,13 +675,34 @@ main {
   gap: 0.75rem 2rem;
 }
 
-.cli .headshot {
-  max-width: 11rem;
+/* The headshot in ASCII: 64 characters wide, each 0.6em, so 38.4em in all. About 16rem
+   wide, or narrower on small phones. Ligatures off, or "==" and "--" join up. */
+.portrait pre {
+  margin: 0;
+  font: inherit;
+  font-size: min(0.4167rem, calc((100vw - 2 * var(--gutter)) / 38.4));
+  font-weight: 600;
+  line-height: 1;
+  font-variant-ligatures: none;
+  color: var(--fg);
+}
+
+.portrait-dark {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .portrait-light {
+    display: none;
+  }
+  .portrait-dark {
+    display: block;
+  }
 }
 
 @media (min-width: 48rem) {
   .cli .about-intro {
-    grid-template-columns: 1fr 11rem;
+    grid-template-columns: 1fr 16rem;
   }
 }
 

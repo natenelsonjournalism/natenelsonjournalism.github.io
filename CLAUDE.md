@@ -150,12 +150,15 @@ Re-scan after any hosting change.
   `ogType`, `person` (adds schema.org `Person` JSON-LD; used on the homepage), `cli` (the
   homepage's script and CSP) and `cwd` (the "where you are" path in the header prompt).
 - One static share image for every page: `public/og-default.png` (1200×630, the terminal
-  `whoami` screen). Icons: `public/favicon.svg` (a bold "N" drawn as a path from JetBrains
-  Mono, with a green underscore cursor, on the dark background), `favicon-32.png`,
-  `apple-touch-icon.png` (square corners; iOS rounds them), `icon-192.png`, `icon-512.png`;
-  manifest `public/site.webmanifest`. All rendered with a headless browser (Oct 2026) and
-  free of metadata; redo them if the design or tagline changes, and then bump the `?v=`
-  number on the icon links in `BaseLayout.astro` (browsers cache icons hard).
+  `whoami` screen). Icons: a bold green "N" drawn as a path from JetBrains Mono, on the dark
+  background (Nate, Oct 2026; it replaced an "N_" monogram that looked too much like another
+  site's): `public/favicon.svg`, `favicon-32.png`, `apple-touch-icon.png` (square corners;
+  iOS rounds them), `icon-192.png`, `icon-512.png`; manifest `public/site.webmanifest`. All
+  rendered with a headless browser and free of metadata; redo them if the design changes,
+  and then bump the `?v=` number on the icon links in `BaseLayout.astro` (browsers cache
+  icons hard). The ASCII portrait in `whoami` is drawn from the headshot by
+  `scripts/portrait.py` (Python 3 + Pillow, run by hand; not part of the build); rerun it
+  if the headshot changes.
 - `README.md` is one line, "My personal website." (Nate's call, Oct 2026); the details
   live here.
 - `@astrojs/sitemap` (official integration, approved by the plan) writes
@@ -186,7 +189,8 @@ goes live.
 - `src/data/projects.yaml`: side projects.
 - `src/data/appearances.yaml`: talks, panels, podcast guest spots, TV, radio (`whoami`).
 - `src/config/site.ts`: name, homepage tagline, `about` text (`ABOUT`), full-archive links (`ARCHIVES`),
-  profiles, headshot and contact channels (a Signal username link, and LinkedIn from `PROFILES`; Nate dropped the CV, PGP key,
+  profiles, headshot (shown in `whoami` as ASCII art, from `src/data/portrait-light.txt` and
+  `portrait-dark.txt`, one per colour scheme; the photo only goes to search engines) and contact channels (a Signal username link, and LinkedIn from `PROFILES`; Nate dropped the CV, PGP key,
   SecureDrop and the public email address in Oct 2026). A value left as `null` (or an empty
   list) shows on the site as a clearly marked yellow "Placeholder" box, so nothing fake is
   ever presented as real.
