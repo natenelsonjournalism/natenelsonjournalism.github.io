@@ -45,8 +45,8 @@ export const ABOUT: string[] | null = [
 
 /**
  * Headshot: a path in `public/` plus a description for screen readers. `whoami` shows it
- * as ASCII art and the icons are drawn from it (scripts/portrait.py); the photo itself is
- * only given to search engines. Strip metadata (EXIF/GPS) before adding any image: see
+ * as ASCII art (drawn by scripts/portrait.py); the photo itself is only given to search
+ * engines. Strip metadata (EXIF/GPS) before adding any image: see
  * "Never commit" in CLAUDE.md.
  */
 export const HEADSHOT: { src: string; alt: string } | null = {

@@ -1,11 +1,9 @@
-"""Draws the site's portrait art from the headshot: the halftone-dot icons and the ASCII
-portrait in `whoami`. Run by hand after changing the headshot (needs Python 3 and Pillow):
+"""Draws the ASCII portrait in `whoami` from the headshot. Run by hand after changing the
+headshot (needs Python 3 and Pillow):
 
     python3 scripts/portrait.py
 
-It overwrites public/favicon.svg, favicon-32.png, apple-touch-icon.png, icon-192.png,
-icon-512.png and src/data/portrait-{light,dark}.txt. Afterwards bump the `?v=` number on the
-icon links in src/layouts/BaseLayout.astro. The PNGs are written fresh, with no metadata.
+It overwrites src/data/portrait-light.txt and portrait-dark.txt.
 """
 
 from pathlib import Path
@@ -13,10 +11,8 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFilter, ImageOps
 
 ROOT = Path(__file__).resolve().parent.parent
-PUBLIC, DATA = ROOT / 'public', ROOT / 'src' / 'data'
-photo = Image.open(PUBLIC / 'images' / 'nate-nelson.jpg').convert('L')
-
-CREAM, INK = (248, 247, 243), (27, 28, 30)  # --bg (light theme) and a near-black ink
+DATA = ROOT / 'src' / 'data'
+photo = Image.open(ROOT / 'public' / 'images' / 'nate-nelson.jpg').convert('L')
 
 # Outline of head and shoulders in the 448px photo, drawn by hand: everything outside it
 # (the brick wall) is left blank. Redraw it if the headshot changes.
@@ -42,49 +38,6 @@ def tones(box, cols, rows):
     inside = [[mask.getpixel((x, y)) / 255 for x in range(cols)] for y in range(rows)]
     return dark, inside
 
-
-# ---- Icons: halftone dots, ink on cream, cropped to the face ----
-
-N = 26  # dots across
-dark, inside = tones((90, 15, 360, 285), N, N)
-DOTS = [
-    (x + 0.5, y + 0.5, r)
-    for y in range(N)
-    for x in range(N)
-    if (r := 0.56 * dark[y][x] ** 0.9 * inside[y][x]) > 0.08
-]
-
-
-def svg():
-    circles = ''.join(f'<circle cx="{x:g}" cy="{y:g}" r="{r:.2f}"/>' for x, y, r in DOTS)
-    return (
-        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {N} {N}">'
-        f'<rect width="{N}" height="{N}" rx="{N * 0.18:.2f}" fill="#f8f7f3"/>'
-        f'<g fill="#1b1c1e">{circles}</g></svg>\n'
-    )
-
-
-def png(size, rounded):
-    k = 8  # drawn 8x larger, then scaled down, for smooth dots
-    big, cell = size * k, size * k / N
-    im = Image.new('RGBA', (big, big), (0, 0, 0, 0))
-    d = ImageDraw.Draw(im)
-    if rounded:
-        d.rounded_rectangle([0, 0, big - 1, big - 1], radius=big * 0.18, fill=CREAM)
-    else:
-        d.rectangle([0, 0, big, big], fill=CREAM)
-    for x, y, r in DOTS:
-        d.ellipse([(x - r) * cell, (y - r) * cell, (x + r) * cell, (y + r) * cell], fill=INK)
-    im = im.resize((size, size), Image.LANCZOS)
-    # Two colours plus their blends: a 32-colour palette keeps it smooth at a fraction of the size.
-    return im.quantize(colors=32, method=Image.Quantize.FASTOCTREE)
-
-
-(PUBLIC / 'favicon.svg').write_text(svg())
-png(32, True).save(PUBLIC / 'favicon-32.png')
-png(180, False).save(PUBLIC / 'apple-touch-icon.png')  # iOS rounds it itself
-png(192, True).save(PUBLIC / 'icon-192.png')
-png(512, True).save(PUBLIC / 'icon-512.png')
 
 # ---- ASCII portrait for whoami: head and shoulders, one version per colour scheme ----
 
@@ -112,4 +65,4 @@ def ascii_art(dense_is_dark):
 
 (DATA / 'portrait-light.txt').write_text(ascii_art(True))  # dark text on cream
 (DATA / 'portrait-dark.txt').write_text(ascii_art(False))  # light text on near-black
-print(f'{len(DOTS)} dots; ASCII {COLS}x{ROWS}')
+print(f'ASCII {COLS}x{ROWS}')

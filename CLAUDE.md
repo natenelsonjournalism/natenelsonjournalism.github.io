@@ -150,13 +150,15 @@ Re-scan after any hosting change.
   `ogType`, `person` (adds schema.org `Person` JSON-LD; used on the homepage), `cli` (the
   homepage's script and CSP) and `cwd` (the "where you are" path in the header prompt).
 - One static share image for every page: `public/og-default.png` (1200×630, the terminal
-  `whoami` screen). Icons: Nate's face as halftone dots, ink on cream (Nate, Oct 2026; it replaced
-  an "N_" monogram that looked too much like another site's): `public/favicon.svg`,
-  `favicon-32.png`, `apple-touch-icon.png` (square corners; iOS rounds them), `icon-192.png`,
-  `icon-512.png`; manifest `public/site.webmanifest`. They and the ASCII portrait in `whoami`
-  are drawn from the headshot by `scripts/portrait.py` (Python 3 + Pillow, run by hand; not
-  part of the build), free of metadata. Rerun it if the headshot changes, and then bump the
-  `?v=` number on the icon links in `BaseLayout.astro` (browsers cache icons hard).
+  `whoami` screen). Icons: a bold green "N" drawn as a path from JetBrains Mono, on the dark
+  background (Nate, Oct 2026; it replaced an "N_" monogram that looked too much like another
+  site's): `public/favicon.svg`, `favicon-32.png`, `apple-touch-icon.png` (square corners;
+  iOS rounds them), `icon-192.png`, `icon-512.png`; manifest `public/site.webmanifest`. All
+  rendered with a headless browser and free of metadata; redo them if the design changes,
+  and then bump the `?v=` number on the icon links in `BaseLayout.astro` (browsers cache
+  icons hard). The ASCII portrait in `whoami` is drawn from the headshot by
+  `scripts/portrait.py` (Python 3 + Pillow, run by hand; not part of the build); rerun it
+  if the headshot changes.
 - `README.md` is one line, "My personal website." (Nate's call, Oct 2026); the details
   live here.
 - `@astrojs/sitemap` (official integration, approved by the plan) writes
