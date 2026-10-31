@@ -174,7 +174,7 @@ The whole site is one page laid out like a terminal (Nate, Oct 2026): his name, 
 commands to type, and each command's output below. Commands (Nate, Oct 2026), in this order: `whoami`
 (about him, with speaking and media appearances, if any), `news` (a few investigations, then
 features, then the full-archive link; each story is a title linking to the article, with
-a one-line summary), `pod` (shows he has written, with playable episodes), `proj`, `ping` (contact) and
+a one-line summary), `pod` (shows he has written, with playable episodes), `proj`, `tips` (contact; it replaced `ping` in Oct 2026, which no longer works) and
 `help` (shows the list again; not itself listed, Nate's call). Each command's output is a section of
 `src/pages/index.astro`, with its own id: `/#stories`, `/#podcasts`, `/#projects`,
 `/#about`, `/#contact` (kept as they were, so links shared elsewhere still work).
@@ -291,7 +291,7 @@ then. Commands are short and the same on every device. Capitals don't matter
 (`WHOAMI` and `Whoami` work), and a near-miss like `whaomi` gets "Did you mean...". Past commands
 show a short `$` prompt; the full `nate@nelson:~$` appears only on the live line. One font (JetBrains Mono) at one size, as in a real terminal:
 headings stand out by weight and colour. Colours have one job each (Nate, Oct 2026):
-green for the prompt and commands, yellow for error messages, blue (`--link`) for every
+green for the prompt and commands, yellow for error messages, red only for "Nice try, sucka!!", blue (`--link`) for every
 link, muted grey for dates, descriptions and `# comment` subheadings. Outputs have no visible
 title (Nate, Oct 2026): the `$ command` line says what they are, and each keeps a
 screen-reader-only `<h2>`. Like a terminal window, pages fill the browser's
@@ -313,7 +313,14 @@ a third of a second. None of it runs for visitors who ask for reduced motion.
   command to `COMMANDS` (and `MAIN`, for Tab completion) in `public/cli.js`. `npm run a11y` checks every section automatically.
 - Prompt text is decoration: mark it `aria-hidden="true"` (`Prompt` and `CliOutput` do)
   and keep a real heading or link text for screen readers.
-- Typed commands: the script also accepts `ls` (same as `help`), `clear`, Tab completion (listing the options when several fit), Up/Down history and
+- Typed commands: the script also accepts `ls` (same as `help`), `clear`, and some
+  unlisted ones (Nate, Oct 2026): `finger nate` (`whoami`), `mail` (`tips`), `cd` (`clear`),
+  and `pwd`, `hostname`, `uname -a`, `ps` and `netstat`, which answer with a fixed line
+  (`INFO` in `public/cli.js`; only what the public code and page source already show, never
+  version numbers). Three unlisted jokes, played straight (Nate, Oct 2026): `rm -rf /`
+  empties the screen down to the prompt, `exit`/`logout` does the same with
+  "Connection to ... closed." (`WIPE`/`EXIT`; nothing is removed, and the next command or
+  a reload brings the page back), and `rm` gets the real `rm: missing operand`. Also Tab completion (listing the options when several fit), Up/Down history and
   Escape; anything else gets a fixed "command not found" message. Typed text is never
   echoed back. A command that works shows nothing under the prompt (its "Showing ..."
   message is for screen readers only); errors and Tab's list show. As in the fish shell,
@@ -324,8 +331,8 @@ a third of a second. None of it runs for visitors who ask for reduced motion.
   the cursor is the focus indicator (solid when focused, outlined when not).
 - Easter eggs: an ASCII-art note in an HTML comment at the top of every page (in
   `BaseLayout.astro`), `public/humans.txt`, a line in `security.txt`, and a "command not
-  found" 404 page (with one link home). In the command box, the only one (Nate, Oct 2026)
-  is "Nice try, sucka!!" for `sudo` or anything that looks like code injection (`ATTACK`
+  found" 404 page (with one link home). In the command box (Nate, Oct 2026): the
+  unlisted commands and jokes above, and "Nice try, sucka!!" for `sudo` or anything that looks like code injection (`ATTACK`
   in `public/cli.js`; it could never work, since typed text is only compared, never run or
   shown).
 

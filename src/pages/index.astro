@@ -35,7 +35,7 @@ const COMMANDS = [
   { cmd: 'news', id: 'stories', help: 'My recent journalism' },
   { cmd: 'pod', id: 'podcasts', help: 'Shows I’ve written' },
   { cmd: 'proj', id: 'projects', help: 'Things I make on the side' },
-  { cmd: 'ping', id: 'contact', help: 'How to reach me' },
+  { cmd: 'tips', id: 'contact', help: 'How to reach me' },
 ];
 
 const investigations = await getInvestigations();
@@ -231,7 +231,7 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
               <span aria-hidden="true">#</span> speaking and media
             </h3>
             <p>
-              To invite me to speak, run <a class="no-js-only" href="#contact">ping</a><span class="js-only cli-cmd">ping</span>.
+              To invite me to speak, run <a class="no-js-only" href="#contact">tips</a><span class="js-only cli-cmd">tips</span>.
             </p>
             {groups.map((group) => (
               <section aria-labelledby={`type-${group.type}`}>
@@ -263,7 +263,7 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
       }
     </CliOutput>
 
-    <CliOutput id="contact" command="ping">
+    <CliOutput id="contact" command="tips">
       <h2 id="contact-heading" class="visually-hidden">Contact</h2>
       {
         linkedin ? (

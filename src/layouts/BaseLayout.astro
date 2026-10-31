@@ -74,6 +74,8 @@ const sourceNote = `<!--
     <link rel="icon" href="/favicon-32.png?v=3" type="image/png" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=3" />
     <link rel="manifest" href="/site.webmanifest" />
+    {/* Fetch the main font straight away, so text doesn't flash in a fallback font first. */}
+    <link rel="preload" href="/fonts/jetbrains-mono-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="alternate" type="application/rss+xml" title={`${SITE.name}: new work`} href="/rss.xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     {person && <PersonJsonLd />}
