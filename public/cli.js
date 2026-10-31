@@ -35,6 +35,10 @@
     netstat: 'No third-party connections. A podcast player connects to its show’s host only when you press play.',
   };
   const CLEAR = ['clear', 'cd', 'cd ~'];
+  // Unlisted jokes, played straight. These empty the screen (only hidden, never deleted:
+  // the next command, or reloading, brings it all back).
+  const WIPE = ['rm -rf /', 'rm -rf /*', 'rm -fr /', 'rm -rf *', 'rm -rf ~'];
+  const EXIT = ['exit', 'logout'];
   // Easter egg: anything that looks like an attempt to inject code (HTML, script, SQL,
   // shell), or sudo. It couldn't work anyway (the text is only ever compared, never run
   // or shown), so it just gets a fixed reply.
@@ -82,6 +86,9 @@
     return row[b.length];
   };
 
+  // Hides everything but the prompt (for the jokes above), or shows it all again.
+  const wipe = (on) => document.documentElement.classList.toggle('cli-wiped', on);
+
   const history = [];
   let back = 0;
 
@@ -91,7 +98,23 @@
     history.push(typed);
     back = 0;
     stopHint();
+    wipe(false);
 
+    if (WIPE.includes(typed) || EXIT.includes(typed)) {
+      wipe(true);
+      window.scrollTo(0, 0);
+      if (EXIT.includes(typed)) say('Connection to natenelsonjournalism.github.io closed.');
+      else say('Everything is gone. Run any command to bring it back.', 'quiet');
+      return true;
+    }
+    if (typed === 'rm') {
+      say('rm: missing operand', 'error');
+      return false;
+    }
+    if (typed.startsWith('rm ') && !typed.startsWith('rm -')) {
+      say('rm: cannot remove: Read-only file system', 'error');
+      return false;
+    }
     if (ATTACK.test(typed)) {
       say('Nice try, sucka!!', 'attack');
       return false;

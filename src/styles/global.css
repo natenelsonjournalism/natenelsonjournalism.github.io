@@ -838,6 +838,12 @@ main {
   font-weight: 700;
 }
 
+/* After `rm -rf /` or `exit` (unlisted jokes in cli.js): only the prompt is left. */
+.cli-wiped .cli > :not(.cli-form, .cli-status),
+.cli-wiped .site-footer {
+  display: none;
+}
+
 /* Like a real terminal, a command that works says nothing on screen: "Showing ..." is
    for screen readers only. Errors and Tab's list of options do show. */
 .cli-status.cli-quiet {

@@ -317,7 +317,10 @@ a third of a second. None of it runs for visitors who ask for reduced motion.
   unlisted ones (Nate, Oct 2026): `finger nate` (`whoami`), `mail` (`tips`), `cd` (`clear`),
   and `pwd`, `hostname`, `uname -a`, `ps` and `netstat`, which answer with a fixed line
   (`INFO` in `public/cli.js`; only what the public code and page source already show, never
-  version numbers). Also Tab completion (listing the options when several fit), Up/Down history and
+  version numbers). Three unlisted jokes, played straight (Nate, Oct 2026): `rm -rf /`
+  empties the screen down to the prompt, `exit`/`logout` does the same with
+  "Connection to ... closed." (`WIPE`/`EXIT`; nothing is removed, and the next command or
+  a reload brings the page back), and `rm` gets the real `rm: missing operand`. Also Tab completion (listing the options when several fit), Up/Down history and
   Escape; anything else gets a fixed "command not found" message. Typed text is never
   echoed back. A command that works shows nothing under the prompt (its "Showing ..."
   message is for screen readers only); errors and Tab's list show. As in the fish shell,
@@ -328,8 +331,8 @@ a third of a second. None of it runs for visitors who ask for reduced motion.
   the cursor is the focus indicator (solid when focused, outlined when not).
 - Easter eggs: an ASCII-art note in an HTML comment at the top of every page (in
   `BaseLayout.astro`), `public/humans.txt`, a line in `security.txt`, and a "command not
-  found" 404 page (with one link home). In the command box, the only one (Nate, Oct 2026)
-  is "Nice try, sucka!!" for `sudo` or anything that looks like code injection (`ATTACK`
+  found" 404 page (with one link home). In the command box (Nate, Oct 2026): the
+  unlisted commands and jokes above, and "Nice try, sucka!!" for `sudo` or anything that looks like code injection (`ATTACK`
   in `public/cli.js`; it could never work, since typed text is only compared, never run or
   shown).
 
