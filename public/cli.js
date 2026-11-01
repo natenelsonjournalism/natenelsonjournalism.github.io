@@ -15,10 +15,30 @@
     news: 'stories',
     pod: 'podcasts',
     proj: 'projects',
-    ping: 'contact',
+    tips: 'contact',
     help: 'help',
     ls: 'help', // what people try in a real terminal
+    // Unlisted, as in a real terminal: they work, but help doesn't mention them.
+    finger: 'about',
+    'finger nate': 'about',
+    mail: 'contact',
   };
+  // Unlisted commands that answer with a fixed line about the site. Nothing here is secret:
+  // the code is public, and these say only what anyone can see in the page source.
+  const INFO = {
+    pwd: '/home/nate',
+    hostname: 'natenelsonjournalism.github.io',
+    uname: 'Static site · GitHub Pages · no cookies, no trackers, one script',
+    'uname -a': 'Static site · GitHub Pages · no cookies, no trackers, one script',
+    ps: 'cli.js: the command box (the only script running here)',
+    'ps aux': 'cli.js: the command box (the only script running here)',
+    netstat: 'No third-party connections. A podcast player connects to its show’s host only when you press play.',
+  };
+  const CLEAR = ['clear', 'cd', 'cd ~'];
+  // Unlisted jokes, played straight. These empty the screen (only hidden, never deleted:
+  // the next command, or reloading, brings it all back).
+  const WIPE = ['rm -rf /', 'rm -rf /*', 'rm -fr /', 'rm -rf *', 'rm -rf ~'];
+  const EXIT = ['exit', 'logout'];
   // Easter egg: anything that looks like an attempt to inject code (HTML, script, SQL,
   // shell), or sudo. It couldn't work anyway (the text is only ever compared, never run
   // or shown), so it just gets a fixed reply.
@@ -26,7 +46,7 @@
     /[<>{}`;|&$\\]|\.\.\/|%[0-9a-f]{2}|script|alert\s*\(|javascript:|\bunion\s+select\b|\bdrop\s+table\b|\bselect\s.*\bfrom\b|'\s*or\s|\bor\s+1\s*=\s*1\b|\brm\s+-|\/etc\/passwd|\bchmod\b|\bcurl\b|\bwget\b|^sudo\b/;
 
   // Suggested by Tab completion, in this order.
-  const MAIN = ['whoami', 'news', 'pod', 'proj', 'ping', 'help', 'clear'];
+  const MAIN = ['whoami', 'news', 'pod', 'proj', 'tips', 'help', 'clear'];
 
   const form = document.getElementById('cli-form');
   const input = document.getElementById('cli-input');
@@ -43,6 +63,7 @@
   const say = (message, tone) => {
     status.textContent = message;
     status.classList.toggle('cli-error', tone === 'error');
+    status.classList.toggle('cli-attack', tone === 'attack');
     status.classList.toggle('cli-quiet', tone === 'quiet');
   };
 
@@ -65,25 +86,48 @@
     return row[b.length];
   };
 
+  // Hides everything but the prompt (for the jokes above), or shows it all again.
+  const wipe = (on) => document.documentElement.classList.toggle('cli-wiped', on);
+
   const history = [];
   let back = 0;
 
   const run = (raw) => {
     const typed = raw.trim().toLowerCase().replace(/\s+/g, ' ');
-    if (typed === '') return;
+    if (typed === '') return false;
     history.push(typed);
     back = 0;
     stopHint();
+    wipe(false);
 
-    if (ATTACK.test(typed)) {
-      say('Nice try, sucka!!', 'error');
-      return;
+    if (WIPE.includes(typed) || EXIT.includes(typed)) {
+      wipe(true);
+      window.scrollTo(0, 0);
+      if (EXIT.includes(typed)) say('Connection to natenelsonjournalism.github.io closed.');
+      else say('Everything is gone. Run any command to bring it back.', 'quiet');
+      return true;
     }
-    if (typed === 'clear') {
+    if (typed === 'rm') {
+      say('rm: missing operand', 'error');
+      return false;
+    }
+    if (typed.startsWith('rm ') && !typed.startsWith('rm -')) {
+      say('rm: cannot remove: Read-only file system', 'error');
+      return false;
+    }
+    if (ATTACK.test(typed)) {
+      say('Nice try, sucka!!', 'attack');
+      return false;
+    }
+    if (Object.prototype.hasOwnProperty.call(INFO, typed)) {
+      say(INFO[typed]);
+      return true;
+    }
+    if (CLEAR.includes(typed)) {
       location.hash = '';
       window.scrollTo(0, 0);
       say('Cleared.', 'quiet');
-      return;
+      return true;
     }
     const id = Object.prototype.hasOwnProperty.call(COMMANDS, typed) ? COMMANDS[typed] : null;
     if (!id) {
@@ -96,12 +140,15 @@
           : 'command not found. Type "help" to see the commands.',
         'error',
       );
-      return;
+      return false;
     }
     if (location.hash !== '#' + id) location.hash = id;
     reveal(id);
     say(id === 'help' ? 'Showing the list of commands.' : 'Showing ' + id + '.', 'quiet');
+    return true;
   };
+
+  const touch = !window.matchMedia('(pointer: fine)').matches;
 
   // Scroll like a terminal: just far enough to show the new output and the prompt under
   // it, keeping what's above in view when it all fits. (Going to a #link would instead
@@ -116,9 +163,12 @@
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
-    run(input.value);
+    const ran = run(input.value);
     input.value = '';
-    input.focus({ preventScroll: true });
+    // On phones, a command that works puts the keyboard away so its output can be read;
+    // after an error it stays up for another try.
+    if (ran && touch) input.blur();
+    else input.focus({ preventScroll: true });
   });
 
   // The one command that starts with what's typed, if exactly one does (for Tab, the
@@ -238,7 +288,7 @@
   });
 
   // Ready to type on computers; on phones, wait for a tap so the keyboard doesn't pop up.
-  if (window.matchMedia('(pointer: fine)').matches && !location.hash) {
+  if (!touch && !location.hash) {
     input.focus({ preventScroll: true });
   }
 })();

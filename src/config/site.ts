@@ -33,7 +33,7 @@ export const ARCHIVES: { outlet: string; url: string }[] = [
 
 /** The About page text: one string per paragraph. `null` = not written yet. */
 export const ABOUT: string[] | null = [
-  'I’m a journalist and scriptwriter. I cover daily news for Dark Reading, the most widely read cybersecurity ' +
+  'I’m a journalist and scriptwriter. I cover daily news for Dark Reading — historically, the most widely read cybersecurity ' +
     'website among Chief Information Security Officers (CISOs). I also write long form stories for Darknet ' +
     'Diaries, the most popular show in cybersecurity across all media.',
   'I began my career as a freelancer, ghostwriting Forbes and CNBC op-eds for executives in tech and finance. ' +

@@ -1,6 +1,14 @@
 # Feature articles (3–5 is plenty). Order doesn't matter: the site sorts by date.
 # See "How to add a feature" in CLAUDE.md.
 
+- id: dark-reading-2026-wartime-gameplans
+  title: "As Global Conflicts Go Digital, Businesses Need Wartime Gameplans"
+  outlet: Dark Reading
+  date: 2026-07-09
+  url: https://www.darkreading.com/cybersecurity-operations/businesses-wartime-cybersecurity-gameplans
+  summary: "A discourse with experts in cybersecurity and law, about how companies can defend themselves against warring states."
+  featured: true
+
 - id: dark-reading-2026-ai-slop-cyberattacks
   title: "AI Slop Isn't Just for Social Media; It's Ruining Cyberattacks, Too"
   outlet: Dark Reading
