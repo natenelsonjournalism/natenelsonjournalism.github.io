@@ -33,15 +33,22 @@ export const ARCHIVES: { outlet: string; url: string }[] = [
 
 /** The About page text: one string per paragraph. `null` = not written yet. */
 export const ABOUT: string[] | null = [
-  'I’m a journalist and scriptwriter. I cover daily news for Dark Reading — historically, the most widely read cybersecurity ' +
-    'website among Chief Information Security Officers (CISOs). I also write long form stories for Darknet ' +
-    'Diaries, the most popular show in cybersecurity across all media.',
-  'I began my career as a freelancer, ghostwriting Forbes and CNBC op-eds for executives in tech and finance. ' +
-    'Then I transitioned to journalism at Threatpost, where I began covering cybersecurity news and trends. ' +
-    'Throughout those years I co-created a cybersecurity podcast, Malicious Life, which in its day climbed into ' +
-    'the Top 20 technology podcasts charts on Apple Podcasts and Spotify.',
+  'I’m a cybersecurity journalist and podcast writer. I cover news and investigations for Dark Reading, ' +
+    'and I write long-form episodes of Darknet Diaries.',
+  'My reporting has compelled the Vatican, mainstream tech companies, and US government agencies to fix ' +
+    'cybersecurity vulnerabilities in their Web infrastructure. Security researchers often bring their findings ' +
+    'to me first, and my stories run alongside their own reports.',
+  'I’ve worked in cybersecurity since 2017. I started out ghostwriting op-eds for executives in tech and ' +
+    'finance, published in Forbes and CNBC. In 2017 I co-created Malicious Life, a podcast about the history of ' +
+    'cybersecurity, and went on to write nearly 150 episodes; the show reached the Top 20 technology charts on ' +
+    'Apple Podcasts and Spotify. In 2022 I moved into news at Threatpost, before joining Dark Reading.',
   'I hold degrees from New York University and Bard College.',
 ];
+
+/** The line at the top of `pod`, above the shows. */
+export const PODCASTS_INTRO =
+  'Since 2017 I’ve been writing, researching, and producing long-form documentary podcasts. ' +
+  'Here are some recent examples of my work:';
 
 /**
  * Headshot: a path in `public/` plus a description for screen readers. `whoami` shows it

@@ -26,7 +26,7 @@
 //     - must not contain scripts, event handlers, or external references
 //   Outbound links
 //     - <a href> to other sites (e.g. published articles) is allowed, but must carry
-//       rel="noopener noreferrer"
+//       rel="noopener noreferrer" and target="_blank" (outbound links open in a new tab)
 //     - no tel: links or phone numbers in page text (Signal is a username, not a number)
 //   security.txt (RFC 9116)
 //     - must exist with Contact, Expires and Canonical; Expires at most a year out
@@ -183,6 +183,9 @@ function checkMarkup(file, markup, { isHtml, isCliPage = false }) {
           const rel = (get('rel') ?? '').toLowerCase().split(/\s+/);
           if (externalReason(href) && !(rel.includes('noopener') && rel.includes('noreferrer'))) {
             fail(file, `<a href="${value}"> links to another site without rel="noopener noreferrer"`);
+          }
+          if (externalReason(href) && (get('target') ?? '').toLowerCase() !== '_blank') {
+            fail(file, `<a href="${value}"> links to another site without target="_blank" (outbound links open in a new tab)`);
           }
         }
       }

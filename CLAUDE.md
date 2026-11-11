@@ -63,8 +63,8 @@ The site makes **no third-party requests** and ships **one small script of our o
 - `src`, `srcset`, `poster`, `<link href>`, CSS `url()` and `@import` must be same-origin.
   Fonts and images are self-hosted under `public/` or `src/assets/`.
   Outbound `<a href>` links to articles are fine.
-- Every link to another site must carry `rel="noopener noreferrer"`. Components add it by
-  hand; any Markdown links get it from `src/lib/external-links-plugin.mjs`, so write
+- Every link to another site opens in a new tab (Nate, Nov 2026) and must carry
+  `target="_blank" rel="noopener noreferrer"`. Components add both by hand; any Markdown links get them from `src/lib/external-links-plugin.mjs`, so write
   links in Markdown syntax (`[text](https://...)`), not raw `<a>` HTML.
 - No analytics, embeds, CDN links, or social widgets.
 - **Podcast audio is the one approved exception** (Nate, Oct 2026): episodes play in the
@@ -174,7 +174,7 @@ The whole site is one page laid out like a terminal (Nate, Oct 2026): his name, 
 commands to type, and each command's output below. Commands (Nate, Oct 2026), in this order: `whoami`
 (about him, with speaking and media appearances, if any), `news` (a few investigations, then
 features, then the full-archive link; each story is a title linking to the article, with
-a one-line summary), `pod` (shows he has written, with playable episodes), `proj`, `tips` (contact; it replaced `ping` in Oct 2026, which no longer works) and
+a one-line summary), `pod` (shows he has written, with playable episodes, under a line of intro, `PODCASTS_INTRO` in `src/config/site.ts`), `proj`, `tips` (contact; it replaced `ping` in Oct 2026, which no longer works) and
 `help` (shows the list again; not itself listed, Nate's call). Each command's output is a section of
 `src/pages/index.astro`, with its own id: `/#stories`, `/#podcasts`, `/#projects`,
 `/#about`, `/#contact` (kept as they were, so links shared elsewhere still work).
@@ -246,7 +246,6 @@ Add a show to `src/data/podcasts.yaml`:
   name: "The Show"
   role: Writer and host
   years: 2024–present                 # optional
-  description: "One or two sentences about the show."
   cover: /images/podcasts/the-show.jpg  # optional; square image in public/, metadata stripped
   links:                              # all optional
     spotify: https://open.spotify.com/show/...

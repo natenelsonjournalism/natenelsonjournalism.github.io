@@ -22,7 +22,7 @@ const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
 
 <article class:list={['clip', { 'clip-compact': compact }]}>
   <Heading class="clip-title">
-    {href ? <a href={href} rel={external ? 'noopener noreferrer' : undefined}>{title}</a> : title}
+    {href ? <a href={href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined}>{title}</a> : title}
     {external && original.archived && <span class="clip-note">(archived copy)</span>}
     {external && !href && <span class="clip-note">(link no longer available)</span>}
   </Heading>

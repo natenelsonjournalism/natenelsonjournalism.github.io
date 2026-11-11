@@ -156,7 +156,6 @@ const podcasts = defineCollection({
       name: z.string().min(1),
       role: z.string().min(1),
       years: z.string().min(1).optional(),
-      description: z.string().min(1),
       cover: sitePath.optional(),
       links: z
         .object({ spotify: httpsUrl.optional(), apple: httpsUrl.optional(), website: httpsUrl.optional() })

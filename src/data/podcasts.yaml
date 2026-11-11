@@ -8,7 +8,6 @@
 - id: darknet-diaries
   name: "Darknet Diaries"
   role: Scriptwriter and researcher
-  description: "True stories from the dark side of the internet: hackers, breaches, cybercrime and the people behind them."
   cover: /images/podcasts/darknet-diaries.jpg
   links:
     apple: https://podcasts.apple.com/us/podcast/darknet-diaries/id1296350485
@@ -30,17 +29,18 @@
 - id: malicious-life
   name: "Malicious Life"
   role: Co-creator and scriptwriter
-  description: "Untold stories from the history of cybersecurity."
   cover: /images/podcasts/malicious-life.jpg
   links:
     apple: https://podcasts.apple.com/us/podcast/malicious-life/id1252417787
     website: https://malicious.life/
   episodes:
-    - title: "Operation Snow White, Part 1"
-      audio: https://pscrb.fm/rss/p/clrtpod.com/m/audio3.redcircle.com/episodes/1b14cfa5-e467-40fc-ae9b-73089e1cb0ed/stream.mp3
-      summary: "How the Church of Scientology mounted the largest known infiltration of the US government."
-      url: https://podcasts.apple.com/us/podcast/operation-snow-white-part-1/id1252417787?i=1000671435171
     - title: "The Y2K Bug, Part 1"
+      date: 2024-10-01
       audio: https://pscrb.fm/rss/p/clrtpod.com/m/audio3.redcircle.com/episodes/fbe18f2d-76f0-491d-bebb-5ddd5a929f33/stream.mp3
       summary: "Why smart people thought the world might just end on January 1, 2000."
       url: https://podcasts.apple.com/us/podcast/the-y2k-bug-part-1/id1252417787?i=1000650971906
+    - title: "Operation Snow White, Part 1"
+      date: 2024-03-31
+      audio: https://pscrb.fm/rss/p/clrtpod.com/m/audio3.redcircle.com/episodes/1b14cfa5-e467-40fc-ae9b-73089e1cb0ed/stream.mp3
+      summary: "How the Church of Scientology mounted the largest known infiltration of the US government."
+      url: https://podcasts.apple.com/us/podcast/operation-snow-white-part-1/id1252417787?i=1000671435171

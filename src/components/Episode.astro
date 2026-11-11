@@ -17,20 +17,20 @@ const { title, date, summary, audio, url, transcript } = episode;
 ---
 
 <article class="episode">
-  <Heading class="clip-title">{url ? <a href={url} rel="noopener noreferrer">{title}</a> : title}</Heading>
+  <Heading class="clip-title">{url ? <a href={url} target="_blank" rel="noopener noreferrer">{title}</a> : title}</Heading>
   {date && <p class="meta"><time datetime={isoDate(date)}>{formatDate(date)}</time></p>}
   {summary && <p class="clip-summary">{summary}</p>}
   {
     audio && (
       <audio controls preload="none" src={audio} aria-label={`Play “${title}” from ${show}`}>
-        <a href={audio} rel="noopener noreferrer">Download the episode</a>
+        <a href={audio} target="_blank" rel="noopener noreferrer">Download the episode</a>
       </audio>
     )
   }
   {
     transcript && (
       <p class="meta">
-        <a href={transcript} rel="noopener noreferrer">Read the transcript</a>
+        <a href={transcript} target="_blank" rel="noopener noreferrer">Read the transcript</a>
       </p>
     )
   }
