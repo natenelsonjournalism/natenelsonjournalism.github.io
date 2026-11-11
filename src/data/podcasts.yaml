@@ -12,6 +12,9 @@
   links:
     apple: https://podcasts.apple.com/us/podcast/darknet-diaries/id1296350485
     website: https://darknetdiaries.com/
+  apple_rating:                       # as shown on Apple Podcasts; update by hand now and then
+    stars: 4.9
+    count: 8.1K
   episodes:
     - title: "177: National Public Data"
       date: 2026-07-21
@@ -29,11 +32,14 @@
 - id: malicious-life
   name: "Malicious Life"
   role: Co-creator and scriptwriter
-  awards: "People’s Choice Podcast Award winner · Webby Honoree"
+  awards: "People’s Choice Podcast Award winner · Webby Awards honoree"
   cover: /images/podcasts/malicious-life.jpg
   links:
     apple: https://podcasts.apple.com/us/podcast/malicious-life/id1252417787
     website: https://malicious.life/
+  apple_rating:
+    stars: 4.8
+    count: "929"
   episodes:
     - title: "Operation Snow White, Part 1"
       date: 2024-10-01

@@ -9,4 +9,5 @@
 
 - id: cyber-research-watchlist
   name: "Cyber Research Watchlist"
-  summary: "An engine that discovers, triages, and neatly presents all of the best cyber threat intelligence published across the Internet every day. (Private; release date TBD)"
+  summary: "An engine that discovers, triages, and neatly presents all of the best cyber threat intelligence published across the Internet every day. (Private; release date TBD.)"
+  link_pending: true                  # shown red and underlined: a link that isn't live yet

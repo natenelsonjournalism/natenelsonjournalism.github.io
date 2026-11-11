@@ -165,6 +165,17 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
                         <li>
                           <a href={show.data.links[l.key]} target="_blank" rel="noopener noreferrer">
                             {l.label}
+                            {l.key === 'apple' && show.data.apple_rating && (
+                              <>
+                                {' '}
+                                <span aria-hidden="true">
+                                  ★ {show.data.apple_rating.stars} ({show.data.apple_rating.count})
+                                </span>
+                                <span class="visually-hidden">
+                                  , rated {show.data.apple_rating.stars} out of 5 from {show.data.apple_rating.count} ratings
+                                </span>
+                              </>
+                            )}
                           </a>
                         </li>
                       ))}
@@ -194,6 +205,8 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
                   <a href={p.data.url} target="_blank" rel="noopener noreferrer">
                     {p.data.name}
                   </a>
+                ) : p.data.link_pending ? (
+                  <span class="link-pending">{p.data.name}</span>
                 ) : (
                   p.data.name
                 )}

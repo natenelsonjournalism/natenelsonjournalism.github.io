@@ -246,7 +246,8 @@ Add a show to `src/data/podcasts.yaml`:
   name: "The Show"
   role: Writer and host
   years: 2024–present                 # optional
-  awards: "Webby Honoree"              # optional; one line under the role
+  awards: "Webby Awards honoree"       # optional; one line under the role
+  apple_rating: { stars: 4.8, count: "929" }  # optional; shown on the Apple Podcasts link, copied by hand
   cover: /images/podcasts/the-show.jpg  # optional; square image in public/, metadata stripped
   links:                              # all optional
     spotify: https://open.spotify.com/show/...
@@ -271,7 +272,7 @@ Add a show to `src/data/podcasts.yaml`:
 ### How to add a project
 
 Add an entry to `src/data/projects.yaml`: `id`, `name`, `summary`, and optionally `url`,
-`year` (e.g. `2024` or `2024–present`), `featured`, and `image` (a path in `public/`) with
+`year` (e.g. `2024` or `2024–present`), `featured`, `link_pending` (no link yet: the name shows red and underlined), and `image` (a path in `public/`) with
 `image_alt` (a short description, or `""` if purely decorative).
 
 ### How to add an appearance
@@ -291,7 +292,7 @@ then. Commands are short and the same on every device. Capitals don't matter
 (`WHOAMI` and `Whoami` work), and a near-miss like `whaomi` gets "Did you mean...". Past commands
 show a short `$` prompt; the full `nate@nelson:~$` appears only on the live line. One font (JetBrains Mono) at one size, as in a real terminal:
 headings stand out by weight and colour. Colours have one job each (Nate, Oct 2026):
-green for the prompt and commands, yellow for error messages, red only for "Nice try, sucka!!", blue (`--link`) for every
+green for the prompt and commands, yellow for error messages, red only for "Nice try, sucka!!" and a project link that isn't live yet (`link_pending`), blue (`--link`) for every
 link, muted grey for dates, descriptions and `# comment` subheadings. Outputs have no visible
 title (Nate, Oct 2026): the `$ command` line says what they are, and each keeps a
 screen-reader-only `<h2>`. Like a terminal window, pages fill the browser's
