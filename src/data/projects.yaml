@@ -6,3 +6,8 @@
   summary: "A game that simulates, and abstracts, the sport of football and its strategy."
   url: https://football.nathanieltnelson1.workers.dev/
   featured: true
+
+- id: cyber-research-watchlist
+  name: "Cyber Research Watchlist"
+  summary: "An engine that discovers, triages, and neatly presents all of the best cyber threat intelligence published across the Internet every day. (Private; release date TBD.)"
+  link_pending: true                  # shown red and underlined: a link that isn't live yet

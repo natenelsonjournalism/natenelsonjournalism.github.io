@@ -10,7 +10,7 @@ import StoryItem from '../components/StoryItem.astro';
 // The headshot in ASCII, one version per colour scheme (drawn by scripts/portrait.py).
 import PORTRAIT_DARK from '../data/portrait-dark.txt?raw';
 import PORTRAIT_LIGHT from '../data/portrait-light.txt?raw';
-import { ABOUT, ARCHIVES, CONTACT, HEADSHOT, PROFILES, SITE } from '../config/site';
+import { ABOUT, ARCHIVES, CONTACT, HEADSHOT, PODCASTS_INTRO, PROFILES, SITE } from '../config/site';
 import {
   formatDate,
   getAppearances,
@@ -127,7 +127,7 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
             <ul class="plain-list">
               {ARCHIVES.map((a) => (
                 <li>
-                  <a href={a.url} rel="noopener noreferrer">
+                  <a href={a.url} target="_blank" rel="noopener noreferrer">
                     My {a.outlet} author’s page
                   </a>
                 </li>
@@ -142,6 +142,7 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
 
     <CliOutput id="podcasts" command="pod">
       <h2 id="podcasts-heading" class="visually-hidden">Podcasts</h2>
+      {shows.length > 0 && <p>{PODCASTS_INTRO}</p>}
       {shows.length === 0 && <Placeholder>Your podcasts go here (src/data/podcasts.yaml).</Placeholder>}
       {
         shows.map((show) => {
@@ -157,13 +158,24 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
                     {show.data.name}
                   </h3>
                   <p class="meta">{[show.data.role, show.data.years].filter(Boolean).join(' · ')}</p>
-                  <p>{show.data.description}</p>
+                  {show.data.awards && <p class="show-awards">{show.data.awards}</p>}
                   {links.length > 0 && (
                     <ul class="listen-links" aria-label={`Listen to ${show.data.name}`}>
                       {links.map((l) => (
                         <li>
-                          <a href={show.data.links[l.key]} rel="noopener noreferrer">
+                          <a href={show.data.links[l.key]} target="_blank" rel="noopener noreferrer">
                             {l.label}
+                            {l.key === 'apple' && show.data.apple_rating && (
+                              <>
+                                {' '}
+                                <span aria-hidden="true">
+                                  ★ {show.data.apple_rating.stars} ({show.data.apple_rating.count})
+                                </span>
+                                <span class="visually-hidden">
+                                  , rated {show.data.apple_rating.stars} out of 5 from {show.data.apple_rating.count} ratings
+                                </span>
+                              </>
+                            )}
                           </a>
                         </li>
                       ))}
@@ -190,9 +202,11 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
             <div>
               <h3 class="clip-title">
                 {p.data.url ? (
-                  <a href={p.data.url} rel="noopener noreferrer">
+                  <a href={p.data.url} target="_blank" rel="noopener noreferrer">
                     {p.data.name}
                   </a>
+                ) : p.data.link_pending ? (
+                  <span class="link-pending">{p.data.name}</span>
                 ) : (
                   p.data.name
                 )}
@@ -243,7 +257,7 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
                     <li class="clip clip-compact">
                       <p class="clip-title">
                         {a.data.url ? (
-                          <a href={a.data.url} rel="noopener noreferrer">
+                          <a href={a.data.url} target="_blank" rel="noopener noreferrer">
                             {a.data.title}
                           </a>
                         ) : (
@@ -269,7 +283,7 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
         linkedin ? (
           <p>
             For conference or speaking invitations, find me on{' '}
-            <a href={linkedin.url} rel="noopener noreferrer">
+            <a href={linkedin.url} target="_blank" rel="noopener noreferrer">
               LinkedIn
             </a>
             .
@@ -282,7 +296,7 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
         signal ? (
           <p>
             For tips (vulnerabilities, threat intelligence, etc.), reach out on{' '}
-            <a href={signal} rel="noopener noreferrer">
+            <a href={signal} target="_blank" rel="noopener noreferrer">
               Signal
             </a>
             .

@@ -33,15 +33,23 @@ export const ARCHIVES: { outlet: string; url: string }[] = [
 
 /** The About page text: one string per paragraph. `null` = not written yet. */
 export const ABOUT: string[] | null = [
-  'I’m a journalist and scriptwriter. I cover daily news for Dark Reading — historically, the most widely read cybersecurity ' +
-    'website among Chief Information Security Officers (CISOs). I also write long form stories for Darknet ' +
-    'Diaries, the most popular show in cybersecurity across all media.',
-  'I began my career as a freelancer, ghostwriting Forbes and CNBC op-eds for executives in tech and finance. ' +
-    'Then I transitioned to journalism at Threatpost, where I began covering cybersecurity news and trends. ' +
-    'Throughout those years I co-created a cybersecurity podcast, Malicious Life, which in its day climbed into ' +
-    'the Top 20 technology podcasts charts on Apple Podcasts and Spotify.',
-  'I hold degrees from New York University and Bard College.',
+  'I’m a cybersecurity journalist and podcast writer. I cover news and investigations for Dark Reading, ' +
+    'and I write long-form episodes of Darknet Diaries.',
+  'I began my career ghostwriting Forbes and CNBC op-eds for tech and finance executives. In 2017 I ' +
+    'co-created Malicious Life, a podcast about the history of cybersecurity, and went on to write nearly 150 ' +
+    'episodes. The show reached the Top 20 technology charts on Apple Podcasts and Spotify, won a People’s ' +
+    'Choice Podcast Award, and was named a Webby Awards honoree. In 2022 I transitioned to news reporting at ' +
+    'Threatpost, before joining Dark Reading.',
+  'My reporting has compelled the Vatican, mainstream tech companies, and US government agencies to fix ' +
+    'cybersecurity vulnerabilities in their web infrastructure. Security researchers often bring their findings ' +
+    'to me first, and my stories run alongside their own reports.',
+  'I hold degrees from Bard College and New York University.',
 ];
+
+/** The line at the top of `pod`, above the shows. */
+export const PODCASTS_INTRO =
+  'Since 2017 I’ve been writing, researching, and producing long-form documentary podcasts. ' +
+  'Here are some examples of episodes I’ve written:';
 
 /**
  * Headshot: a path in `public/` plus a description for screen readers. `whoami` shows it

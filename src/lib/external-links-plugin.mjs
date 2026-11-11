@@ -1,5 +1,5 @@
-// Markdown (Sätteri) plugin: adds rel="noopener noreferrer" to every off-site link in
-// investigation write-ups, matching the links written in components. A few lines instead
+// Markdown (Sätteri) plugin: makes every off-site link open in a new tab, with
+// rel="noopener noreferrer", matching the links written in components. A few lines instead
 // of a dependency. scripts/verify-build.mjs fails the build if any outbound link lacks it.
 
 const SITE_HOST = 'natenelsonjournalism.github.io';
@@ -25,6 +25,7 @@ export const externalLinks = {
       const rel = new Set(Array.isArray(existing) ? existing.map(String) : typeof existing === 'string' ? existing.split(/\s+/) : []);
       rel.add('noopener').add('noreferrer');
       ctx.setProperty(node, 'rel', [...rel].filter(Boolean));
+      ctx.setProperty(node, 'target', '_blank');
     },
   },
 };

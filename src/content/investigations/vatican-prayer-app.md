@@ -4,6 +4,6 @@ outlet: Dark Reading
 date: 2026-07-23
 url: https://www.darkreading.com/vulnerabilities-threats/vatican-official-prayer-app-leaks-700k-pii
 archive_url: https://web.archive.org/web/20261020183346/https://www.darkreading.com/vulnerabilities-threats/vatican-official-prayer-app-leaks-700k-pii
-summary: "The Pope's official prayer app was leaking PII belonging to more than 700,000 users. The issue was fixed after my story ran."
+summary: "The Pope's official prayer app was leaking 700,000 users’ personal data. I worked with a source to bring the issue to light, and it was fixed after my story ran. (The story was then picked up by dozens of international media outlets.)"
 featured: true
 ---

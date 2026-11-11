@@ -156,7 +156,12 @@ const podcasts = defineCollection({
       name: z.string().min(1),
       role: z.string().min(1),
       years: z.string().min(1).optional(),
-      description: z.string().min(1),
+      awards: z.string().min(1).optional(),
+      // Star rating and number of ratings, copied by hand from Apple Podcasts.
+      apple_rating: z
+        .object({ stars: z.number().min(0).max(5), count: z.union([z.string().min(1), z.number().int()]).transform(String) })
+        .strict()
+        .optional(),
       cover: sitePath.optional(),
       links: z
         .object({ spotify: httpsUrl.optional(), apple: httpsUrl.optional(), website: httpsUrl.optional() })
@@ -176,6 +181,7 @@ const projects = defineCollection({
       name: z.string().min(1),
       summary: z.string().min(1),
       url: httpsUrl.optional(),
+      link_pending: z.boolean().default(false), // no link yet: name shown red and underlined
       year: z.union([z.string().min(1), z.number().int()]).transform(String).optional(),
       image: sitePath.optional(),
       image_alt: z.string().optional(),

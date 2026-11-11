@@ -25,7 +25,7 @@
   --focus: #1f5fbf;
   --placeholder-fg: #6b4e00;
   --placeholder-bg: #fff4d1;
-  --danger: #b3261e; /* only for the "Nice try, sucka!!" reply */
+  --danger: #b3261e; /* "Nice try, sucka!!" and links that aren't live yet */
 
   /* The homepage terminal window is dark in both themes, like a real terminal. */
   --term-bg: #16181c;
@@ -382,6 +382,10 @@ main {
 }
 
 .show-header .meta {
+  margin: 0 0 0.6rem;
+}
+
+.show-awards {
   margin: 0 0 0.6rem;
 }
 
@@ -915,4 +919,10 @@ main {
     transition: none !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* A project whose link isn't live yet: looks like a link, in red. */
+.link-pending {
+  color: var(--danger);
+  text-decoration: underline;
 }
