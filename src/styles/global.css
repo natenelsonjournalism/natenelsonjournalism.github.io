@@ -385,6 +385,10 @@ main {
   margin: 0 0 0.6rem;
 }
 
+.show-awards {
+  margin: 0 0 0.6rem;
+}
+
 .show-cover {
   flex: 0 0 auto;
   width: 6rem;

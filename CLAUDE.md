@@ -246,6 +246,7 @@ Add a show to `src/data/podcasts.yaml`:
   name: "The Show"
   role: Writer and host
   years: 2024–present                 # optional
+  awards: "Webby Honoree"              # optional; one line under the role
   cover: /images/podcasts/the-show.jpg  # optional; square image in public/, metadata stripped
   links:                              # all optional
     spotify: https://open.spotify.com/show/...

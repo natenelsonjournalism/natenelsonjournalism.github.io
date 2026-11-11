@@ -158,6 +158,7 @@ const groups = TYPES.map((t) => ({ ...t, items: appearances.filter((a) => a.data
                     {show.data.name}
                   </h3>
                   <p class="meta">{[show.data.role, show.data.years].filter(Boolean).join(' · ')}</p>
+                  {show.data.awards && <p class="show-awards">{show.data.awards}</p>}
                   {links.length > 0 && (
                     <ul class="listen-links" aria-label={`Listen to ${show.data.name}`}>
                       {links.map((l) => (

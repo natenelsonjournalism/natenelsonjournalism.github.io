@@ -41,7 +41,7 @@ export const ABOUT: string[] | null = [
   'I’ve worked in cybersecurity since 2017. I started out ghostwriting op-eds for executives in tech and ' +
     'finance, published in Forbes and CNBC. In 2017 I co-created Malicious Life, a podcast about the history of ' +
     'cybersecurity, and went on to write nearly 150 episodes; the show reached the Top 20 technology charts on ' +
-    'Apple Podcasts and Spotify. In 2022 I moved into news at Threatpost, before joining Dark Reading.',
+    'Apple Podcasts and Spotify, won a People’s Choice Podcast Award, and was named a Webby Honoree. In 2022 I moved into news at Threatpost, before joining Dark Reading.',
   'I hold degrees from New York University and Bard College.',
 ];
 
